@@ -14,6 +14,9 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('firstname');
+            $table->string('lastname');
+            $table->string('username');
             $table->string('email')->unique();
             $table->enum('role', ['admin', 'user'])->default('user');
             $table->enum('status', ['Active', 'Inactive'])->default('Active');
@@ -22,6 +25,8 @@ return new class extends Migration
             $table->string('otp_code')->nullable();
             $table->timestamp('otp_expires_at')->nullable();
             $table->timestamp('otp_verified_at')->nullable();
+            $table->boolean('is_approved')->default(false);
+            $table->boolean('is_verified')->default(false);
             $table->rememberToken();
             $table->timestamps();
         });

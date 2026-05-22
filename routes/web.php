@@ -1,7 +1,14 @@
 <?php
 
+use App\Livewire\Auth\AccountActivationPage;
+use App\Livewire\Auth\AccountVerification;
+use App\Livewire\Auth\ForgotPasswordPage;
+use App\Livewire\Auth\LoginPage;
 use App\Livewire\Auth\NotVerify;
 use App\Livewire\Auth\OtpVerify;
+use App\Livewire\Auth\RegisterPage;
+use App\Livewire\Auth\ResendVerificationPage;
+use App\Livewire\Auth\ResetPasswordPage;
 use App\Livewire\HomePage;
 use App\Livewire\Notify\NotAcceptedPage;
 use App\Livewire\Pages\About;
@@ -17,7 +24,7 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-Route::get('/', HomePage::class)->name('home');
+Route::get('/', LoginPage::class)->name('home');
 Route::get('/verify-account', NotVerify::class)->name('verify.account');
 Route::get('/verify-otp', OtpVerify::class)->name('otp.verify');
 Route::get('/not-accepted', NotAcceptedPage::class)
@@ -26,3 +33,14 @@ Route::get('/about', About::class)->name('about');
 Route::get('/logagain', function () {
     return redirect( '/ibroccogreens-admin');
 })->name('login');
+
+Route::middleware('guest')->group(function () {
+    // AUTH
+    Route::get('/register', RegisterPage::class)->name('register');
+    Route::get('/login', LoginPage::class)->name('login');
+    Route::get('/forgot', ForgotPasswordPage::class)->name('password.request');
+    Route::get('/reset/{token}', ResetPasswordPage::class)->name('password.reset');
+    Route::get('/activate-account/{token}', AccountActivationPage::class)->name('activate-account');
+    Route::get('/account-verification/{user_id}', AccountVerification::class)->name('account.verify');
+    Route::get('/account/resend-verification', ResendVerificationPage::class)->name('account.resend-verification');
+});

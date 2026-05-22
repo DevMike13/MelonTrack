@@ -7,13 +7,15 @@
         <title>{{ $title ?? 'Page Title' }}</title>
         
         @wireUiScripts
-        @livewireStyles
         @vite(['resources/css/app.css', 'resources/js/app.js'])
+        @livewireStyles
     </head>
     <body>
-        @livewire('partials.navbar')
+        <x-notifications />
+        {{-- @livewire('partials.navbar') --}}
         {{ $slot }}
-        @livewire('partials.footer')
+        <x-dialog z-index="z-50" blur="md" align="center" />
+        {{-- @livewire('partials.footer') --}}
         @livewireScripts
     </body>
 </html>
