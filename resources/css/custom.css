@@ -1,0 +1,58 @@
+
+@media (min-width: 1024px) {
+    .fi-topbar-open-sidebar-btn {
+        display: none !important;
+    }
+    .fi-main, .fi-main-ctn{
+        margin-left: 20rem;
+        display: flex !important;
+        justify-content: center;
+        max-width: 100% !important;
+    }
+    .fi-main{
+        overflow: hidden !important;
+    }
+    .fi-page{
+        width: 95%;
+    }
+}
+
+.fi-sidebar-item-active svg,
+.fi-sidebar-item-active span {
+    color: #0b5a1e !important;
+}
+
+.calendar-navigation{
+   margin-left: 10px;
+}
+.drag-border-color{
+    border: 2px solid blue;
+}
+.dashed-container{
+    padding: 10px 20px;
+    height: auto;
+    border: 1px dashed gray;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+.dashed-container-no-padding{
+    padding: 5px 10px;
+    height: auto;
+    border: 1px dashed gray;
+    border-radius: 10px;
+}
+.dashed-container-light{
+    padding-top: 20px;
+    height: auto;
+    border-top: 1px dashed gray;
+}
+.container{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+.header-text{
+    font-size: 24px;
+    font-weight: 600;
+}
