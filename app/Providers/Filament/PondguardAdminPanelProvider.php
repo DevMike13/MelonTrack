@@ -36,8 +36,8 @@ class PondguardAdminPanelProvider extends PanelProvider
     {
         return $panel
             ->default()
-            ->id('ibroccogreens-admin')
-            ->path('ibroccogreens-admin')
+            ->id('admin')
+            ->path('admin')
             ->login()
             ->registration(Register::class)
             ->passwordReset()
@@ -68,57 +68,57 @@ class PondguardAdminPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
-                \App\Http\Middleware\EnsureUserIsApproved::class,
+                // \App\Http\Middleware\EnsureUserIsApproved::class,
             ])
-            ->plugin(
-                FilamentSocialitePlugin::make()
-                    // (required) Add providers corresponding with providers in `config/services.php`. 
-                    ->providers([
-                        // Create a provider 'gitlab' corresponding to the Socialite driver with the same name.
-                        Provider::make('google')
-                            ->label('Login with Google')
-                            ->icon('fab-google')
-                            ->color(Color::hex('#2f2a6b'))
-                            ->outlined(false)
-                            ->stateless(false)
-                            // ->scopes(['...'])
-                            // ->with([']),
-                    ])
-                    ->registration(true)
-                    ->createUserUsing(function (string $provider, SocialiteUserContract $oauthUser, FilamentSocialitePlugin $plugin) {
-                        return User::create([
-                            'name'              => $oauthUser->getName(),
-                            'email'             => $oauthUser->getEmail(),
-                            'email_verified_at' => now(), // ✅ force verify
-                            'is_approved'       => false, // ✅ admin must approve
-                            'password'          => bcrypt(str()->random(16)),
-                        ]);
-                    })
-                    ->resolveUserUsing(function (string $provider, SocialiteUserContract $oauthUser, FilamentSocialitePlugin $plugin) {
-                        $user = User::firstWhere('email', $oauthUser->getEmail());
+            // ->plugin(
+            //     FilamentSocialitePlugin::make()
+            //         // (required) Add providers corresponding with providers in `config/services.php`. 
+            //         ->providers([
+            //             // Create a provider 'gitlab' corresponding to the Socialite driver with the same name.
+            //             Provider::make('google')
+            //                 ->label('Login with Google')
+            //                 ->icon('fab-google')
+            //                 ->color(Color::hex('#2f2a6b'))
+            //                 ->outlined(false)
+            //                 ->stateless(false)
+            //                 // ->scopes(['...'])
+            //                 // ->with([']),
+            //         ])
+            //         ->registration(true)
+            //         ->createUserUsing(function (string $provider, SocialiteUserContract $oauthUser, FilamentSocialitePlugin $plugin) {
+            //             return User::create([
+            //                 'name'              => $oauthUser->getName(),
+            //                 'email'             => $oauthUser->getEmail(),
+            //                 'email_verified_at' => now(), // ✅ force verify
+            //                 'is_approved'       => false, // ✅ admin must approve
+            //                 'password'          => bcrypt(str()->random(16)),
+            //             ]);
+            //         })
+            //         ->resolveUserUsing(function (string $provider, SocialiteUserContract $oauthUser, FilamentSocialitePlugin $plugin) {
+            //             $user = User::firstWhere('email', $oauthUser->getEmail());
             
-                        if ($user) {
-                            if (is_null($user->email_verified_at)) {
-                                $user->forceFill([
-                                    'email_verified_at' => now(), // ✅ fix null issue
-                                ])->save();
-                            }
-                            return $user;
-                        }
+            //             if ($user) {
+            //                 if (is_null($user->email_verified_at)) {
+            //                     $user->forceFill([
+            //                         'email_verified_at' => now(), // ✅ fix null issue
+            //                     ])->save();
+            //                 }
+            //                 return $user;
+            //             }
             
-                        return null; // let createUserUsing handle registration
-                    })
+            //             return null; // let createUserUsing handle registration
+            //         })
 
-                    // (optional) Enable/disable registration of new (socialite-) users.
+            //         // (optional) Enable/disable registration of new (socialite-) users.
                     
-                    // (optional) Enable/disable registration of new (socialite-) users using a callback.
-                    // In this example, a login flow can only continue if there exists a user (Authenticatable) already.
-                    // ->registration(fn (string $provider, SocialiteUserContract $oauthUser, ?Authenticatable $user) => (bool) $user)
-                    // (optional) Change the associated model class.
-                    ->userModelClass(User::class)
-                    // (optional) Change the associated socialite class (see below).
-                    // ->socialiteUserModelClass(SocialiteUser::class)
-            )
+            //         // (optional) Enable/disable registration of new (socialite-) users using a callback.
+            //         // In this example, a login flow can only continue if there exists a user (Authenticatable) already.
+            //         // ->registration(fn (string $provider, SocialiteUserContract $oauthUser, ?Authenticatable $user) => (bool) $user)
+            //         // (optional) Change the associated model class.
+            //         ->userModelClass(User::class)
+            //         // (optional) Change the associated socialite class (see below).
+            //         // ->socialiteUserModelClass(SocialiteUser::class)
+            // )
             ->authMiddleware([
                 Authenticate::class,
                 \App\Http\Middleware\EnsureUserIsApproved::class,

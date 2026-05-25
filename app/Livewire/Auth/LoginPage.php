@@ -76,12 +76,12 @@ class LoginPage extends Component
 
         // Redirect admin
         if ($user->role === 'admin') {
-            return redirect()->route('filament.ev-admin.pages.dashboard');
+            return redirect()->route('filament.admin.pages.dashboard');
         }
 
         // Redirect normal user
         if ($user->role === 'user') {
-            return redirect()->route('dashboard');
+            return redirect()->route('filament.admin.pages.dashboard');
         }
 
         return redirect()->intended();

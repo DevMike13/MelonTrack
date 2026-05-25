@@ -30,9 +30,10 @@ Route::get('/verify-otp', OtpVerify::class)->name('otp.verify');
 Route::get('/not-accepted', NotAcceptedPage::class)
     ->name('notify.not-accepted');
 Route::get('/about', About::class)->name('about');
-Route::get('/logagain', function () {
-    return redirect( '/ibroccogreens-admin');
-})->name('login');
+
+// Route::get('/logagain', function () {
+//     return redirect( '/ibroccogreens-admin');
+// })->name('login');
 
 Route::middleware('guest')->group(function () {
     // AUTH

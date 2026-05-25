@@ -18,30 +18,16 @@ class AccountsSeeder extends Seeder
         $now = Carbon::now();
         
         User::create([
-            'name' => 'iBroccoGreens Admin',
-            'email' => 'broccolimicrogreens@gmail.com',
-            'password' => Hash::make('ibroccogreens@2025'),
+            'firstname' => 'Melon',
+            'lastname' => 'Track',
+            'username' => 'MelonTrack',
+            'name' => 'MelonTrack Admin',
+            'email' => 'melontrack@gmail.com',
+            'password' => Hash::make('melontrack@2026'),
             'role' => 'admin',
             'email_verified_at' => $now,
-            'is_approved' => true
-        ]);
-
-        User::create([
-            'name' => 'Reynalyn Admin',
-            'email' => 'rodiquereyn@gmail.com',
-            'password' => Hash::make('rodiquereyn@2025'),
-            'role' => 'admin',
-            'email_verified_at' => $now,
-            'is_approved' => true
-        ]);
-
-        User::create([
-            'name' => 'Abigail Admin',
-            'email' => 'abigailvacunawa3412@gmail.com',
-            'password' => Hash::make('abigailvacunawa@2025'),
-            'role' => 'admin',
-            'email_verified_at' => $now,
-            'is_approved' => true
+            'is_verified' => true,
+            'is_approved' => true,
         ]);
     }
 }

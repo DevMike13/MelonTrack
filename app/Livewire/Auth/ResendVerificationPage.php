@@ -2,7 +2,9 @@
 
 namespace App\Livewire\Auth;
 
+use App\Mail\SendOtpMail;
 use App\Models\User;
+use Illuminate\Support\Facades\Mail;
 use Livewire\Component;
 use WireUi\Traits\Actions;
 
@@ -31,7 +33,7 @@ class ResendVerificationPage extends Component
         $user->otp_code = mt_rand(100000, 999999);
         $user->save();
 
-        // Mail::to($user->email)->send(new SendOtp($user->otp));
+        Mail::to($user->email)->send(new SendOtpMail($user->otp_code));
 
         session()->flash('success', 'OTP sent to your email.');
         return redirect()->route('account.verify', ['user_id' => $user->id]);

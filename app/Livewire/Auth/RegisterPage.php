@@ -2,9 +2,11 @@
 
 namespace App\Livewire\Auth;
 
+use App\Mail\SendOtpMail;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Livewire\Component;
 
 class RegisterPage extends Component
@@ -54,7 +56,7 @@ class RegisterPage extends Component
                 'is_approved' => false,
             ]);
 
-            // Mail::to($user->email)->send(new SendOtp($otp));
+            Mail::to($user->email)->send(new SendOtpMail($otp));
 
             return redirect()->route('account.verify', [
                 'user_id' => $user->id
