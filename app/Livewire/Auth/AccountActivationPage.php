@@ -5,8 +5,10 @@ namespace App\Livewire\Auth;
 use App\Models\AccountActivation;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Livewire\Attributes\Title;
 use Livewire\Component;
 
+#[Title('Account Activation Page')]
 class AccountActivationPage extends Component
 {
     public $token;

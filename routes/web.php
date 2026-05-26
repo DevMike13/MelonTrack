@@ -12,6 +12,8 @@ use App\Livewire\Auth\ResetPasswordPage;
 use App\Livewire\HomePage;
 use App\Livewire\Notify\NotAcceptedPage;
 use App\Livewire\Pages\About;
+use App\Livewire\Static\PrivacyPolicyPage;
+use App\Livewire\Static\TermsOfServicesPage;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -30,6 +32,10 @@ Route::get('/verify-otp', OtpVerify::class)->name('otp.verify');
 Route::get('/not-accepted', NotAcceptedPage::class)
     ->name('notify.not-accepted');
 Route::get('/about', About::class)->name('about');
+
+
+Route::get('/terms-of-services', TermsOfServicesPage::class)->name('terms');
+Route::get('/privacy-policy', PrivacyPolicyPage::class)->name('privacy');
 
 // Route::get('/logagain', function () {
 //     return redirect( '/ibroccogreens-admin');

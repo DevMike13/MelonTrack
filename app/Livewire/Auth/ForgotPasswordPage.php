@@ -3,9 +3,11 @@
 namespace App\Livewire\Auth;
 
 use Illuminate\Support\Facades\Password;
+use Livewire\Attributes\Title;
 use Livewire\Component;
 use WireUi\Traits\Actions;
 
+#[Title('Forgot Page')]
 class ForgotPasswordPage extends Component
 {
     use Actions;

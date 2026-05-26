@@ -169,22 +169,25 @@
                                 </div>
                             </div>
 
-                           <div class="flex justify-between items-center">
+                           <div class="flex flex-col justify-between items-center">
     
                                 <div class="flex items-center gap-2">
-                                    <input id="remember" type="checkbox" wire:model.defer="model" class="rounded border-gray-300">
+                                    <input id="terms" type="checkbox" wire:model="terms" class="rounded border-gray-300">
 
-                                    <label for="remember" class="text-2xs">
+                                    <label for="terms" class="text-2xs">
                                         I agree to the
-                                        <a href="#" class="underline-none text-[#346844]">
+                                        <a href="{{ route('terms') }}" target="_blank" class="underline-none text-[#346844]">
                                             Terms of Services
                                         </a>
                                         and
-                                        <a href="#" class="underline-none text-[#346844]">
+                                        <a href="{{ route('privacy') }}" target="_blank" class="underline-none text-[#346844]">
                                             Privacy Policy
                                         </a>
                                     </label>
                                 </div>
+                                @error('terms')
+                                    <span class="text-red-500 text-sm">{{ $message }}</span>
+                                @enderror
 
                             </div>
                         </div>
@@ -384,15 +387,15 @@
                         <div class="flex justify-between items-center">
 
                             <div class="flex items-center gap-2">
-                                <input id="remember" type="checkbox" wire:model.defer="model" class="rounded border-gray-300">
+                                <input id="terms" type="checkbox" wire:model="terms" class="rounded border-gray-300">
 
-                                <label for="remember" class="text-2xs">
+                                <label for="terms" class="text-2xs">
                                     I agree to the
-                                    <a href="#" class="underline-none text-[#346844]">
+                                    <a href="{{ route('terms') }}" target="_blank" class="underline-none text-[#346844]">
                                         Terms of Services
                                     </a>
                                     and
-                                    <a href="#" class="underline-none text-[#346844]">
+                                    <a href="{{ route('privacy') }}" target="_blank" class="underline-none text-[#346844]">
                                         Privacy Policy
                                     </a>
                                 </label>

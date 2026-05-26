@@ -117,7 +117,7 @@
             </div>
 
             {{-- RIGHT --}}
-            <div class="relative w-full md:w-1/2 flex justify-center overflow-hidden">
+            <div class="relative w-full md:w-1/2 flex justify-center items-center overflow-hidden">
                 @if (session('message'))
                     <div class="text-green-600">{{ session('message') }}</div>
                 @elseif (session('success'))

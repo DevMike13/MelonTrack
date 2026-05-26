@@ -1,4 +1,5 @@
 <div class="relative flex justify-center h-auto">
+    {{-- DESKTOP --}}
     <div class="relative w-full justify-center h-fit min-h-screen hidden md:flex flex-col gap-10">
         <div class="w-full flex justify-center h-auto z-10">
             {{-- LEFT --}}
@@ -248,6 +249,7 @@
         ></div>
     </div>
 
+    {{-- MOBILE --}}
     <div class="relative w-full h-auto flex flex-col gap-4 px-3 py-6 md:hidden">
         <div class="flex justify-left z-10 gap-2 w-full max-w-[60%]">
             <img src="{{ asset('images/Logo_MelonTrack.png') }}" alt="Logo" class="w-12 h-12 object-contain">

@@ -7,8 +7,10 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Livewire\Attributes\Title;
 use Livewire\Component;
 
+#[Title('Register Page')]
 class RegisterPage extends Component
 {
     public $firstname;
@@ -17,6 +19,7 @@ class RegisterPage extends Component
     public $email;
     public $password;
     public $confirmPassword;
+    public $terms;
 
     public function register()
     {
@@ -29,6 +32,8 @@ class RegisterPage extends Component
 
             'password'  => 'required|min:8|max:255',
             'confirmPassword' => 'required|same:password',
+            
+            'terms' => 'accepted',
         ]);
 
         try {

@@ -2,9 +2,11 @@
 
 namespace App\Livewire\Auth;
 
+use Livewire\Attributes\Title;
 use Livewire\Component;
 use WireUi\Traits\Actions;
 
+#[Title('Login Page')]
 class LoginPage extends Component
 {
     use Actions;

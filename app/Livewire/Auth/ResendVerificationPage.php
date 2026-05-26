@@ -5,9 +5,11 @@ namespace App\Livewire\Auth;
 use App\Mail\SendOtpMail;
 use App\Models\User;
 use Illuminate\Support\Facades\Mail;
+use Livewire\Attributes\Title;
 use Livewire\Component;
 use WireUi\Traits\Actions;
 
+#[Title('Verification Page')]
 class ResendVerificationPage extends Component
 {
     use Actions;

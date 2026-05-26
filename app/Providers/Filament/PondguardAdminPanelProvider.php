@@ -8,6 +8,7 @@ use App\Models\User;
 use DutchCodingCompany\FilamentSocialite\FilamentSocialitePlugin;
 use DutchCodingCompany\FilamentSocialite\Models\SocialiteUser;
 use DutchCodingCompany\FilamentSocialite\Provider;
+use Filament\Enums\ThemeMode;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -43,11 +44,13 @@ class PondguardAdminPanelProvider extends PanelProvider
             ->passwordReset()
             // ->emailVerification()
             ->profile()
-            ->brandLogo(asset('images/iBroccoGreensLogo.png'))
+            ->brandLogo(asset('images/Logo_MelonTrack.png'))
             ->favicon(asset('favicon.ico'))
             ->colors([
-                'primary' => '#659d38',
+                'primary' => '#c4e9c0',
             ])
+            ->defaultThemeMode(ThemeMode::Light)
+            ->darkMode(false)
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([

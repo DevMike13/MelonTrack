@@ -47,30 +47,39 @@ class AppServiceProvider extends ServiceProvider
         );
 
         FilamentView::registerRenderHook(
-            PanelsRenderHook::USER_MENU_BEFORE,
-            fn (): string => '
-                <style>
-                    .user-role-badge {
-                        background-color: #dcfce7; /* light green */
-                        color: #166534;           /* green-800 */
-                        border-radius: 9999px;
-                        font-size: 0.75rem;
-                        font-weight: 500;
-                        padding: 0.25rem 0.75rem;
-                        display: inline-flex;
-                        align-items: center;
-                    }
-                    @media (prefers-color-scheme: dark) {
-                        .user-role-badge {
-                            background-color: #065f46; /* green-800 */
-                            color: #f0fdf4;           /* green-100 */
-                        }
-                    }
-                </style>
-                <span class="user-role-badge">'
-                    . ucfirst(auth()->user()?->role ?? 'User') .
-                '</span>'
+            PanelsRenderHook::SIDEBAR_NAV_END,
+            fn (): string => Blade::render('<livewire:partials.account-info-card />')
         );
+
+        FilamentView::registerRenderHook(
+            PanelsRenderHook::USER_MENU_BEFORE,
+             fn (): string => Blade::render('<livewire:partials.weather-badge />')
+        );
+        // FilamentView::registerRenderHook(
+        //     PanelsRenderHook::USER_MENU_BEFORE,
+        //     fn (): string => '
+        //         <style>
+        //             .user-role-badge {
+        //                 background-color: #dcfce7; /* light green */
+        //                 color: #166534;           /* green-800 */
+        //                 border-radius: 9999px;
+        //                 font-size: 0.75rem;
+        //                 font-weight: 500;
+        //                 padding: 0.25rem 0.75rem;
+        //                 display: inline-flex;
+        //                 align-items: center;
+        //             }
+        //             @media (prefers-color-scheme: dark) {
+        //                 .user-role-badge {
+        //                     background-color: #065f46; /* green-800 */
+        //                     color: #f0fdf4;           /* green-100 */
+        //                 }
+        //             }
+        //         </style>
+        //         <span class="user-role-badge">'
+        //             . ucfirst(auth()->user()?->role ?? 'User') .
+        //         '</span>'
+        // );
 
         FilamentView::registerRenderHook(
             PanelsRenderHook::AUTH_LOGIN_FORM_BEFORE,
