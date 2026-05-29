@@ -12,6 +12,8 @@ class ParametersMonitoring extends Page
 
     protected static ?int $navigationSort = 2;
 
+    protected ?string $subheading = 'Real-time tracking of ennvironmental and soil parameters.';
+
     // public static function shouldRegisterNavigation(): bool
     // {
     //     return false;

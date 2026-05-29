@@ -8,6 +8,9 @@ use Kreait\Firebase\Contract\Database;
 class ParametersMonitoring extends Component
 {
     protected Database $database;
+
+    public string $activeFilter = 'Live';
+    
     public $phData;
     public $phTresholdData;
     public $setPHTresholdValue;
