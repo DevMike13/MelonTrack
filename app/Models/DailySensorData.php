@@ -11,12 +11,11 @@ class DailySensorData extends Model
 
     protected $fillable = [
         'cycle_id',
-        'board',
-        'soil_moisture', 
-        'soil_ph',
-        'water_ph',
-        'temperature',
+        'temperature', 
         'humidity',
+        'soil_moisture',
+        'ec_level',
+        'ph_level',
         'reading_date'
     ];
 }

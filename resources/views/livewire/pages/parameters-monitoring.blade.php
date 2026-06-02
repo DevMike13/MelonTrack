@@ -1,15 +1,15 @@
-<div class="relative overflow-hidden">
+<div class="relative overflow-hidden bg-white">
 
-    <div class="fixed right-0 top-0 h-screen w-[35%] pointer-events-none z-0">
-        <div class="h-full w-full bg-[url('../../public/images/melon-right-bg.png')] bg-no-repeat bg-cover bg-right opacity-100"></div>
+    <div class="fixed right-0 top-0 h-screen w-[25vw] lg:w-[30vw] xl:w-[35vw] pointer-events-none z-0">
+        <div class="h-full w-full bg-[url('../../public/images/melon-right-bg.png')] bg-no-repeat bg-contain bg-right opacity-100"></div>
     </div>
 
-    <div class="relative z-10">
+    <div class="relative z-10 bg-transparent">
         {{-- FILTER --}}
-        <div class="flex justify-between items-start flex-col gap-2 mb-8">
+        <div class="flex justify-between items-center lg:items-start flex-col gap-2 mb-8">
             <h6>Time Range</h6>
 
-            <div class="flex flex-wrap items-center gap-2 bg-gray-300 py-2 px-3 rounded-full">
+            <div class="flex flex-nowrap sm:flex-wrap items-center gap-1 sm:gap-2 bg-gray-300 py-2 px-2 sm:px-3 rounded-full overflow-x-auto max-w-full">
                 @php
                     $filters = ['Live', '24H', '7D', '30D', 'Custom'];
                 @endphp
@@ -17,7 +17,7 @@
                 @foreach ($filters as $filter)
                     <button
                         wire:click="$set('activeFilter', '{{ $filter }}')"
-                        class="px-4 py-1.5 rounded-full text-sm font-medium transition
+                        class="shrink-0 whitespace-nowrap px-3 sm:px-4 py-1.5 rounded-full text-xs sm:text-sm font-medium transition
                             {{ $activeFilter === $filter
                                 ? 'bg-[#356744] text-white'
                                 : 'bg-gray-100 hover:bg-gray-200 text-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
@@ -30,281 +30,738 @@
         </div>
 
         {{-- CARDS --}}
-        <div class="grid grid-cols-5 space-x-5 mb-8">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-5 mb-8">
+
             {{-- TEMPERATURE CARD --}}
-            <div class="bg-[#e1eedb] border border-[#356744] px-5 py-5 rounded-2xl flex flex-col gap-5">
-                <div class="flex flex-row justify-between items-center">
-                    <div class="w-14 h-14 bg-[#c1ebbf] flex items-center justify-center overflow-hidden rounded-full">
-                        <img 
-                            src="{{ asset('images/humidity-icon.png') }}" 
+            <div class="bg-[#e1eedb] border border-[#356744] p-4 sm:p-5 rounded-2xl flex flex-col gap-4">
+                <div class="flex items-center justify-between gap-3">
+                    <div class="w-12 h-12 sm:w-14 sm:h-14 bg-[#c1ebbf] flex items-center justify-center overflow-hidden rounded-full shrink-0">
+                        <img
+                            src="{{ asset('images/humidity-icon.png') }}"
                             alt=""
-                            class="max-w-9 max-h-9 object-contain"
+                            class="w-8 h-8 object-contain"
                         >
                     </div>
-                    <div>
-                        <p class="font-semibold text-[#376a44] text-sm">Temperature</p>
-                        <p class="text-2xl">26.8°C</p>
+
+                    <div class="text-right min-w-0">
+                        <p class="font-semibold text-[#376a44] text-xs sm:text-sm">Temperature</p>
+                        <p class="text-lg sm:text-2xl font-semibold">
+                            {{ number_format($Temperature, 1, '.', ',') }} °C
+                        </p>
                     </div>
                 </div>
-                <div class="flex flex-row justify-center items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
+
+                <div class="flex items-center justify-center gap-2 text-xs">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4 sm:size-5 shrink-0">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18 9 11.25l4.306 4.306a11.95 11.95 0 0 1 5.814-5.518l2.74-1.22m0 0-5.94-2.281m5.94 2.28-2.28 5.941" />
                     </svg>
-                    <p class="text-xs">1.2°C than yesterday</p>
-
+                    <p>1.2°C than yesterday</p>
                 </div>
             </div>
 
             {{-- HUMIDITY CARD --}}
-            <div class="bg-blue-100/50 border border-blue-500 px-5 py-5 rounded-2xl flex flex-col gap-5">
-                <div class="flex flex-row justify-between items-center">
-                    <div class="w-14 h-14 bg-[#cfdfe9] flex items-center justify-center overflow-hidden rounded-full">
-                        <img 
-                            src="{{ asset('images/humidity-icon.png') }}" 
+            <div class="bg-blue-100/50 border border-blue-500 p-4 sm:p-5 rounded-2xl flex flex-col gap-4">
+                <div class="flex items-center justify-between gap-3">
+                    <div class="w-12 h-12 sm:w-14 sm:h-14 bg-[#cfdfe9] flex items-center justify-center overflow-hidden rounded-full shrink-0">
+                        <img
+                            src="{{ asset('images/humidity-icon.png') }}"
                             alt=""
-                            class="max-w-9 max-h-9 object-contain"
+                            class="w-8 h-8 object-contain"
                         >
                     </div>
-                    <div>
-                        <p class="font-semibold text-blue-600 text-sm">Humidity</p>
-                        <p class="text-2xl">65%</p>
+
+                    <div class="text-right min-w-0">
+                        <p class="font-semibold text-blue-600 text-xs sm:text-sm">Humidity</p>
+                        <p class="text-lg sm:text-2xl font-semibold">
+                            {{ number_format($Humidity, 1, '.', ',') }}%
+                        </p>
                     </div>
                 </div>
-                <div class="flex flex-row justify-center items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
+
+                <div class="flex items-center justify-center gap-2 text-xs">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4 sm:size-5 shrink-0">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18 9 11.25l4.306 4.306a11.95 11.95 0 0 1 5.814-5.518l2.74-1.22m0 0-5.94-2.281m5.94 2.28-2.28 5.941" />
                     </svg>
-                    <p class="text-xs">3% than yesterday</p>
-
+                    <p>3% than yesterday</p>
                 </div>
             </div>
 
             {{-- SOIL MOISTURE CARD --}}
-            <div class="bg-[#dde7e9] border border-[#dde7e9] px-5 py-5 rounded-2xl flex flex-col gap-5">
-                <div class="flex flex-row justify-between items-center">
-                    <div class="w-14 h-14 bg-[#eadcdb] flex items-center justify-center overflow-hidden rounded-full">
-                        <img 
-                            src="{{ asset('images/soil-moisture-icon.png') }}" 
+            <div class="bg-[#dde7e9] border border-[#dde7e9] p-4 sm:p-5 rounded-2xl flex flex-col gap-4">
+                <div class="flex items-center justify-between gap-3">
+                    <div class="w-12 h-12 sm:w-14 sm:h-14 bg-[#eadcdb] flex items-center justify-center overflow-hidden rounded-full shrink-0">
+                        <img
+                            src="{{ asset('images/soil-moisture-icon.png') }}"
                             alt=""
-                            class="max-w-9 max-h-9 object-contain"
+                            class="w-8 h-8 object-contain"
                         >
                     </div>
-                    <div>
-                        <p class="font-semibold text-gray-400 text-sm">Soil Moisture</p>
-                        <p class="text-2xl">62%</p>
+
+                    <div class="text-right min-w-0">
+                        <p class="font-semibold text-gray-500 text-xs sm:text-sm">Soil Moisture</p>
+                        <p class="text-lg sm:text-2xl font-semibold">
+                            {{ number_format($SoilMoisture, 1, '.', ',') }}%
+                        </p>
                     </div>
                 </div>
-                <div class="flex flex-row justify-center items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
+
+                <div class="flex items-center justify-center gap-2 text-xs">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4 sm:size-5 shrink-0">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18 9 11.25l4.306 4.306a11.95 11.95 0 0 1 5.814-5.518l2.74-1.22m0 0-5.94-2.281m5.94 2.28-2.28 5.941" />
                     </svg>
-                    <p class="text-xs">2% than yesterday</p>
-
+                    <p>2% than yesterday</p>
                 </div>
             </div>
 
             {{-- EC CARD --}}
-            <div class="bg-[#e9e6dd] border border-[#e9e6dd] px-5 py-5 rounded-2xl flex flex-col gap-5">
-                <div class="flex flex-row justify-between items-center">
-                    <div class="w-14 h-14 bg-[#e7e8db] flex items-center justify-center overflow-hidden rounded-full">
-                        <img 
-                            src="{{ asset('images/ec-icon.png') }}" 
+            <div class="bg-[#e9e6dd] border border-[#e9e6dd] p-4 sm:p-5 rounded-2xl flex flex-col gap-4">
+                <div class="flex items-center justify-between gap-3">
+                    <div class="w-12 h-12 sm:w-14 sm:h-14 bg-[#e7e8db] flex items-center justify-center overflow-hidden rounded-full shrink-0">
+                        <img
+                            src="{{ asset('images/ec-icon.png') }}"
                             alt=""
-                            class="max-w-9 max-h-9 object-contain"
+                            class="w-8 h-8 object-contain"
                         >
                     </div>
-                    <div>
-                        <p class="font-semibold text-[#b5a86c] text-sm">EC Level</p>
-                        <p class="text-2xl">2.0%</p>
+
+                    <div class="text-right min-w-0">
+                        <p class="font-semibold text-[#b5a86c] text-xs sm:text-sm">EC Level</p>
+                        <p class="text-lg sm:text-2xl font-semibold">
+                            {{ number_format($ECLevel, 1, '.', ',') }}%
+                        </p>
                     </div>
                 </div>
-                <div class="flex flex-row justify-center items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
+
+                <div class="flex items-center justify-center gap-2 text-xs">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4 sm:size-5 shrink-0">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18 9 11.25l4.306 4.306a11.95 11.95 0 0 1 5.814-5.518l2.74-1.22m0 0-5.94-2.281m5.94 2.28-2.28 5.941" />
                     </svg>
-                    <p class="text-xs">1.2% than yesterday</p>
-
+                    <p>1.2% than yesterday</p>
                 </div>
             </div>
 
             {{-- PH CARD --}}
-            <div class="bg-[#e3e6eb] border border-[#e3e6eb] px-5 py-5 rounded-2xl flex flex-col gap-5">
-                <div class="flex flex-row justify-between items-center">
-                    <div class="w-14 h-14 bg-[#b79dcb] flex items-center justify-center overflow-hidden rounded-full">
-                        <img 
-                            src="{{ asset('images/ec-icon.png') }}" 
+            <div class="bg-[#e3e6eb] border border-[#e3e6eb] p-4 sm:p-5 rounded-2xl flex flex-col gap-4">
+                <div class="flex items-center justify-between gap-3">
+                    <div class="w-12 h-12 sm:w-14 sm:h-14 bg-[#b79dcb] flex items-center justify-center overflow-hidden rounded-full shrink-0">
+                        <img
+                            src="{{ asset('images/ph-icon.png') }}"
                             alt=""
-                            class="max-w-9 max-h-9 object-contain"
+                            class="w-8 h-8 object-contain"
                         >
                     </div>
-                    <div>
-                        <p class="font-semibold text-[#ac82aa] text-sm">pH Level</p>
-                        <p class="text-2xl">6.1</p>
+
+                    <div class="text-right min-w-0">
+                        <p class="font-semibold text-[#ac82aa] text-xs sm:text-sm">pH Level</p>
+                        <p class="text-lg sm:text-2xl font-semibold">
+                            {{ number_format($pHLevel, 1, '.', ',') }}
+                        </p>
                     </div>
                 </div>
-                <div class="flex flex-row justify-center items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
+
+                <div class="flex items-center justify-center gap-2 text-xs">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4 sm:size-5 shrink-0">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18 9 11.25l4.306 4.306a11.95 11.95 0 0 1 5.814-5.518l2.74-1.22m0 0-5.94-2.281m5.94 2.28-2.28 5.941" />
                     </svg>
-                    <p class="text-xs">1.1than yesterday</p>
-
+                    <p>1.1 than yesterday</p>
                 </div>
             </div>
+
         </div>
 
-        <div wire:ignore class="w-[100%] h-96 mb-8">
+        {{-- <div wire:ignore class="w-[100%] h-96 mb-8">
             <canvas id="allSensorsChart"></canvas>
-        </div>
+        </div> --}}
 
-        <div class="flex justify-between items-center flex-col gap-5 lg:flex-row lg:gap-2">
-            <div class="w-full lg:w-1/2 flex flex-col bg-white border shadow-sm rounded-xl dark:bg-neutral-900 dark:border-neutral-700 dark:shadow-neutral-700/70">
-                <div class="bg-gray-100 border-b rounded-t-xl py-3 px-4 md:py-4 md:px-5 dark:bg-neutral-900 dark:border-neutral-700 flex justify-between items-center">
-                    <p class="mt-1 text-sm text-gray-500 dark:text-neutral-500">
-                        pH Level
-                    </p>
-                    <div>
-                        <p class="text-xs mb-2">Current TR: <span class="inline-flex items-center gap-x-1.5 px-2 rounded-full text-xs font-medium bg-yellow-500 text-white">{{$phTresholdData}}</span></p>
-                        <a href="#" onclick="$openModal('phlevelmodal')" class="text-xs bg-blue-600 px-2 py-1 rounded-lg text-white">Set Threshhold Range</a>
-                    </div>
-                </div>
-                <div class="p-4 md:p-5">
-                    <div class="flex justify-center items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512" width="24" height="24">
-                            <path d="M400 320c0 88.37-55.63 144-144 144s-144-55.63-144-144c0-94.83 103.23-222.85 134.89-259.88a12 12 0 0118.23 0C296.77 97.15 400 225.17 400 320z" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="32"/>
-                            <path d="M344 328a72 72 0 01-72 72" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/>
-                        </svg>
-                        <h3 class="text-2xl font-bold text-gray-800 dark:text-white">
-                            {{number_format($phData, 2, '.', ',')}}
-                        </h3>
-                    </div>
-                </div>
-            </div>
-
-            <div class="w-full lg:w-1/2 flex flex-col bg-white border shadow-sm rounded-xl dark:bg-neutral-900 dark:border-neutral-700 dark:shadow-neutral-700/70">
-                <div class="bg-gray-100 border-b rounded-t-xl py-3 px-4 md:py-4 md:px-5 dark:bg-neutral-900 dark:border-neutral-700 flex justify-between items-center">
-                    <p class="mt-1 text-sm text-gray-500 dark:text-neutral-500">
-                        Dissolved Oxygen
-                    </p>
-                    <div>
-                        <p class="text-xs mb-2">Current TR: <span class="inline-flex items-center gap-x-1.5 px-2 rounded-full text-xs font-medium bg-yellow-500 text-white">{{$doTresholdData}}mg/L</span></p>
-                        <a href="#" onclick="$openModal('domodal')" class="text-xs bg-blue-600 px-2 py-1 rounded-lg text-white">Set Threshhold Range</a>
-                    </div>
-                </div>
-                <div class="p-4 md:p-5">
-                    <div class="flex justify-center items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512" width="24" height="24">
-                            <path d="M321.89 171.42C233 114 141 155.22 56 65.22c-19.8-21-8.3 235.5 98.1 332.7 77.79 71 197.9 63.08 238.4-5.92s18.28-163.17-70.61-220.58zM173 253c86 81 175 129 292 147" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/>
-                        </svg>                      
-                        <h3 class="text-2xl font-bold text-gray-800 dark:text-white">
-                            {{number_format($doData, 2, '.', ',')}}mg/L
-                        </h3>
-                    </div>
-                </div>
+        <div wire:ignore class="w-full overflow-x-auto md:overflow-x-visible mb-8 bg-white rounded-2xl border border-[#356744] p-3 lg:p-8">
+            {{-- <select wire:model="selectedParameter" class="mb-4 px-3 py-2 border rounded">
+                <option value="all">All Parameters</option>
+                <option value="temperature">Temperature</option>
+                <option value="humidity">Humidity</option>
+                <option value="soil_moisture">Soil Moisture</option>
+                <option value="ec_level">EC Level</option>
+                <option value="ph_level">pH Level</option>
+            </select> --}}
+            <div class="min-w-[1200px] md:min-w-full h-[300px] sm:h-[350px] lg:h-[450px] xl:h-[500px]">
+                <canvas id="allSensorsChart"></canvas>
             </div>
         </div>
 
-        <div class="flex justify-between items-center flex-col lg:flex-row gap-5 lg:gap-2 mt-5">
-            <div class="w-full lg:w-1/2 flex flex-col bg-white border shadow-sm rounded-xl dark:bg-neutral-900 dark:border-neutral-700 dark:shadow-neutral-700/70">
-                <div class="bg-gray-100 border-b rounded-t-xl py-3 px-4 md:py-4 md:px-5 dark:bg-neutral-900 dark:border-neutral-700 flex justify-between items-center">
-                    <p class="mt-1 text-sm text-gray-500 dark:text-neutral-500">
-                        Alkalinity Level
-                    </p>
-                    <div>
-                        <p class="text-xs mb-2">Current TR: <span class="inline-flex items-center gap-x-1.5 px-2 rounded-full text-xs font-medium bg-yellow-500 text-white">{{$alTresholdData}}ppm</span></p>
-                        <a href="#" onclick="$openModal('almodal')" class="text-xs bg-blue-600 px-2 py-1 rounded-lg text-white">Set Threshhold Range</a>
-                    </div>
-                </div>
-                <div class="p-4 md:p-5">
-                    <div class="flex justify-center items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512" width="24" height="24">
-                            <circle cx="256" cy="184" r="120" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="32"/>
-                            <circle cx="344" cy="328" r="120" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="32"/>
-                            <circle cx="168" cy="328" r="120" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="32"/>
-                        </svg>
-                        <h3 class="text-2xl font-bold text-gray-800 dark:text-white">
-                            {{number_format($alData, 2, '.', ',')}}ppm
-                        </h3>
-                    </div>
-                </div>
-            </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-3 gap-5 mb-8">
+            <div class="w-full h-full max-h-72 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100 bg-white rounded-2xl border border-[#356744] p-4 lg:p-6">
+                <h6 class="mb-5 font-semibold">Parameters Status</h6>
+                @php
+                    $tempStatus =
+                        $Temperature < $MinTemperature ? 'low' :
+                        ($Temperature > $MaxTemperature ? 'high' : 'optimal');
 
-            <div class="w-full lg:w-1/2 flex flex-col bg-white border shadow-sm rounded-xl dark:bg-neutral-900 dark:border-neutral-700 dark:shadow-neutral-700/70">
-                <div class="bg-gray-100 border-b rounded-t-xl py-3 px-4 md:py-4 md:px-5 dark:bg-neutral-900 dark:border-neutral-700 flex justify-between items-center">
-                    <p class="mt-1 text-sm text-gray-500 dark:text-neutral-500">
-                        Water Temperature
-                    </p>
-                    <div>
-                        <p class="text-xs mb-2">Current TR: <span class="inline-flex items-center gap-x-1.5 px-2 rounded-full text-xs font-medium bg-yellow-500 text-white">{{$wTempTresholdData}}°C</span></p>
-                        <a href="#" onclick="$openModal('wtmodal')" class="text-xs bg-blue-600 px-2 py-1 rounded-lg text-white">Set Threshhold Range</a>
-                    </div>
-                </div>
-                <div class="p-4 md:p-5">
-                    <div class="flex justify-center items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512" width="24" height="24">
-                            <path d="M307.72 302.27a8 8 0 01-3.72-6.75V80a48 48 0 00-48-48h0a48 48 0 00-48 48v215.52a8 8 0 01-3.71 6.74 97.51 97.51 0 00-44.19 86.07A96 96 0 00352 384a97.49 97.49 0 00-44.28-81.73zM256 112v272" fill="none" stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="32"/>
-                            <circle cx="256" cy="384" r="48"/>
-                        </svg>                      
-                        <h3 class="text-2xl font-bold text-gray-800 dark:text-white">
-                            {{$wTempData}}°C
-                        </h3>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <x-modal blur name="phlevelmodal" persistent align="center" max-width="sm">
-            <x-card title="Set New pH Level Treshold">
+                    $tempStatusText = match($tempStatus) {
+                        'optimal' => 'Temperature is in optimal range',
+                        'low' => 'Temperature is below optimal range',
+                        'high' => 'Temperature is above optimal range',
+                    };
+                @endphp
+
                 
-                <x-input right-icon="shield-exclamation" label="Treshold Value" placeholder="Ex: 5.5" wire:model="setPHTresholdValue" />
-                <x-slot name="footer" class="flex justify-end gap-x-4">
-                    <div class="flex justify-end gap-x-4">
-                        <x-button flat label="Cancel" x-on:click="close" />
-                        <x-button primary label="Save" wire:click="setPHTreshold" />
-                    </div>
-                </x-slot>
-            </x-card>
-        </x-modal>
 
-        <x-modal blur name="domodal" persistent align="center" max-width="sm">
-            <x-card title="Set New Dissolved Oxygen Treshold">
-                <x-input right-icon="shield-exclamation" label="Treshold Value" placeholder="Ex: 0.4mg/L" wire:model="setDOTresholdValue"/>
-                <x-slot name="footer" class="flex justify-end gap-x-4">
-                    <div class="flex justify-end gap-x-4">
-                        <x-button flat label="Cancel" x-on:click="close" />
-                        <x-button primary label="Save" wire:click="setDOTreshold" />
-                    </div>
-                </x-slot>
-            </x-card>
-        </x-modal>
+                <div class="flex flex-row items-center gap-3 border-b-[1px] border-gray-700 py-3">
 
-        <x-modal blur name="almodal" persistent align="center" max-width="sm">
-            <x-card title="Set New Alkalinity Level Treshold">
-                <x-input right-icon="shield-exclamation" label="Treshold Value" placeholder="Ex: 80ppm"  wire:model="setALTresholdValue"/>
-                <x-slot name="footer" class="flex justify-end gap-x-4">
-                    <div class="flex justify-end gap-x-4">
-                        <x-button flat label="Cancel" x-on:click="close" />
-                        <x-button primary label="Save" wire:click="setALTreshold" />
-                    </div>
-                </x-slot>
-            </x-card>
-        </x-modal>
+                    {{-- ICON (UNCHANGED) --}}
+                    @if($tempStatus === 'optimal')
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                            viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor" class="size-6 text-green-500">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                        </svg>
 
-        <x-modal blur name="wtmodal" persistent align="center" max-width="sm">
-            <x-card title="Set New Water Temperature Treshold">
-                <x-input right-icon="shield-exclamation" label="Treshold Value" placeholder="Ex: 28°C"  wire:model="setWTTresholdValue"/>
-                <x-slot name="footer" class="flex justify-end gap-x-4">
-                    <div class="flex justify-end gap-x-4">
-                        <x-button flat label="Cancel" x-on:click="close" />
-                        <x-button primary label="Save" wire:click="setWTTreshold" />
+                    @elseif($tempStatus === 'low')
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                            viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor" class="size-6 text-blue-500">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                        </svg>
+
+                    @else
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                            viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor" class="size-6 text-red-500">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
+                        </svg>
+                    @endif
+
+                    {{-- VALUES + STATUS TEXT --}}
+                    <div class="flex flex-col items-start leading-tight">
+
+                        <div class="flex justify-start items-start gap-2">
+                            <span class="font-semibold
+                                {{ $tempStatus === 'optimal' ? 'text-green-500' : '' }}
+                                {{ $tempStatus === 'low' ? 'text-blue-500' : '' }}
+                                {{ $tempStatus === 'high' ? 'text-red-500' : '' }}">
+                                {{ number_format($Temperature, 1, '.', ',') }} °C
+                            </span>
+
+                        </div>
+
+                        {{-- STATUS TEXT --}}
+                        <span class="text-xs mt-1
+                            {{ $tempStatus === 'optimal' ? 'text-green-600' : '' }}
+                            {{ $tempStatus === 'low' ? 'text-blue-500' : '' }}
+                            {{ $tempStatus === 'high' ? 'text-red-500' : '' }}">
+                            {{ $tempStatusText }}
+                        </span>
+                        @php
+                            use Carbon\Carbon;
+
+                            $lastChecked = Carbon::now('Asia/Manila')->subMinutes(10);
+                        @endphp
+                        <span class="text-xs mt-1 text-gray-600 font-semibold">
+                            Last Checked: <span class="italic font-light">{{ $lastChecked->format('h:i A, F d, Y') }}</span> 
+                        </span>
+
                     </div>
-                </x-slot>
-            </x-card>
-        </x-modal>
+
+                </div>
+
+                @php
+                    $humidityStatus =
+                        $Humidity < $MinHumidity ? 'low' :
+                        ($Humidity > $MaxHumidity ? 'high' : 'optimal');
+
+                    $humidityStatusText = match($humidityStatus) {
+                        'optimal' => 'Humidity is in optimal range',
+                        'low' => 'Humidity is below optimal range',
+                        'high' => 'Humidity is above optimal range',
+                    };
+
+                
+                    $humidityLastChecked = Carbon::now('Asia/Manila')->subMinutes(10);
+                @endphp
+
+
+                <div class="flex flex-row items-center gap-3 border-b-[1px] border-gray-700 py-3">
+
+                    {{-- ICON (UNCHANGED) --}}
+                    @if($humidityStatus === 'optimal')
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                            viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor" class="size-6 text-green-500">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                        </svg>
+
+                    @elseif($humidityStatus === 'low')
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                            viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor" class="size-6 text-blue-500">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                        </svg>
+
+                    @else
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                            viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor" class="size-6 text-red-500">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
+                        </svg>
+                    @endif
+
+
+                    {{-- VALUE + TEXT --}}
+                    <div class="flex flex-col items-start leading-tight">
+
+                        <span class="font-semibold
+                            {{ $humidityStatus === 'optimal' ? 'text-green-500' : '' }}
+                            {{ $humidityStatus === 'low' ? 'text-blue-500' : '' }}
+                            {{ $humidityStatus === 'high' ? 'text-red-500' : '' }}">
+                            {{ number_format($Humidity, 1, '.', ',') }} %
+                        </span>
+
+                        <span class="text-xs mt-1
+                            {{ $humidityStatus === 'optimal' ? 'text-green-600' : '' }}
+                            {{ $humidityStatus === 'low' ? 'text-blue-500' : '' }}
+                            {{ $humidityStatus === 'high' ? 'text-red-500' : '' }}">
+                            {{ $humidityStatusText }}
+                        </span>
+
+                        <span class="text-xs mt-1 text-gray-600 font-semibold">
+                            Last Checked:
+                            <span class="italic font-light">
+                                {{ $humidityLastChecked->format('h:i A, F d, Y') }}
+                            </span>
+                        </span>
+
+                    </div>
+
+                </div>
+
+                @php
+                    $soilStatus =
+                        $SoilMoisture < $MinSoilMoisture ? 'low' :
+                        ($SoilMoisture > $MaxSoilMoisture ? 'high' : 'optimal');
+
+                    $soilStatusText = match($soilStatus) {
+                        'optimal' => 'Soil Moisture is in optimal range',
+                        'low' => 'Soil Moisture is below optimal range',
+                        'high' => 'Soil Moisture is above optimal range',
+                    };
+
+                    $soilLastChecked = Carbon::now('Asia/Manila')->subMinutes(10);
+                @endphp
+
+
+                <div class="flex flex-row items-center gap-3 border-b-[1px] border-gray-700 py-3">
+
+                    {{-- ICON (UNCHANGED) --}}
+                    @if($soilStatus === 'optimal')
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                            viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor" class="size-6 text-green-500">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                        </svg>
+
+                    @elseif($soilStatus === 'low')
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                            viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor" class="size-6 text-blue-500">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                        </svg>
+
+                    @else
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                            viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor" class="size-6 text-red-500">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 1 0 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
+                        </svg>
+                    @endif
+
+
+                    {{-- VALUE + TEXT --}}
+                    <div class="flex flex-col items-start leading-tight">
+
+                        <span class="font-semibold
+                            {{ $soilStatus === 'optimal' ? 'text-green-500' : '' }}
+                            {{ $soilStatus === 'low' ? 'text-blue-500' : '' }}
+                            {{ $soilStatus === 'high' ? 'text-red-500' : '' }}">
+                            {{ number_format($SoilMoisture, 1, '.', ',') }} %
+                        </span>
+
+                        <span class="text-xs mt-1
+                            {{ $soilStatus === 'optimal' ? 'text-green-600' : '' }}
+                            {{ $soilStatus === 'low' ? 'text-blue-500' : '' }}
+                            {{ $soilStatus === 'high' ? 'text-red-500' : '' }}">
+                            {{ $soilStatusText }}
+                        </span>
+
+                        <span class="text-xs mt-1 text-gray-600 font-semibold">
+                            Last Checked:
+                            <span class="italic font-light">
+                                {{ $soilLastChecked->format('h:i A, F d, Y') }}
+                            </span>
+                        </span>
+
+                    </div>
+
+                </div>
+
+                @php
+                    $ecStatus =
+                        $ECLevel < $MinECLevel ? 'low' :
+                        ($ECLevel > $MaxECLevel ? 'high' : 'optimal');
+
+                    $ecStatusText = match($ecStatus) {
+                        'optimal' => 'EC Level is in optimal range',
+                        'low' => 'EC Level is below optimal range',
+                        'high' => 'EC Level is above optimal range',
+                    };
+
+                    $ecLastChecked = Carbon::now('Asia/Manila')->subMinutes(10);
+                @endphp
+
+                <div class="flex flex-row items-center gap-3 border-b-[1px] border-gray-700 py-3">
+
+                    {{-- ICON (UNCHANGED) --}}
+                    @if($ecStatus === 'optimal')
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                            viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor" class="size-6 text-green-500">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                        </svg>
+
+                    @elseif($ecStatus === 'low')
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                            viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor" class="size-6 text-blue-500">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                        </svg>
+
+                    @else
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                            viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor" class="size-6 text-red-500">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
+                        </svg>
+                    @endif
+
+                    {{-- VALUE + STATUS --}}
+                    <div class="flex flex-col items-start leading-tight">
+
+                        <div class="flex justify-start items-start gap-2">
+                            <span class="font-semibold
+                                {{ $ecStatus === 'optimal' ? 'text-green-500' : '' }}
+                                {{ $ecStatus === 'low' ? 'text-blue-500' : '' }}
+                                {{ $ecStatus === 'high' ? 'text-red-500' : '' }}">
+                                {{ number_format($ECLevel, 1, '.', ',') }}
+                            </span>
+                        </div>
+
+                        {{-- STATUS TEXT --}}
+                        <span class="text-xs mt-1
+                            {{ $ecStatus === 'optimal' ? 'text-green-600' : '' }}
+                            {{ $ecStatus === 'low' ? 'text-blue-500' : '' }}
+                            {{ $ecStatus === 'high' ? 'text-red-500' : '' }}">
+                            {{ $ecStatusText }}
+                        </span>
+
+                        {{-- LAST CHECKED --}}
+                        <span class="text-xs mt-1 text-gray-600 font-semibold">
+                            Last Checked:
+                            <span class="italic font-light">
+                                {{ $ecLastChecked->format('h:i A, F d, Y') }}
+                            </span>
+                        </span>
+
+                    </div>
+                </div>
+
+                @php
+                    $phStatus =
+                        $pHLevel < $MinpHLevel ? 'low' :
+                        ($pHLevel > $MaxpHLevel ? 'high' : 'optimal');
+
+                    $phStatusText = match($phStatus) {
+                        'optimal' => 'pH Level is in optimal range',
+                        'low' => 'pH Level is below optimal range',
+                        'high' => 'pH Level is above optimal range',
+                    };
+
+                    $phLastChecked = Carbon::now('Asia/Manila')->subMinutes(10);
+                @endphp
+
+                <div class="flex flex-row items-center gap-3 border-b-[1px] border-gray-700 py-3">
+
+                    {{-- ICON (UNCHANGED) --}}
+                    @if($phStatus === 'optimal')
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                            viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor" class="size-6 text-green-500">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                        </svg>
+
+                    @elseif($phStatus === 'low')
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                            viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor" class="size-6 text-blue-500">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                        </svg>
+
+                    @else
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                            viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor" class="size-6 text-red-500">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
+                        </svg>
+                    @endif
+
+                    {{-- VALUE + STATUS --}}
+                    <div class="flex flex-col items-start leading-tight">
+
+                        <div class="flex justify-start items-start gap-2">
+                            <span class="font-semibold
+                                {{ $phStatus === 'optimal' ? 'text-green-500' : '' }}
+                                {{ $phStatus === 'low' ? 'text-blue-500' : '' }}
+                                {{ $phStatus === 'high' ? 'text-red-500' : '' }}">
+                                {{ number_format($pHLevel, 1, '.', ',') }}
+                            </span>
+                        </div>
+
+                        {{-- STATUS TEXT --}}
+                        <span class="text-xs mt-1
+                            {{ $phStatus === 'optimal' ? 'text-green-600' : '' }}
+                            {{ $phStatus === 'low' ? 'text-blue-500' : '' }}
+                            {{ $phStatus === 'high' ? 'text-red-500' : '' }}">
+                            {{ $phStatusText }}
+                        </span>
+
+                        {{-- LAST CHECKED --}}
+                        <span class="text-xs mt-1 text-gray-600 font-semibold">
+                            Last Checked:
+                            <span class="italic font-light">
+                                {{ $phLastChecked->format('h:i A, F d, Y') }}
+                            </span>
+                        </span>
+
+                    </div>
+                </div>
+                
+            </div>
+
+            <div class="col-span-2 w-full h-full max-h-72 overflow-y-auto bg-white rounded-2xl border border-[#356744] p-4 lg:p-6">
+
+                <h6 class="mb-5 font-semibold">Sensor Devices</h6>
+
+                <table class="w-full text-sm">
+                    <thead class="text-left text-xs text-gray-500 uppercase tracking-wider">
+                        <tr>
+                            <th class="px-5 py-3 font-medium">Sensor</th>
+                            <th class="px-5 py-3 font-medium">Status</th>
+                            <th class="px-5 py-3 font-medium">Last Update</th>
+                        </tr>
+                    </thead>
+
+                    <tbody class="divide-y divide-gray-100">
+
+                        {{-- Temperature --}}
+                        <tr class="hover:bg-gray-50 transition">
+                            <td class="px-5 py-3 font-medium text-gray-800">Temperature</td>
+                            <td class="px-5 py-3">
+                                <span class="inline-flex items-center px-2.5 py-1 text-xs font-medium rounded-full bg-green-50 text-green-600 ring-1 ring-green-200">
+                                    ● Online
+                                </span>
+                            </td>
+                            <td class="px-5 py-3 text-gray-500">10:00 AM, June 02, 2026</td>
+                        </tr>
+
+                        {{-- Humidity --}}
+                        <tr class="hover:bg-gray-50 transition">
+                            <td class="px-5 py-3 font-medium text-gray-800">Humidity</td>
+                            <td class="px-5 py-3">
+                                <span class="inline-flex items-center px-2.5 py-1 text-xs font-medium rounded-full bg-red-50 text-red-600 ring-1 ring-red-200">
+                                    ● Offline
+                                </span>
+                            </td>
+                            <td class="px-5 py-3 text-gray-500">10:00 AM, June 02, 2026</td>
+                        </tr>
+
+                        {{-- Soil Moisture --}}
+                        <tr class="hover:bg-gray-50 transition">
+                            <td class="px-5 py-3 font-medium text-gray-800">Soil Moisture</td>
+                            <td class="px-5 py-3">
+                                <span class="inline-flex items-center px-2.5 py-1 text-xs font-medium rounded-full bg-green-50 text-green-600 ring-1 ring-green-200">
+                                    ● Online
+                                </span>
+                            </td>
+                            <td class="px-5 py-3 text-gray-500">10:00 AM, June 02, 2026</td>
+                        </tr>
+
+                        {{-- EC Level --}}
+                        <tr class="hover:bg-gray-50 transition">
+                            <td class="px-5 py-3 font-medium text-gray-800">EC Level</td>
+                            <td class="px-5 py-3">
+                                <span class="inline-flex items-center px-2.5 py-1 text-xs font-medium rounded-full bg-green-50 text-green-600 ring-1 ring-green-200">
+                                    ● Online
+                                </span>
+                            </td>
+                            <td class="px-5 py-3 text-gray-500">10:00 AM, June 02, 2026</td>
+                        </tr>
+
+                        {{-- pH Level --}}
+                        <tr class="hover:bg-gray-50 transition">
+                            <td class="px-5 py-3 font-medium text-gray-800">pH Level</td>
+                            <td class="px-5 py-3">
+                                <span class="inline-flex items-center px-2.5 py-1 text-xs font-medium rounded-full bg-green-50 text-green-600 ring-1 ring-green-200">
+                                    ● Online
+                                </span>
+                            </td>
+                            <td class="px-5 py-3 text-gray-500">10:00 AM, June 02, 2026</td>
+                        </tr>
+
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script>
+        let chart;
+
+        function buildDatasets(data, mode) {
+            const datasets = [];
+
+            const colors = {
+                temperature: '#FF5722',
+                humidity: '#00BCD4',
+                soil_moisture: '#4CAF50',
+                ec_level: '#9C27B0',
+                ph_level: '#795548',
+            };
+
+            const labels = {
+                temperature: 'Temperature',
+                humidity: 'Humidity',
+                soil_moisture: 'Soil Moisture',
+                ec_level: 'EC Level',
+                ph_level: 'pH Level',
+            };
+
+            const units = {
+                temperature: '°C',
+                humidity: '%',
+                soil_moisture: '%',
+                ec_level: '',
+                ph_level: '',
+            };
+
+            if (mode === 'all') {
+                Object.keys(data).forEach(key => {
+                    datasets.push({
+                        label: labels[key],
+                        data: data[key],
+                        borderColor: colors[key],
+                        tension: 0,
+                        pointRadius: 0
+                    });
+                });
+            } else {
+                datasets.push({
+                    label: labels[mode],
+                    data: data[mode],
+                    borderColor: colors[mode],
+                    tension: 0,
+                    pointRadius: 0
+                });
+            }
+
+            return datasets;
+        }
+
+        document.addEventListener('livewire:init', () => {
+
+            const ctx = document.getElementById('allSensorsChart');
+
+            if (!ctx) return;
+
+            chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: @json($chartLabels ?? []),
+                    datasets: buildDatasets(@json($chartData ?? []), 'all')
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    const label = context.dataset.label || '';
+                                    const value = context.parsed.y;
+
+                                    if (label.includes('Temperature')) {
+                                        return `${label}: ${value}°C`;
+                                    }
+
+                                    if (label.includes('Humidity') || label.includes('Soil Moisture')) {
+                                        return `${label}: ${value}%`;
+                                    }
+
+                                    if (label.includes('EC Level')) {
+                                        return `${label}: ${value}`;
+                                    }
+
+                                    if (label.includes('pH Level')) {
+                                        return `${label}: ${value}`;
+                                    }
+
+                                    return `${label}: ${value}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { display: false }
+                        },
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            Livewire.on('updateChart', (payload) => {
+                const data = payload[0];
+
+                chart.data.labels = data.labels;
+                chart.data.datasets = buildDatasets(data.data, data.mode);
+                chart.update();
+            });
+
+        });
+    </script>
+    {{-- <script>
         document.addEventListener('livewire:init', () => {
 
             const labels = [
@@ -326,26 +783,23 @@
                     labels,
                     datasets: [
                         {
-                            label: 'Temperature (°C)',
+                            label: 'Temperature',
                             data: temperatureData,
                             borderColor: '#FF5722',
-                            yAxisID: 'yTemp',
                             tension: 0,
                             pointRadius: 0
                         },
                         {
-                            label: 'Humidity (%)',
+                            label: 'Humidity',
                             data: humidityData,
                             borderColor: '#00BCD4',
-                            yAxisID: 'yHumidity',
                             tension: 0,
                             pointRadius: 0
                         },
                         {
-                            label: 'Soil Moisture (%)',
+                            label: 'Soil Moisture',
                             data: soilMoistureData,
                             borderColor: '#4CAF50',
-                            yAxisID: 'ySoil',
                             tension: 0,
                             pointRadius: 0
                         },
@@ -353,7 +807,6 @@
                             label: 'EC Level',
                             data: ecLevelData,
                             borderColor: '#9C27B0',
-                            yAxisID: 'yEC',
                             tension: 0,
                             pointRadius: 0
                         },
@@ -361,7 +814,6 @@
                             label: 'pH Level',
                             data: phLevelData,
                             borderColor: '#795548',
-                            yAxisID: 'yPH',
                             tension: 0,
                             pointRadius: 0
                         }
@@ -371,6 +823,7 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    animation: true,
 
                     interaction: {
                         mode: 'index',
@@ -380,125 +833,164 @@
                     plugins: {
                         legend: {
                             position: 'bottom'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.dataset.label || '';
+                                    const value = context.parsed.y;
+
+                                    if (label.includes('Temperature')) {
+                                        return `${label}: ${value}°C`;
+                                    }
+
+                                    if (label.includes('Humidity') || label.includes('Soil Moisture')) {
+                                        return `${label}: ${value}%`;
+                                    }
+
+                                    if (label.includes('EC Level')) {
+                                        return `${label}: ${value}`;
+                                    }
+
+                                    if (label.includes('pH Level')) {
+                                        return `${label}: ${value}`;
+                                    }
+
+                                    return `${label}: ${value}`;
+                                }
+                            }
                         }
                     },
 
                     scales: {
                         x: {
-                            grid: { display: false },
-                            ticks: {
-                                font: {
-                                    size: 10   // smaller X labels
-                                }
-                            }
+                            grid: { display: false }
                         },
-
-                        // =========================
-                        // TEMPERATURE AXIS (RED)
-                        // =========================
-                        yTemp: {
-                            type: 'linear',
-                            position: 'left',
-                            ticks: {
-                                color: '#FF5722',
-                                font: { size: 10 }
-                            },
+                        y: {
+                            beginAtZero: true,
                             title: {
                                 display: true,
-                                text: 'Temp (°C)',
-                                color: '#FF5722'
-                            },
-                            grid: {
-                                drawOnChartArea: true
-                            }
-                        },
-
-                        // =========================
-                        // HUMIDITY AXIS (CYAN)
-                        // =========================
-                        yHumidity: {
-                            type: 'linear',
-                            position: 'right',
-                            ticks: {
-                                color: '#ffffff',
-                                font: { size: 10 }
-                            },
-                            title: {
-                                display: true,
-                                text: 'Humidity (%)',
-                                color: '#ffffff'
-                            },
-                            grid: {
-                                drawOnChartArea: false
-                            }
-                        },
-
-                        // =========================
-                        // SOIL AXIS (GREEN)
-                        // =========================
-                        ySoil: {
-                            type: 'linear',
-                            position: 'right',
-                            offset: true,
-                            ticks: {
-                                color: '#000000',
-                                font: { size: 10 }
-                            },
-                            title: {
-                                display: true,
-                                text: 'Soil (%)',
-                                color: '#000000'
-                            },
-                            grid: {
-                                drawOnChartArea: false
-                            }
-                        },
-
-                        // =========================
-                        // EC AXIS (PURPLE)
-                        // =========================
-                        yEC: {
-                            type: 'linear',
-                            position: 'left',
-                            offset: true,
-                            ticks: {
-                                color: '#9C27B0',
-                                font: { size: 10 }
-                            },
-                            title: {
-                                display: true,
-                                text: 'EC Level',
-                                color: '#9C27B0'
-                            },
-                            grid: {
-                                drawOnChartArea: false
-                            }
-                        },
-
-                        // =========================
-                        // pH AXIS (BROWN)
-                        // =========================
-                        yPH: {
-                            type: 'linear',
-                            position: 'left',
-                            offset: true,
-                            ticks: {
-                                color: '#795548',
-                                font: { size: 10 }
-                            },
-                            title: {
-                                display: true,
-                                text: 'pH Level',
-                                color: '#795548'
-                            },
-                            grid: {
-                                drawOnChartArea: false
+                                text: ''
                             }
                         }
                     }
+
+                    // scales: {
+                    //     x: {
+                    //         grid: { display: false },
+                    //         ticks: {
+                    //             font: {
+                    //                 size: 10   // smaller X labels
+                    //             }
+                    //         }
+                    //     },
+
+                    //     // =========================
+                    //     // TEMPERATURE AXIS (RED)
+                    //     // =========================
+                    //     yTemp: {
+                    //         type: 'linear',
+                    //         position: 'left',
+                    //         ticks: {
+                    //             color: '#FF5722',
+                    //             font: { size: 10 }
+                    //         },
+                    //         title: {
+                    //             display: true,
+                    //             text: 'Temp (°C)',
+                    //             color: '#FF5722'
+                    //         },
+                    //         grid: {
+                    //             drawOnChartArea: true
+                    //         }
+                    //     },
+
+                    //     // =========================
+                    //     // HUMIDITY AXIS (CYAN)
+                    //     // =========================
+                    //     yHumidity: {
+                    //         type: 'linear',
+                    //         position: 'right',
+                    //         ticks: {
+                    //             color: '#ffffff',
+                    //             font: { size: 10 }
+                    //         },
+                    //         title: {
+                    //             display: true,
+                    //             text: 'Humidity (%)',
+                    //             color: '#ffffff'
+                    //         },
+                    //         grid: {
+                    //             drawOnChartArea: false
+                    //         }
+                    //     },
+
+                    //     // =========================
+                    //     // SOIL AXIS (GREEN)
+                    //     // =========================
+                    //     ySoil: {
+                    //         type: 'linear',
+                    //         position: 'right',
+                    //         offset: true,
+                    //         ticks: {
+                    //             color: '#000000',
+                    //             font: { size: 10 }
+                    //         },
+                    //         title: {
+                    //             display: true,
+                    //             text: 'Soil (%)',
+                    //             color: '#000000'
+                    //         },
+                    //         grid: {
+                    //             drawOnChartArea: false
+                    //         }
+                    //     },
+
+                    //     // =========================
+                    //     // EC AXIS (PURPLE)
+                    //     // =========================
+                    //     yEC: {
+                    //         type: 'linear',
+                    //         position: 'left',
+                    //         offset: true,
+                    //         ticks: {
+                    //             color: '#9C27B0',
+                    //             font: { size: 10 }
+                    //         },
+                    //         title: {
+                    //             display: true,
+                    //             text: 'EC Level',
+                    //             color: '#9C27B0'
+                    //         },
+                    //         grid: {
+                    //             drawOnChartArea: false
+                    //         }
+                    //     },
+
+                    //     // =========================
+                    //     // pH AXIS (BROWN)
+                    //     // =========================
+                    //     yPH: {
+                    //         type: 'linear',
+                    //         position: 'left',
+                    //         offset: true,
+                    //         ticks: {
+                    //             color: '#795548',
+                    //             font: { size: 10 }
+                    //         },
+                    //         title: {
+                    //             display: true,
+                    //             text: 'pH Level',
+                    //             color: '#795548'
+                    //         },
+                    //         grid: {
+                    //             drawOnChartArea: false
+                    //         }
+                    //     }
+                    // }
                 }
             });
 
         });
-    </script>
+    </script> --}}
 </div>

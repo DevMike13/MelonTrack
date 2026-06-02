@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Pages;
 
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Kreait\Firebase\Contract\Database;
 
@@ -11,27 +12,54 @@ class ParametersMonitoring extends Component
 
     public string $activeFilter = 'Live';
     
-    public $phData;
-    public $phTresholdData;
-    public $setPHTresholdValue;
+    public $tempratureReading;
+    public $tempratureMinReading;
+    public $tempratureMaxReading;
+    
+    public $humidityReading;
+    public $humidityMinReading;
+    public $humidityMaxReading;
+    
+    public $soilMoistureReading;
+    public $soilMoistureMinReading;
+    public $soilMoistureMaxReading;
+    
+    public $ecLevelReading;
+    public $ecLevelMinReading;
+    public $ecLevelMaxReading;
+    
+    public $pHLevelReading;
+    public $pHLevelMinReading;
+    public $pHLevelMaxReading;
 
-    public $doData;
-    public $doTresholdData;
-    public $setDOTresholdValue;
+    public $chartLabels = [];
+    public $chartData = [];
 
-    public $alData;
-    public $alTresholdData;
-    public $setALTresholdValue;
-
-    public $wTempData;
-    public $wTempTresholdData;
-    public $setWTTresholdValue;
+    
 
     protected $listeners = [
-        'updatePhLevel' => 'handlePhLevelUpdate',
-        'updateDOLevel' => 'handleDoLevelUpdate',
-        'updateALLevel' => 'handleAlLevelUpdate',
-        'updateWTLevel' => 'handleWtLevelUpdate'
+        'updateTemperature' => 'handleTemperatureUpdate',
+        'updateMinTemperature' => 'handleMinTemperatureUpdate',
+        'updateMaxTemperature' => 'handleMaxTemperatureUpdate',
+
+
+        'updateHumidity' => 'handleHumidityUpdate',
+        'updateMinHumidity' => 'handleMinHumidityUpdate',
+        'updateMaxHumidity' => 'handleMaxHumidityUpdate',
+
+
+        'updateSoilMoisture' => 'handleSoilMoistureUpdate',
+        'updateMinSoilMoisture' => 'handleMinSoilMoistureUpdate',
+        'updateMaxSoilMoisture' => 'handleMaxSoilMoistureUpdate',
+
+
+        'updateECLevel' => 'handleECLevelUpdate',
+        'updateMinECLevel' => 'handleMinECLevelUpdate',
+        'updateMaxECLevel' => 'handleMaxECLevelUpdate',
+
+        'updatepHLevel' => 'handlepHLevelUpdate',
+        'updateMinpHLevel' => 'handleMinpHLevelUpdate',
+        'updateMaxpHLevel' => 'handleMaxpHLevelUpdate'
     ];
 
 
@@ -39,141 +67,193 @@ class ParametersMonitoring extends Component
     {
         $this->database = $database;
         $this->fetchData();
-        
+        $this->loadChartData();
     }
 
     public function fetchData()
     {
         try {
-            // PH
-            $referencePH = $this->database->getReference('pHLevel/phLevel');  // Example path
-            $snapshotPH = $referencePH->getSnapshot();
-            $this->phData = $snapshotPH->getValue();
+            // Temperature
+            $referenceTemperature = $this->database->getReference('Temperature/SensorValue');  
+            $snapshotTemperature = $referenceTemperature->getSnapshot();
+            $this->tempratureReading = $snapshotTemperature->getValue();
+            // Min Temperature
+            $referenceMinTemperature = $this->database->getReference('Temperature/Min');  
+            $snapshotMinTemperature = $referenceMinTemperature->getSnapshot();
+            $this->tempratureMinReading = $snapshotMinTemperature->getValue();
+             // Max Temperature
+            $referenceMaxTemperature = $this->database->getReference('Temperature/Max');  
+            $snapshotMaxTemperature = $referenceMaxTemperature->getSnapshot();
+            $this->tempratureMaxReading = $snapshotMaxTemperature->getValue();
 
-            $referencePHTresh = $this->database->getReference('pHLevel/Treshold');  // Example path
-            $snapshotPHTresh = $referencePHTresh->getSnapshot();
-            $this->phTresholdData = $snapshotPHTresh->getValue();
 
-            // DISSOLVED OXYGEN
-            $referenceDO = $this->database->getReference('DissolvedOxygen/DO');  // Example path
-            $snapshotDO = $referenceDO->getSnapshot();
-            $this->doData = $snapshotDO->getValue();
+            // Humidity
+            $referenceHumidity = $this->database->getReference('Humidity/SensorValue');  
+            $snapshotHumidity = $referenceHumidity->getSnapshot();
+            $this->humidityReading = $snapshotHumidity->getValue();
+            // Min Humidity
+            $referenceMinHumidity = $this->database->getReference('Humidity/Min');  
+            $snapshotMinHumidity = $referenceMinHumidity->getSnapshot();
+            $this->humidityMinReading = $snapshotMinHumidity->getValue();
+            // Max Humidity
+            $referenceMaxHumidity = $this->database->getReference('Humidity/Max');  
+            $snapshotMaxHumidity = $referenceMaxHumidity->getSnapshot();
+            $this->humidityMaxReading = $snapshotMaxHumidity->getValue();
+            
 
-            $referenceDOTresh = $this->database->getReference('DissolvedOxygen/Treshold');  // Example path
-            $snapshotDOTresh = $referenceDOTresh->getSnapshot();
-            $this->doTresholdData = $snapshotDOTresh->getValue();
+             // Soil Moisture
+            $referenceSoilMoisture = $this->database->getReference('SoilMoisture/SensorValue');  
+            $snapshotSoilMoisture = $referenceSoilMoisture->getSnapshot();
+            $this->soilMoistureReading = $snapshotSoilMoisture->getValue();
+            // Min Soil Moisture
+            $referenceMinSoilMoisture = $this->database->getReference('SoilMoisture/Min');  
+            $snapshotMinSoilMoisture = $referenceMinSoilMoisture->getSnapshot();
+            $this->soilMoistureMinReading = $snapshotMinSoilMoisture->getValue();
+            // Max Soil Moisture
+            $referenceMaxSoilMoisture = $this->database->getReference('SoilMoisture/Max');  
+            $snapshotMaxSoilMoisture = $referenceMaxSoilMoisture->getSnapshot();
+            $this->soilMoistureMaxReading = $snapshotMaxSoilMoisture->getValue();
 
-            // ALKALINITY LEVEL
-            $referenceAL = $this->database->getReference('AlkalinityLevel/AL');  // Example path
-            $snapshotAL = $referenceAL->getSnapshot();
-            $this->alData = $snapshotAL->getValue();
 
-            $referenceALTresh = $this->database->getReference('AlkalinityLevel/Treshold');  // Example path
-            $snapshotALTresh = $referenceALTresh->getSnapshot();
-            $this->alTresholdData = $snapshotALTresh->getValue();
+            // EC Level
+            $referenceECLevel = $this->database->getReference('ECLevel/SensorValue');  
+            $snapshotECLevel = $referenceECLevel->getSnapshot();
+            $this->ecLevelReading = $snapshotECLevel->getValue();
+            // Min EC Level
+            $referenceMinECLevel = $this->database->getReference('ECLevel/Min');  
+            $snapshotMinECLevel = $referenceMinECLevel->getSnapshot();
+            $this->ecLevelMinReading = $snapshotMinECLevel->getValue();
+            // Max EC Level
+            $referenceMaxECLevel = $this->database->getReference('ECLevel/Max');  
+            $snapshotMaxECLevel = $referenceMaxECLevel->getSnapshot();
+            $this->ecLevelMaxReading = $snapshotMaxECLevel->getValue();
 
-            // WATER TEMPERATURE
-            $referenceWT = $this->database->getReference('WaterTemperature/Temperature');  // Example path
-            $snapshotWT = $referenceWT->getSnapshot();
-            $this->wTempData = $snapshotWT->getValue();
-
-            $referenceWTTresh = $this->database->getReference('WaterTemperature/Treshold');  // Example path
-            $snapshotWTTresh = $referenceWTTresh->getSnapshot();
-            $this->wTempTresholdData = $snapshotWTTresh->getValue();
+            // pH Level
+            $referencepHLevel = $this->database->getReference('pHLevel/SensorValue');  
+            $snapshotpHLevel = $referencepHLevel->getSnapshot();
+            $this->pHLevelReading = $snapshotpHLevel->getValue();
+            // Min pH Level
+            $referenceMinpHLevel = $this->database->getReference('pHLevel/Min');  
+            $snapshotMinpHLevel = $referenceMinpHLevel->getSnapshot();
+            $this->pHLevelMinReading = $snapshotMinpHLevel->getValue();
+            // Max pH Level
+            $referenceMaxpHLevel = $this->database->getReference('pHLevel/Max');  
+            $snapshotMaxpHLevel = $referenceMaxpHLevel->getSnapshot();
+            $this->pHLevelMaxReading = $snapshotMaxpHLevel->getValue();
 
 
         } catch (\Exception $e) {
-            $this->phData = 'Error: ' . $e->getMessage();
+            $this->tempratureReading = 'Error: ' . $e->getMessage();
         }
     }
 
-    public function handlePhLevelUpdate($phLevel)
+    public function handleTemperatureUpdate($temperature)
     {
-        $this->phData = $phLevel;
+        $this->tempratureReading = $temperature;
     }
-
-    public function handleDoLevelUpdate($doLevel)
+    public function handleMinTemperatureUpdate($minTemperature)
     {
-        $this->doData = $doLevel;
+        $this->tempratureMinReading = $minTemperature;
     }
-
-    public function handleAlLevelUpdate($alLevel)
+    public function handleMaxTemperatureUpdate($maxTemperature)
     {
-        $this->alData = $alLevel;
+        $this->tempratureMaxReading = $maxTemperature;
     }
 
-    public function handleWtLevelUpdate($wtLevel)
+    public function handleHumidityUpdate($humidity)
     {
-        $this->wTempData = $wtLevel;
+        $this->humidityReading = $humidity;
+    }
+    public function handleMinHumidityUpdate($minHumidity)
+    {
+        $this->humidityMinReading = $minHumidity;
+    }
+    public function handleMaxHumidityUpdate($maxHumidity)
+    {
+        $this->humidityMaxReading = $maxHumidity;
     }
 
-    public function setPHTreshold(Database $database){
-        $this->database = $database;
-        try {
-            // Set pH threshold
-            $referencePHTresh = $this->database->getReference('pHLevel/Treshold');
-            $thresholdValue = (float) $this->setPHTresholdValue;
-            $referencePHTresh->set($thresholdValue); 
-            $this->dispatch('reload');
-        } catch (\Exception $e) {
-            // Handle error
-            return response()->json(['error' => 'Error setting data: ' . $e->getMessage()], 500);
-        }
+    public function handleSoilMoistureUpdate($soilMoisture)
+    {
+        $this->soilMoistureReading = $soilMoisture;
+    }
+    public function handleMinSoilMoistureUpdate($minSoilMoisture)
+    {
+        $this->soilMoistureMinReading = $minSoilMoisture;
+    }
+    public function handleMaxSoilMoistureUpdate($maxSoilMoisture)
+    {
+        $this->soilMoistureMaxReading = $maxSoilMoisture;
     }
 
-    public function setDOTreshold(Database $database){
-        $this->database = $database;
-        try {
-            // Set pH threshold
-            $referenceDOTresh = $this->database->getReference('DissolvedOxygen/Treshold');
-            $thresholdValue = (float) $this->setDOTresholdValue;
-            $referenceDOTresh->set($thresholdValue); 
-            $this->dispatch('reload');
-        } catch (\Exception $e) {
-            // Handle error
-            return response()->json(['error' => 'Error setting data: ' . $e->getMessage()], 500);
-        }
+    public function handleECLevelUpdate($ecLevel)
+    {
+        $this->ecLevelReading = $ecLevel;
+    }
+    public function handleMinECLevelUpdate($minECLevel)
+    {
+        $this->ecLevelMinReading = $minECLevel;
+    }
+    public function handleMaxECLevelUpdate($maxECLevel)
+    {
+        $this->ecLevelMaxReading = $maxECLevel;
     }
 
-    public function setALTreshold(Database $database){
-        $this->database = $database;
-        try {
-            // Set pH threshold
-            $referenceALTresh = $this->database->getReference('AlkalinityLevel/Treshold');
-            $thresholdValue = (float) $this->setALTresholdValue;
-            $referenceALTresh->set($thresholdValue); 
-            $this->dispatch('reload');
-        } catch (\Exception $e) {
-            // Handle error
-            return response()->json(['error' => 'Error setting data: ' . $e->getMessage()], 500);
-        }
+    public function handlepHLevelUpdate($pHLevel)
+    {
+        $this->pHLevelReading = $pHLevel;
+    }
+    public function handleMinpHLevelUpdate($minpHLevel)
+    {
+        $this->pHLevelMinReading = $minpHLevel;
+    }
+    public function handleMaxpHLevelUpdate($maxpHLevel)
+    {
+        $this->pHLevelMaxReading = $maxpHLevel;
     }
 
-    public function setWTTreshold(Database $database){
-        $this->database = $database;
-        try {
-            // Set pH threshold
-            $referenceWTTresh = $this->database->getReference('WaterTemperature/Treshold');
-            $thresholdValue = (float) $this->setWTTresholdValue;
-            $referenceWTTresh->set($thresholdValue); 
-            $this->dispatch('reload');
-        } catch (\Exception $e) {
-            // Handle error
-            return response()->json(['error' => 'Error setting data: ' . $e->getMessage()], 500);
-        }
+    public function loadChartData()
+    {
+        $data = DB::table('daily_sensor_data')
+            ->orderBy('reading_date')
+            ->get();
+
+        $this->chartLabels = $data
+            ->pluck('reading_date')
+            ->map(fn($d) => date('g A', strtotime($d)))
+            ->toArray();
+
+        $this->chartData = [
+            'temperature' => $data->pluck('temperature')->toArray(),
+            'humidity' => $data->pluck('humidity')->toArray(),
+            'soil_moisture' => $data->pluck('soil_moisture')->toArray(),
+            'ec_level' => $data->pluck('ec_level')->toArray(),
+            'ph_level' => $data->pluck('ph_level')->toArray(),
+        ];
     }
 
     public function render()
     {
         return view('livewire.pages.parameters-monitoring', [
-            'pHLevel' => $this->phData,
-            'pHTreshold' => $this->phTresholdData,
-            'DissolvedOxygen' => $this->doData,
-            'DOTreshold' => $this->doTresholdData,
-            'AlkalinityLevel' => $this->alData,
-            'ALTreshold' => $this->alTresholdData,
-            'WaterTemperature' => $this->wTempData,
-            'WTTreshold' => $this->wTempTresholdData
+            'Temperature' => $this->tempratureReading,
+            'MinTemperature' => $this->tempratureMinReading,
+            'MaxTemperature' => $this->tempratureMaxReading,
+
+            'Humidity' => $this->humidityReading,
+            'MinHumidity' => $this->humidityMinReading,
+            'MaxHumidity' => $this->humidityMaxReading,
+
+            'SoilMoisture' => $this->soilMoistureReading,
+            'MinSoilMoisture' => $this->soilMoistureMinReading,
+            'MaxSoilMoisture' => $this->soilMoistureMaxReading,
+
+            'ECLevel' => $this->ecLevelReading,
+            'MinECLevel' => $this->ecLevelMinReading,
+            'MaxECLevel' => $this->ecLevelMaxReading,
+
+            'pHLevel' => $this->pHLevelReading,
+            'MinpHLevel' => $this->pHLevelMinReading,
+            'MaxpHLevel' => $this->pHLevelMaxReading
         ]);
     }
 }

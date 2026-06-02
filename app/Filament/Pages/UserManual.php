@@ -17,7 +17,7 @@ class UserManual extends Page
 
     protected ?string $heading = "Grower's Guide";
 
-    // protected ?string $subheading = 'Manage house models, subdivision lots, and client properties';
+    protected ?string $subheading = 'Best practices and recommendations for growing healthy, high-quality melons.';
 
     protected static ?string $slug = 'growers-guide';
 }

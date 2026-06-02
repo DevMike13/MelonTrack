@@ -17,6 +17,14 @@
         width: 95%;
     }
 }
+.fi-header-heading,
+.fi-header-subheading {
+    position: relative;
+    z-index: 10;
+}
+.fi-main{
+    background-color: white;
+}
 /* 
 .fi-sidebar-item-active svg,
 .fi-sidebar-item-active span {
