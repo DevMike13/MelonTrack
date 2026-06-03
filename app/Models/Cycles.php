@@ -12,18 +12,35 @@ class Cycles extends Model
     use HasFactory;
 
     protected $fillable = [
-        'cycle_no',
-        'microgreen_type',
-        'start_date', 
-        'end_date',
-        'trays',
-        'notes',
+        'cycle_code',
+        'crop_variety',
+        'planting_date',
+        'expected_harvest_date',
+        'actual_harvest_date',
         'status',
-        'phase'
+        'growth_stage',
+        'overall_progress',
+        'fruit_progress',
+        'current_brix',
+        'final_brix',
+        'yield_kg',
+        'yield_rate',
+        'notes'
     ];
 
-    public function yieldTrackers()
+    protected $casts = [
+        'planting_date' => 'date',
+        'expected_harvest_date' => 'date',
+        'actual_harvest_date' => 'date',
+    ];
+
+    public function brixReadings()
     {
-        return $this->hasMany(YieldTracker::class, 'cycle_id'); 
+        return $this->hasMany(BrixReading::class);
+    }
+
+    public function milestones()
+    {
+        return $this->hasMany(CycleMilestone::class, 'cycle_id')->orderBy('scheduled_date');
     }
 }

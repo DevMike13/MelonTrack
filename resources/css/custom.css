@@ -25,6 +25,21 @@
 .fi-main{
     background-color: white;
 }
+
+.donut {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: conic-gradient(
+        var(--color) calc(var(--percent) * 1%),
+        #dee2de 0
+    );
+
+    -webkit-mask: radial-gradient(circle, transparent 58%, black 59%);
+    mask: radial-gradient(circle, transparent 58%, black 59%);
+}
+
+
 /* 
 .fi-sidebar-item-active svg,
 .fi-sidebar-item-active span {
