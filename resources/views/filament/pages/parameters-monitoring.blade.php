@@ -154,8 +154,68 @@
             // Trigger Livewire update (assuming you have a Livewire listener)
             Livewire.dispatch('updateMaxpHLevel', { maxpHLevel: pHlevelMax});
         });
-    
         
+        // Listen for real-time updates on Nitrogen
+        const nitrogenRef = ref(database, 'Nitrogen/SensorValue');
+        onValue(nitrogenRef, (snapshot) => {
+            const nitrogen = snapshot.val();
+            console.log('Nitrogen: ', nitrogen);
+            Livewire.dispatch('updateNitrogen', { nitrogen: nitrogen});
+        });
+        const nitrogenMinRef = ref(database, 'Nitrogen/Min');
+        onValue(nitrogenMinRef, (snapshot) => {
+            const nitrogenMin = snapshot.val();
+            console.log('Nitrogen Min: ', nitrogenMin);
+            Livewire.dispatch('updateMinNitrogen', { minNitrogen: nitrogenMin});
+        });
+        const nitrogenMaxRef = ref(database, 'Nitrogen/Max');
+        onValue(nitrogenMaxRef, (snapshot) => {
+            const nitrogenMax = snapshot.val();
+            console.log('Nitrogen Max: ', nitrogenMax);
+            Livewire.dispatch('updateMaxNitrogen', { maxNitrogen: nitrogenMax});
+        });
+
+
+        // Listen for real-time updates on Phosphorus
+        const phosphorusRef = ref(database, 'Phosphorus/SensorValue');
+        onValue(phosphorusRef, (snapshot) => {
+            const phosphorus = snapshot.val();
+            console.log('Phosphorus: ', phosphorus);
+            Livewire.dispatch('updatePhosphorus', { phosphorus: phosphorus});
+        });
+        const phosphorusMinRef = ref(database, 'Phosphorus/Min');
+        onValue(phosphorusMinRef, (snapshot) => {
+            const phosphorusMin = snapshot.val();
+            console.log('Phosphorus Min: ', phosphorusMin);
+            Livewire.dispatch('updateMinPhosphorus', { minPhosphorus: phosphorusMin});
+        });
+        const phosphorusMaxRef = ref(database, 'Phosphorus/Max');
+        onValue(phosphorusMaxRef, (snapshot) => {
+            const phosphorusMax = snapshot.val();
+            console.log('Phosphorus Max: ', phosphorusMax);
+            Livewire.dispatch('updateMaxPhosphorus', { maxPhosphorus: phosphorusMax});
+        });
+        
+
+        // Listen for real-time updates on Potassium
+        const potassiumRef = ref(database, 'Potassium/SensorValue');
+        onValue(potassiumRef, (snapshot) => {
+            const potassium = snapshot.val();
+            console.log('Potassium: ', potassium);
+            Livewire.dispatch('updatePotassium', { potassium: potassium});
+        });
+        const potassiumMinRef = ref(database, 'Potassium/Min');
+        onValue(potassiumMinRef, (snapshot) => {
+            const potassiumMin = snapshot.val();
+            console.log('Potassium Min: ', potassiumMin);
+            Livewire.dispatch('updateMinPotassium', { minPotassium: potassiumMin});
+        });
+        const potassiumMaxRef = ref(database, 'Potassium/Max');
+        onValue(potassiumMaxRef, (snapshot) => {
+            const potassiumMax = snapshot.val();
+            console.log('Potassium Max: ', potassiumMax);
+            Livewire.dispatch('updateMaxPotassium', { maxPotassium: potassiumMax});
+        });
     </script>
     <script>
         window.addEventListener('reload', event => {

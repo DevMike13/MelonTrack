@@ -16,6 +16,9 @@ class DailySensorData extends Model
         'soil_moisture',
         'ec_level',
         'ph_level',
+        'nitrogen',
+        'phosphorus',
+        'potassium',
         'reading_date'
     ];
 }

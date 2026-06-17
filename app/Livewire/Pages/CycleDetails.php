@@ -94,6 +94,13 @@ class CycleDetails extends Component
         ];
     }
 
+    public function updatedNewMilestoneType()
+    {
+        $this->newMilestoneTitle =
+            'Milestone by ' . auth()->user()->name . ' - ' .
+            ucwords(str_replace('_', ' ', $this->newMilestoneType));
+    }
+
     public function createCycle(Database $database)
     {
         if ($this->hasActiveCycle()) {

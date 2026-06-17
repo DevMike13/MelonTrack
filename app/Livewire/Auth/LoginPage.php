@@ -76,6 +76,10 @@ class LoginPage extends Component
             return;
         }
 
+        $user->update([
+            'is_online' => true,
+        ]);
+        
         // Redirect admin
         if ($user->role === 'admin') {
             return redirect()->route('filament.admin.pages.dashboard');

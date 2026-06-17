@@ -37,7 +37,7 @@ class AccountVerification extends Component
             $this->user->save();
             
             auth()->login($this->user);
-            return redirect()->route('user.home');
+            return redirect()->route('home');
         } else {
             session()->flash('error', 'Invalid OTP');
         }

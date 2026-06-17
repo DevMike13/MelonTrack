@@ -6,34 +6,85 @@
 
     <div class="relative z-10 bg-transparent">
         {{-- FILTER --}}
-        <div class="flex justify-between items-center lg:items-start flex-col gap-2 mb-8">
-            <h6>Time Range</h6>
+        <div class="flex justify-between items-center lg:items-start flex-col md:flex-row gap-2 mb-8">
+            <div>
+                <h6>Time Range</h6>
 
-            <div class="flex flex-nowrap sm:flex-wrap items-center gap-1 sm:gap-2 bg-gray-300 py-2 px-2 sm:px-3 rounded-full overflow-x-auto max-w-full">
-                @php
-                    $filters = ['Live', '24H', '7D', '30D', 'Custom'];
-                @endphp
+                <div class="flex flex-nowrap sm:flex-wrap items-center gap-1 sm:gap-2 bg-gray-300 py-2 px-2 sm:px-3 rounded-full overflow-x-auto max-w-full">
+                    @php
+                        $filters = ['Live', 'Yesterday', '7D', '30D', 'Custom'];
+                    @endphp
 
-                @foreach ($filters as $filter)
-                    <button
-                        wire:click="$set('activeFilter', '{{ $filter }}')"
-                        class="shrink-0 whitespace-nowrap px-3 sm:px-4 py-1.5 rounded-full text-xs sm:text-sm font-medium transition
-                            {{ $activeFilter === $filter
-                                ? 'bg-[#356744] text-white'
-                                : 'bg-gray-100 hover:bg-gray-200 text-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
-                            }}"
-                    >
-                        {{ $filter }}
-                    </button>
-                @endforeach
+                    @foreach ($filters as $filter)
+                        <button
+                            wire:click="$set('activeFilter', '{{ $filter }}')"
+                            class="shrink-0 whitespace-nowrap px-3 sm:px-4 py-1.5 rounded-full text-xs sm:text-sm font-medium transition
+                                {{ $activeFilter === $filter
+                                    ? 'bg-[#356744] text-white'
+                                    : 'bg-gray-100 hover:bg-gray-200 text-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
+                                }}"
+                        >
+                            {{ $filter }}
+                        </button>
+                    @endforeach
+                </div>
             </div>
+            @if($activeFilter === 'Custom')
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-4 w-full max-w-3xl">
+                    <x-datetime-picker
+                        label="Start Date"
+                        placeholder="Select start date"
+                        wire:model.defer="customStartDate"
+                        parse-format="YYYY-MM-DD HH:mm:ss"
+                        display-format="MMM DD, YYYY hh:mm A"
+                        max="{{ $maxDateTime }}"
+                        interval="60"
+                        without-timezone
+                    />
+
+                    <x-datetime-picker
+                        label="End Date"
+                        placeholder="Select end date"
+                        wire:model.defer="customEndDate"
+                        parse-format="YYYY-MM-DD HH:mm:ss"
+                        display-format="MMM DD, YYYY hh:mm A"
+                        min="{{ $customStartDate }}"
+                        max="{{ $maxDateTime }}"
+                        interval="60"
+                        without-timezone
+                    />
+
+                    <div class="flex items-end">
+                        <button
+                            type="button"
+                            wire:click="applyCustomFilter"
+                            wire:loading.attr="disabled"
+                            wire:target="applyCustomFilter"
+                            class="w-full px-4 py-2 rounded-lg bg-[#356744] text-white text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                        >
+                            <span wire:loading.remove wire:target="applyCustomFilter">
+                                Apply
+                            </span>
+
+                            <span wire:loading wire:target="applyCustomFilter" class="flex items-center justify-center gap-2">
+                                <svg class="animate-spin w-4 h-4 inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" class="opacity-25"/>
+                                    <path fill="currentColor" class="opacity-75" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"/>
+                                </svg>
+
+                                <span>Loading...</span>
+                            </span>
+                        </button>
+                    </div>
+                </div>
+            @endif
         </div>
 
         {{-- CARDS --}}
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-5 mb-8">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-3 gap-5 mb-8 items-stretch">
 
             {{-- TEMPERATURE CARD --}}
-            <div class="bg-[#e1eedb] border border-[#356744] p-4 sm:p-5 rounded-2xl flex flex-col gap-4">
+            <div class="bg-[#e1eedb] border border-[#356744] p-4 sm:p-5 rounded-2xl flex flex-col gap-4 h-full">
                 <div class="flex items-center justify-between gap-3">
                     <div class="w-12 h-12 sm:w-14 sm:h-14 bg-[#c1ebbf] flex items-center justify-center overflow-hidden rounded-full shrink-0">
                         <img
@@ -60,7 +111,7 @@
             </div>
 
             {{-- HUMIDITY CARD --}}
-            <div class="bg-blue-100/50 border border-blue-500 p-4 sm:p-5 rounded-2xl flex flex-col gap-4">
+            <div class="bg-blue-100/50 border border-blue-500 p-4 sm:p-5 rounded-2xl flex flex-col gap-4 h-full">
                 <div class="flex items-center justify-between gap-3">
                     <div class="w-12 h-12 sm:w-14 sm:h-14 bg-[#cfdfe9] flex items-center justify-center overflow-hidden rounded-full shrink-0">
                         <img
@@ -87,7 +138,7 @@
             </div>
 
             {{-- SOIL MOISTURE CARD --}}
-            <div class="bg-[#dde7e9] border border-[#dde7e9] p-4 sm:p-5 rounded-2xl flex flex-col gap-4">
+            <div class="bg-[#dde7e9] border border-[#dde7e9] p-4 sm:p-5 rounded-2xl flex flex-col gap-4 h-full">
                 <div class="flex items-center justify-between gap-3">
                     <div class="w-12 h-12 sm:w-14 sm:h-14 bg-[#eadcdb] flex items-center justify-center overflow-hidden rounded-full shrink-0">
                         <img
@@ -114,7 +165,7 @@
             </div>
 
             {{-- EC CARD --}}
-            <div class="bg-[#e9e6dd] border border-[#e9e6dd] p-4 sm:p-5 rounded-2xl flex flex-col gap-4">
+            <div class="bg-[#e9e6dd] border border-[#e9e6dd] p-4 sm:p-5 rounded-2xl flex flex-col gap-4 h-full">
                 <div class="flex items-center justify-between gap-3">
                     <div class="w-12 h-12 sm:w-14 sm:h-14 bg-[#e7e8db] flex items-center justify-center overflow-hidden rounded-full shrink-0">
                         <img
@@ -141,7 +192,7 @@
             </div>
 
             {{-- PH CARD --}}
-            <div class="bg-[#e3e6eb] border border-[#e3e6eb] p-4 sm:p-5 rounded-2xl flex flex-col gap-4">
+            <div class="bg-[#e3e6eb] border border-[#e3e6eb] p-4 sm:p-5 rounded-2xl flex flex-col gap-4 h-full">
                 <div class="flex items-center justify-between gap-3">
                     <div class="w-12 h-12 sm:w-14 sm:h-14 bg-[#b79dcb] flex items-center justify-center overflow-hidden rounded-full shrink-0">
                         <img
@@ -167,13 +218,49 @@
                 </div>
             </div>
 
+            {{-- NPK CARD --}}
+            <div class="bg-green-100/60 border border-green-500 p-4 sm:p-5 rounded-2xl flex flex-col gap-4 h-full">
+                <div class="flex items-center justify-between gap-3">
+                    <div class="w-12 h-12 sm:w-14 sm:h-14 bg-green-200 flex items-center justify-center overflow-hidden rounded-full shrink-0">
+                        <img
+                            src="{{ asset('images/leaf-icon.png') }}"
+                            alt=""
+                            class="w-8 h-8 object-contain"
+                        >
+                    </div>
+
+                    <div class="text-right min-w-0">
+                        <p class="font-semibold text-green-700 text-xs sm:text-sm">NPK Level</p>
+
+                        <div class="flex justify-between gap-2 text-sm sm:text-base font-semibold">
+    
+                            <div class="bg-green-200 text-green-800 px-3 py-1 rounded-lg">
+                                N: {{ number_format($Nitrogen, 1, '.', ',') }}
+                            </div>
+
+                            <div class="bg-amber-200 text-amber-800 px-3 py-1 rounded-lg">
+                                P: {{ number_format($Phosphorus, 1, '.', ',') }}
+                            </div>
+
+                            <div class="bg-red-200 text-red-800 px-3 py-1 rounded-lg">
+                                K: {{ number_format($Potassium, 1, '.', ',') }}
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-center gap-2 text-xs">
+                    <p>Nitrogen • Phosphorus • Potassium</p>
+                </div>
+            </div>
         </div>
 
         {{-- <div wire:ignore class="w-[100%] h-96 mb-8">
             <canvas id="allSensorsChart"></canvas>
         </div> --}}
 
-        <div wire:ignore class="w-full overflow-x-auto md:overflow-x-visible mb-8 bg-white rounded-2xl border border-[#356744] p-3 lg:p-8">
+        <div class="w-full overflow-x-auto md:overflow-x-visible mb-8 bg-white rounded-2xl border border-[#356744] p-3 lg:p-8">
             {{-- <select wire:model="selectedParameter" class="mb-4 px-3 py-2 border rounded">
                 <option value="all">All Parameters</option>
                 <option value="temperature">Temperature</option>
@@ -182,7 +269,26 @@
                 <option value="ec_level">EC Level</option>
                 <option value="ph_level">pH Level</option>
             </select> --}}
-            <div class="min-w-[1200px] md:min-w-full h-[300px] sm:h-[350px] lg:h-[450px] xl:h-[500px]">
+            <div class="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1">
+                {{-- <h6 class="font-semibold text-[#356744]">Sensor Graph</h6> --}}
+                <h6 class="font-semibold text-[#356744]">
+                    @if($activeFilter === 'Live')
+                        Sensor Graph - Today Hourly Data
+                    @elseif($activeFilter === 'Yesterday')
+                        Sensor Graph - Yesterday Hourly Data
+                    @elseif($activeFilter === '7D')
+                        Sensor Graph - Average Every 12 Hours
+                    @elseif($activeFilter === '30D')
+                        Sensor Graph - Average Everyday
+                    @else
+                        Sensor Graph
+                    @endif
+                </h6>
+                <p class="text-xs sm:text-sm text-gray-500">
+                    Showing: {{ $ChartDateRange }}
+                </p>
+            </div>
+            <div wire:ignore class="min-w-[1200px] md:min-w-full h-[300px] sm:h-[350px] lg:h-[450px] xl:h-[500px]">
                 <canvas id="allSensorsChart"></canvas>
             </div>
         </div>
@@ -555,10 +661,61 @@
 
                     </div>
                 </div>
+
+                @php
+                    $npkStatus = 'optimal';
+
+                    $npkStatusText = 'NPK readings received successfully';
+
+                    $npkLastChecked = Carbon::now('Asia/Manila')->subMinutes(10);
+                @endphp
+
+                <div class="flex flex-row items-center gap-3 border-b-[1px] border-gray-700 py-3">
+
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                        class="size-6 text-green-500">
+                        <path stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                    </svg>
+
+                    <div class="flex flex-col items-start leading-tight">
+
+                        <div class="flex flex-wrap gap-2">
+                            <span class="font-semibold text-green-500">
+                                N: {{ number_format($Nitrogen, 1, '.', ',') }}
+                            </span>
+
+                            <span class="font-semibold text-amber-500">
+                                P: {{ number_format($Phosphorus, 1, '.', ',') }}
+                            </span>
+
+                            <span class="font-semibold text-red-500">
+                                K: {{ number_format($Potassium, 1, '.', ',') }}
+                            </span>
+                        </div>
+
+                        <span class="text-xs mt-1 text-green-600">
+                            {{ $npkStatusText }}
+                        </span>
+
+                        <span class="text-xs mt-1 text-gray-600 font-semibold">
+                            Last Checked:
+                            <span class="italic font-light">
+                                {{ $npkLastChecked->format('h:i A, F d, Y') }}
+                            </span>
+                        </span>
+
+                    </div>
+                </div>
                 
             </div>
 
-            <div class="col-span-2 w-full h-full max-h-72 overflow-y-auto bg-white rounded-2xl border border-[#356744] p-4 lg:p-6">
+            <div class="col-span-1 md:col-span-2 w-full h-full max-h-72 overflow-y-auto bg-white rounded-2xl border border-[#356744] p-4 lg:p-6">
 
                 <h6 class="mb-5 font-semibold">Sensor Devices</h6>
 
@@ -581,7 +738,7 @@
                                     ● Online
                                 </span>
                             </td>
-                            <td class="px-5 py-3 text-gray-500">10:00 AM, June 02, 2026</td>
+                            <td class="px-5 py-3 text-gray-500">{{ Carbon::now('Asia/Manila')->format('h:i A, F d, Y') }}</td>
                         </tr>
 
                         {{-- Humidity --}}
@@ -592,7 +749,7 @@
                                     ● Offline
                                 </span>
                             </td>
-                            <td class="px-5 py-3 text-gray-500">10:00 AM, June 02, 2026</td>
+                            <td class="px-5 py-3 text-gray-500">{{ Carbon::now('Asia/Manila')->format('h:i A, F d, Y') }}</td>
                         </tr>
 
                         {{-- Soil Moisture --}}
@@ -603,7 +760,7 @@
                                     ● Online
                                 </span>
                             </td>
-                            <td class="px-5 py-3 text-gray-500">10:00 AM, June 02, 2026</td>
+                            <td class="px-5 py-3 text-gray-500">{{ Carbon::now('Asia/Manila')->format('h:i A, F d, Y') }}</td>
                         </tr>
 
                         {{-- EC Level --}}
@@ -614,7 +771,7 @@
                                     ● Online
                                 </span>
                             </td>
-                            <td class="px-5 py-3 text-gray-500">10:00 AM, June 02, 2026</td>
+                            <td class="px-5 py-3 text-gray-500">{{ Carbon::now('Asia/Manila')->format('h:i A, F d, Y') }}</td>
                         </tr>
 
                         {{-- pH Level --}}
@@ -625,7 +782,20 @@
                                     ● Online
                                 </span>
                             </td>
-                            <td class="px-5 py-3 text-gray-500">10:00 AM, June 02, 2026</td>
+                            <td class="px-5 py-3 text-gray-500">{{ Carbon::now('Asia/Manila')->format('h:i A, F d, Y') }}</td>
+                        </tr>
+
+                        {{-- NPK Sensor --}}
+                        <tr class="hover:bg-gray-50 transition">
+                            <td class="px-5 py-3 font-medium text-gray-800">NPK Sensor</td>
+                            <td class="px-5 py-3">
+                                <span class="inline-flex items-center px-2.5 py-1 text-xs font-medium rounded-full bg-green-50 text-green-600 ring-1 ring-green-200">
+                                    ● Online
+                                </span>
+                            </td>
+                            <td class="px-5 py-3 text-gray-500">
+                                {{ Carbon::now('Asia/Manila')->format('h:i A, F d, Y') }}
+                            </td>
                         </tr>
 
                     </tbody>
@@ -649,6 +819,9 @@
                 soil_moisture: '#4CAF50',
                 ec_level: '#9C27B0',
                 ph_level: '#795548',
+                nitrogen: '#22C55E',
+                phosphorus: '#F59E0B',
+                potassium: '#EF4444',
             };
 
             const labels = {
@@ -657,6 +830,9 @@
                 soil_moisture: 'Soil Moisture',
                 ec_level: 'EC Level',
                 ph_level: 'pH Level',
+                nitrogen: 'Nitrogen',
+                phosphorus: 'Phosphorus',
+                potassium: 'Potassium',
             };
 
             const units = {
@@ -665,6 +841,9 @@
                 soil_moisture: '%',
                 ec_level: '',
                 ph_level: '',
+                nitrogen: ' ppm',
+                phosphorus: ' ppm',
+                potassium: ' ppm',
             };
 
             if (mode === 'all') {
@@ -717,7 +896,8 @@
                             callbacks: {
                                 label: function (context) {
                                     const label = context.dataset.label || '';
-                                    const value = context.parsed.y;
+                                    // const value = context.parsed.y;
+                                    const value = Number(context.parsed.y).toFixed(2);
 
                                     if (label.includes('Temperature')) {
                                         return `${label}: ${value}°C`;
@@ -735,6 +915,14 @@
                                         return `${label}: ${value}`;
                                     }
 
+                                    if (
+                                        label.includes('Nitrogen') ||
+                                        label.includes('Phosphorus') ||
+                                        label.includes('Potassium')
+                                    ) {
+                                        return `${label}: ${value} ppm`;
+                                    }
+
                                     return `${label}: ${value}`;
                                 }
                             }
@@ -742,7 +930,15 @@
                     },
                     scales: {
                         x: {
-                            grid: { display: false }
+                            grid: { display: false },
+                            ticks: {
+                                autoSkip: false,
+                                maxRotation: 45,
+                                minRotation: 45,
+                                font: {
+                                    size: 10
+                                }
+                            }
                         },
                         y: {
                             beginAtZero: true

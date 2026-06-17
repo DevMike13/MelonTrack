@@ -178,12 +178,39 @@ class Personnel extends Component
     }
 
 
+    // public function render()
+    // {
+    //     // $personnelLists = User::where('role', 'user')->get();
+    //     $personnelLists = User::all();
+    //     return view('livewire.pages.personnel', [
+    //         'personnelLists' => $personnelLists
+    //     ]);
+    // }
     public function render()
     {
-        // $personnelLists = User::where('role', 'user')->get();
-        $personnelLists = User::all();
+        $totalUsers = User::count();
+
+        $onlineUsers = User::where('is_online', true)->count();
+
+        $offlineUsers = User::where('is_online', false)->count();
+
+        $pendingApprovalUsers = User::where('is_approved', false)->count();
+
+        $pendingPersonnelLists = User::where('is_approved', false)
+            ->orderByDesc('created_at')
+            ->get();
+
+        $approvedPersonnelLists = User::where('is_approved', true)
+            ->orderByDesc('created_at')
+            ->get();
+
         return view('livewire.pages.personnel', [
-            'personnelLists' => $personnelLists
+            'totalUsers' => $totalUsers,
+            'onlineUsers' => $onlineUsers,
+            'offlineUsers' => $offlineUsers,
+            'pendingApprovalUsers' => $pendingApprovalUsers,
+            'pendingPersonnelLists' => $pendingPersonnelLists,
+            'approvedPersonnelLists' => $approvedPersonnelLists,
         ]);
     }
 }

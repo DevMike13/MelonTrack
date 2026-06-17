@@ -32,9 +32,25 @@ class ParametersMonitoring extends Component
     public $pHLevelMinReading;
     public $pHLevelMaxReading;
 
+    public $nitrogenReading;
+    public $nitrogenMinReading;
+    public $nitrogenMaxReading;
+
+    public $phosphorusReading;
+    public $phosphorusMinReading;
+    public $phosphorusMaxReading;
+
+    public $potassiumReading;
+    public $potassiumMinReading;
+    public $potassiumMaxReading;
+
     public $chartLabels = [];
     public $chartData = [];
 
+    public $customStartDate;
+    public $customEndDate;
+    public $maxDateTime;
+    public string $chartDateRange = '';
     
 
     protected $listeners = [
@@ -59,7 +75,19 @@ class ParametersMonitoring extends Component
 
         'updatepHLevel' => 'handlepHLevelUpdate',
         'updateMinpHLevel' => 'handleMinpHLevelUpdate',
-        'updateMaxpHLevel' => 'handleMaxpHLevelUpdate'
+        'updateMaxpHLevel' => 'handleMaxpHLevelUpdate',
+
+        'updateNitrogen' => 'handleNitrogenUpdate',
+        'updateMinNitrogen' => 'handleMinNitrogenUpdate',
+        'updateMaxNitrogen' => 'handleMaxNitrogenUpdate',
+
+        'updatePhosphorus' => 'handlePhosphorusUpdate',
+        'updateMinPhosphorus' => 'handleMinPhosphorusUpdate',
+        'updateMaxPhosphorus' => 'handleMaxPhosphorusUpdate',
+
+        'updatePotassium' => 'handlePotassiumUpdate',
+        'updateMinPotassium' => 'handleMinPotassiumUpdate',
+        'updateMaxPotassium' => 'handleMaxPotassiumUpdate',
     ];
 
 
@@ -68,6 +96,7 @@ class ParametersMonitoring extends Component
         $this->database = $database;
         $this->fetchData();
         $this->loadChartData();
+        $this->maxDateTime = now('Asia/Manila')->format('Y-m-d H:i:s');
     }
 
     public function fetchData()
@@ -141,6 +170,45 @@ class ParametersMonitoring extends Component
             $snapshotMaxpHLevel = $referenceMaxpHLevel->getSnapshot();
             $this->pHLevelMaxReading = $snapshotMaxpHLevel->getValue();
 
+            // Nitrogen
+            $referenceNitrogen = $this->database->getReference('Nitrogen/SensorValue');  
+            $snapshotNitrogen = $referenceNitrogen->getSnapshot();
+            $this->nitrogenReading = $snapshotNitrogen->getValue();
+            // Min Nitrogen
+            $referenceMinNitrogen = $this->database->getReference('Nitrogen/Min');  
+            $snapshotMinNitrogen = $referenceMinNitrogen->getSnapshot();
+            $this->nitrogenMinReading = $snapshotMinNitrogen->getValue();
+            // Max Nitrogen
+            $referenceMaxNitrogen = $this->database->getReference('Nitrogen/Max');  
+            $snapshotMaxNitrogen = $referenceMaxNitrogen->getSnapshot();
+            $this->nitrogenMaxReading = $snapshotMaxNitrogen->getValue();
+
+            // Phosphorus
+            $referencePhosphorus = $this->database->getReference('Phosphorus/SensorValue');  
+            $snapshotPhosphorus = $referencePhosphorus->getSnapshot();
+            $this->phosphorusReading = $snapshotPhosphorus->getValue();
+            // Min Phosphorus
+            $referenceMinPhosphorus = $this->database->getReference('Phosphorus/Min');  
+            $snapshotMinPhosphorus = $referenceMinPhosphorus->getSnapshot();
+            $this->phosphorusMinReading = $snapshotMinPhosphorus->getValue();
+            // Max Phosphorus
+            $referenceMaxPhosphorus = $this->database->getReference('Phosphorus/Max');  
+            $snapshotMaxPhosphorus = $referenceMaxPhosphorus->getSnapshot();
+            $this->phosphorusMaxReading = $snapshotMaxPhosphorus->getValue();
+
+            // Potassium
+            $referencePotassium = $this->database->getReference('Potassium/SensorValue');  
+            $snapshotPotassium = $referencePotassium->getSnapshot();
+            $this->potassiumReading = $snapshotPotassium->getValue();
+            // Min Potassium
+            $referenceMinPotassium = $this->database->getReference('Potassium/Min');  
+            $snapshotMinPotassium = $referenceMinPotassium->getSnapshot();
+            $this->potassiumMinReading = $snapshotMinPotassium->getValue();
+            // Max Potassium
+            $referenceMaxPotassium = $this->database->getReference('Potassium/Max');  
+            $snapshotMaxPotassium = $referenceMaxPotassium->getSnapshot();
+            $this->potassiumMaxReading = $snapshotMaxPotassium->getValue();
+
 
         } catch (\Exception $e) {
             $this->tempratureReading = 'Error: ' . $e->getMessage();
@@ -212,16 +280,218 @@ class ParametersMonitoring extends Component
         $this->pHLevelMaxReading = $maxpHLevel;
     }
 
+    public function handleNitrogenUpdate($nitrogen)
+    {
+        $this->nitrogenReading = $nitrogen;
+    }
+    public function handleMinNitrogenUpdate($minNitrogen)
+    {
+        $this->nitrogenMinReading = $minNitrogen;
+    }
+    public function handleMaxNitrogenUpdate($maxNitrogen)
+    {
+        $this->nitrogenMaxReading = $maxNitrogen;
+    }
+
+    public function handlePhosphorusUpdate($phosphorus)
+    {
+        $this->phosphorusReading = $phosphorus;
+    }
+    public function handleMinPhosphorusUpdate($minPhosphorus)
+    {
+        $this->phosphorusMinReading = $minPhosphorus;
+    }
+    public function handleMaxPhosphorusUpdate($maxPhosphorus)
+    {
+        $this->phosphorusMaxReading = $maxPhosphorus;
+    }
+
+    public function handlePotassiumUpdate($potassium)
+    {
+        $this->potassiumReading = $potassium;
+    }
+    public function handleMinPotassiumUpdate($minPotassium)
+    {
+        $this->potassiumMinReading = $minPotassium;
+    }
+    public function handleMaxPotassiumUpdate($maxPotassium)
+    {
+        $this->potassiumMaxReading = $maxPotassium;
+    }
+
+    public function updatedActiveFilter()
+    {
+        $this->loadChartData();
+
+        $this->dispatch('updateChart', [
+            'labels' => $this->chartLabels,
+            'data' => $this->chartData,
+            'mode' => 'all',
+        ]);
+    }
+
+    public function applyCustomFilter()
+    {
+        $this->activeFilter = 'Custom';
+        $this->loadChartData();
+
+        $this->dispatch('updateChart', [
+            'labels' => $this->chartLabels,
+            'data' => $this->chartData,
+            'mode' => 'all',
+        ]);
+    }
+
     public function loadChartData()
     {
-        $data = DB::table('daily_sensor_data')
-            ->orderBy('reading_date')
-            ->get();
+        $query = DB::table('daily_sensor_data');
 
-        $this->chartLabels = $data
-            ->pluck('reading_date')
-            ->map(fn($d) => date('g A', strtotime($d)))
-            ->toArray();
+        if ($this->activeFilter === 'Live') {
+            // Today hourly data
+            $data = $query
+                ->selectRaw("
+                    DATE_FORMAT(reading_date, '%Y-%m-%d %H:00:00') as grouped_date,
+                    ROUND(AVG(temperature), 2) as temperature,
+                    ROUND(AVG(humidity), 2) as humidity,
+                    ROUND(AVG(soil_moisture), 2) as soil_moisture,
+                    ROUND(AVG(ec_level), 2) as ec_level,
+                    ROUND(AVG(ph_level), 2) as ph_level,
+                    ROUND(AVG(nitrogen), 2) as nitrogen,
+                    ROUND(AVG(phosphorus), 2) as phosphorus,
+                    ROUND(AVG(potassium), 2) as potassium
+                ")
+                ->whereDate('reading_date', now('Asia/Manila')->toDateString())
+                ->groupBy('grouped_date')
+                ->orderBy('grouped_date')
+                ->get();
+
+            $this->chartDateRange = 'Today - ' . now('Asia/Manila')->format('F d, Y');
+        }
+
+        elseif ($this->activeFilter === 'Yesterday') {
+            $start = now('Asia/Manila')->subDay()->startOfDay();
+            $end = now('Asia/Manila')->subDay()->endOfDay();
+
+            $data = $query
+                ->selectRaw("
+                    DATE_FORMAT(reading_date, '%Y-%m-%d %H:00:00') as grouped_date,
+                    ROUND(AVG(temperature), 2) as temperature,
+                    ROUND(AVG(humidity), 2) as humidity,
+                    ROUND(AVG(soil_moisture), 2) as soil_moisture,
+                    ROUND(AVG(ec_level), 2) as ec_level,
+                    ROUND(AVG(ph_level), 2) as ph_level,
+                    ROUND(AVG(nitrogen), 2) as nitrogen,
+                    ROUND(AVG(phosphorus), 2) as phosphorus,
+                    ROUND(AVG(potassium), 2) as potassium
+                ")
+                ->whereBetween('reading_date', [
+                    $start->format('Y-m-d H:i:s'),
+                    $end->format('Y-m-d H:i:s'),
+                ])
+                ->groupBy('grouped_date')
+                ->orderBy('grouped_date')
+                ->get();
+
+            $this->chartDateRange = 'Yesterday - ' . $start->format('F d, Y');
+        }
+
+        elseif ($this->activeFilter === '7D') {
+            // Last 7 days, average every 12 hours
+            $data = $query
+                ->selectRaw("
+                    DATE(reading_date) as date_only,
+                    CASE 
+                        WHEN HOUR(reading_date) < 12 THEN 'AM'
+                        ELSE 'PM'
+                    END as half_day,
+                    ROUND(AVG(temperature), 2) as temperature,
+                    ROUND(AVG(humidity), 2) as humidity,
+                    ROUND(AVG(soil_moisture), 2) as soil_moisture,
+                    ROUND(AVG(ec_level), 2) as ec_level,
+                    ROUND(AVG(ph_level), 2) as ph_level,
+                    ROUND(AVG(nitrogen), 2) as nitrogen,
+                    ROUND(AVG(phosphorus), 2) as phosphorus,
+                    ROUND(AVG(potassium), 2) as potassium
+                ")
+                ->where('reading_date', '>=', now('Asia/Manila')->subDays(7))
+                ->groupBy('date_only', 'half_day')
+                ->orderBy('date_only')
+                ->orderByRaw("FIELD(half_day, 'AM', 'PM')")
+                ->get();
+
+            $this->chartDateRange = now('Asia/Manila')->subDays(7)->format('M d, Y') . ' - ' . now('Asia/Manila')->format('M d, Y');
+        }
+
+        elseif ($this->activeFilter === '30D') {
+            // Last 30 days, average per day
+            $data = $query
+                ->selectRaw("
+                    DATE(reading_date) as grouped_date,
+                    ROUND(AVG(temperature), 2) as temperature,
+                    ROUND(AVG(humidity), 2) as humidity,
+                    ROUND(AVG(soil_moisture), 2) as soil_moisture,
+                    ROUND(AVG(ec_level), 2) as ec_level,
+                    ROUND(AVG(ph_level), 2) as ph_level,
+                    ROUND(AVG(nitrogen), 2) as nitrogen,
+                    ROUND(AVG(phosphorus), 2) as phosphorus,
+                    ROUND(AVG(potassium), 2) as potassium
+                ")
+                ->where('reading_date', '>=', now('Asia/Manila')->subDays(30))
+                ->groupBy('grouped_date')
+                ->orderBy('grouped_date')
+                ->get();
+
+            $this->chartDateRange = now('Asia/Manila')->subDays(30)->format('M d, Y') . ' - ' . now('Asia/Manila')->format('M d, Y');
+        }
+
+        else {
+            if (!$this->customStartDate || !$this->customEndDate) {
+                $data = collect();
+                $this->chartDateRange = 'Custom range not set';
+            } else {
+                $start = \Carbon\Carbon::parse($this->customStartDate, 'Asia/Manila');
+                $end = \Carbon\Carbon::parse($this->customEndDate, 'Asia/Manila');
+
+                $data = $query
+                    ->selectRaw("
+                        DATE_FORMAT(reading_date, '%Y-%m-%d %H:00:00') as grouped_date,
+                        ROUND(AVG(temperature), 2) as temperature,
+                        ROUND(AVG(humidity), 2) as humidity,
+                        ROUND(AVG(soil_moisture), 2) as soil_moisture,
+                        ROUND(AVG(ec_level), 2) as ec_level,
+                        ROUND(AVG(ph_level), 2) as ph_level,
+                        ROUND(AVG(nitrogen), 2) as nitrogen,
+                        ROUND(AVG(phosphorus), 2) as phosphorus,
+                        ROUND(AVG(potassium), 2) as potassium
+                    ")
+                    ->whereBetween('reading_date', [
+                        $start->format('Y-m-d H:i:s'),
+                        $end->format('Y-m-d H:i:s'),
+                    ])
+                    ->groupBy('grouped_date')
+                    ->orderBy('grouped_date')
+                    ->get();
+
+                $this->chartDateRange = $start->format('M d, Y h:i A') . ' - ' . $end->format('M d, Y h:i A');
+            }
+        }
+
+        $this->chartLabels = $data->map(function ($row) {
+            if ($this->activeFilter === 'Live' || $this->activeFilter === 'Yesterday' || $this->activeFilter === 'Custom') {
+                return date('M d, g A', strtotime($row->grouped_date));
+            }
+
+            if ($this->activeFilter === '7D') {
+                return date('M d', strtotime($row->date_only)) . ' ' . 
+                    ($row->half_day === 'AM' ? '12AM-12PM' : '12PM-12AM');
+            }
+
+            if ($this->activeFilter === '30D') {
+                return date('M d', strtotime($row->grouped_date));
+            }
+
+            return '';
+        })->toArray();
 
         $this->chartData = [
             'temperature' => $data->pluck('temperature')->toArray(),
@@ -229,6 +499,9 @@ class ParametersMonitoring extends Component
             'soil_moisture' => $data->pluck('soil_moisture')->toArray(),
             'ec_level' => $data->pluck('ec_level')->toArray(),
             'ph_level' => $data->pluck('ph_level')->toArray(),
+            'nitrogen' => $data->pluck('nitrogen')->toArray(),
+            'phosphorus' => $data->pluck('phosphorus')->toArray(),
+            'potassium' => $data->pluck('potassium')->toArray(),
         ];
     }
 
@@ -253,7 +526,21 @@ class ParametersMonitoring extends Component
 
             'pHLevel' => $this->pHLevelReading,
             'MinpHLevel' => $this->pHLevelMinReading,
-            'MaxpHLevel' => $this->pHLevelMaxReading
+            'MaxpHLevel' => $this->pHLevelMaxReading,
+
+            'Nitrogen' => $this->nitrogenReading,
+            'MinNitrogen' => $this->nitrogenMinReading,
+            'MaxNitrogen' => $this->nitrogenMaxReading,
+
+            'Phosphorus' => $this->phosphorusReading,
+            'MinPhosphorus' => $this->phosphorusMinReading,
+            'MaxPhosphorus' => $this->phosphorusMaxReading,
+
+            'Potassium' => $this->potassiumReading,
+            'MinPotassium' => $this->potassiumMinReading,
+            'MaxPotassium' => $this->potassiumMaxReading,
+
+            'ChartDateRange' => $this->chartDateRange,
         ]);
     }
 }

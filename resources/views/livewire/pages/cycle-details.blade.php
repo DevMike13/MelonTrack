@@ -1076,15 +1076,20 @@
 
             <div class="space-y-4" x-data="{ isNewCompleted: @entangle('newMilestoneCompleted') }">
 
-                <x-input
+                {{-- <x-input
                     label="Title"
                     wire:model.defer="newMilestoneTitle"
                     placeholder="e.g. First Pollination"
+                /> --}}
+                <x-input
+                    label="Title"
+                    readonly
+                    wire:model="newMilestoneTitle"
                 />
 
                 <x-select
                     label="Type"
-                    wire:model.defer="newMilestoneType"
+                    wire:model.live="newMilestoneType"
                     :options="[
                         ['id'=>'greenhouse_transfer','name'=>'Greenhouse Transfer'],
                         ['id'=>'pruning','name'=>'Pruning'],
@@ -1137,6 +1142,7 @@
             <div class="space-y-4">
                 <x-input
                     label="Title"
+                    readonly
                     wire:model.defer="editMilestoneTitle"
                     placeholder="e.g. First Pollination"
                 />

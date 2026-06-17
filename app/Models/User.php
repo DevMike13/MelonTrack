@@ -28,6 +28,7 @@ class User extends Authenticatable implements FilamentUser
         'password',
         'role',
         'status',
+        'is_online',
         'otp_code',
         'email_verified_at',
         'otp_expires_at',
@@ -52,6 +53,7 @@ class User extends Authenticatable implements FilamentUser
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'is_online' => 'boolean',
     ];
 
     // public function canLogin(): bool
@@ -63,13 +65,13 @@ class User extends Authenticatable implements FilamentUser
 
     public function canAccessPanel(Panel $panel): bool
     {
-        if (is_null($this->email_verified_at)) {
-            return false;
-        }
+        // if (is_null($this->email_verified_at)) {
+        //     return false;
+        // }
     
-        if ($this->status !== 'Active') {
-            return false;
-        }
+        // if ($this->status !== 'Active') {
+        //     return false;
+        // }
 
         return true;
     }
