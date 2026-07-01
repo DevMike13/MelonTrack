@@ -9,64 +9,72 @@ use Illuminate\Http\Request;
 
 class SensorController extends Controller
 {
-    public function storeSensorData(Request $request)
-    {
-        try {
-            // Validate the request
-            $validatedData = $request->validate([
-                'cycle_id' => 'required',
-                'ph_level' => 'required',
-                'dissolved_oxygen' => 'required',
-                'alkalinity_level' => 'required',
-                'water_temperature' => 'required',
-                'reading_date' => 'required|date',
-            ]);
+    // public function storeSensorData(Request $request)
+    // {
+    //     try {
+    //         // Validate the request
+    //         $validatedData = $request->validate([
+    //             'cycle_id' => 'required',
+    //             'ph_level' => 'required',
+    //             'dissolved_oxygen' => 'required',
+    //             'alkalinity_level' => 'required',
+    //             'water_temperature' => 'required',
+    //             'reading_date' => 'required|date',
+    //         ]);
     
-            // Create reading
-            $reading = SensorDatas::create($validatedData);
+    //         // Create reading
+    //         $reading = SensorDatas::create($validatedData);
     
-            // Return success response
-            return response()->json([
-                'message' => 'Reading created successfully',
-                'data' => $reading
-            ], 201);
+    //         // Return success response
+    //         return response()->json([
+    //             'message' => 'Reading created successfully',
+    //             'data' => $reading
+    //         ], 201);
             
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'An error occurred',
-                'error' => $e->getMessage()
-            ], 500);
-        }
-    }
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'message' => 'An error occurred',
+    //             'error' => $e->getMessage()
+    //         ], 500);
+    //     }
+    // }
 
     public function storeDailySensorData(Request $request)
     {
         try {
-            // Validate the request
             $validatedData = $request->validate([
-                'cycle_id' => 'required',
-                'board' => 'required',
-                'soil_moisture' => 'required',
-                'soil_ph' => 'required',
-                'water_ph' => 'required',
-                'temperature' => 'required',
-                'humidity' => 'required',
+                'cycle_id' => 'required|exists:cycles,id',
+
+                'temperature' => 'required|numeric',
+                'humidity' => 'required|numeric',
+                'soil_moisture' => 'required|numeric',
+                'ec_level' => 'required|numeric',
+                'ph_level' => 'required|numeric',
+
+                'nitrogen' => 'nullable|numeric',
+                'phosphorus' => 'nullable|numeric',
+                'potassium' => 'nullable|numeric',
+
                 'reading_date' => 'required|date',
             ]);
-    
-            // Create reading
+
             $reading = DailySensorData::create($validatedData);
-    
-            // Return success response
+
             return response()->json([
-                'message' => 'Reading created successfully',
-                'data' => $reading
+                'message' => 'Daily sensor reading created successfully',
+                'data' => $reading,
             ], 201);
-            
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'message' => 'Validation failed',
+                'errors' => $e->errors(),
+            ], 422);
+
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'An error occurred',
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ], 500);
         }
     }

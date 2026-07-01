@@ -14,29 +14,33 @@ class DailySensorDataSeeder extends Seeder
      */
     public function run(): void
     {
-        DailySensorData::truncate();
+        DailySensorData::where('cycle_id', 6)->delete();
 
-        $start = Carbon::now()->subHours(24);
+        $start = Carbon::create(2026, 6, 17, 0, 0, 0);
+        $end   = Carbon::create(2026, 11, 26, 23, 0, 0);
 
-        for ($i = 0; $i <= 24; $i++) {
-
-            $timestamp = $start->copy()->addHours($i);
+        while ($start <= $end) {
 
             DailySensorData::create([
-                'cycle_id' => 1,
+                'cycle_id' => 6,
 
-                'temperature' => rand(260, 340) / 10,      // 26.0 - 34.0 °C
-                'humidity' => rand(650, 900) / 10,         // 65 - 90 %
-                'soil_moisture' => rand(550, 850) / 10,    // 55 - 85 %
-                'ec_level' => rand(10, 30) / 10,           // 1.0 - 3.0
-                'ph_level' => rand(55, 75) / 10,           // 5.5 - 7.5
+                // Environmental Readings
+                'temperature'   => rand(260, 340) / 10, // 26.0 - 34.0 °C
+                'humidity'      => rand(650, 900) / 10, // 65.0 - 90.0 %
+                'soil_moisture' => rand(550, 850) / 10, // 55.0 - 85.0 %
+                'ec_level'      => rand(10, 30) / 10,   // 1.0 - 3.0
+                'ph_level'      => rand(55, 75) / 10,   // 5.5 - 7.5
 
-                'nitrogen' => rand(80, 180),
-                'phosphorus' => rand(30, 120),
-                'potassium' => rand(100, 250),
+                // NPK
+                'nitrogen'      => rand(80, 180),
+                'phosphorus'    => rand(30, 120),
+                'potassium'     => rand(100, 250),
 
-                'reading_date' => $timestamp,
+                'reading_date'  => $start->copy(),
             ]);
+
+            // Next hour
+            $start->addHour();
         }
     }
 }

@@ -288,8 +288,15 @@
                     Showing: {{ $ChartDateRange }}
                 </p>
             </div>
-            <div wire:ignore class="min-w-[1200px] md:min-w-full h-[300px] sm:h-[350px] lg:h-[450px] xl:h-[500px]">
-                <canvas id="allSensorsChart"></canvas>
+            <div class="overflow-x-auto">
+                <div
+                    id="chartContainer"
+                    wire:ignore
+                    class="h-[300px] sm:h-[350px] lg:h-[450px] xl:h-[500px]"
+                    style="min-width: 1500px;"
+                >
+                    <canvas id="allSensorsChart"></canvas>
+                </div>
             </div>
         </div>
 

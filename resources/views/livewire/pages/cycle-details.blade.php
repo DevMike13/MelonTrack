@@ -334,7 +334,11 @@
                                 <tr class="border-t hover:bg-gray-50">
 
                                     {{-- CYCLE INFO --}}
-                                    <td class="px-3 py-4 font-semibold w-40 align-top bg-transparent sticky left-0 z-50 border-r">
+                                    <td
+                                        class="px-3 py-4 font-semibold w-40 align-top bg-white sticky left-0 z-50 border-r cursor-pointer hover:bg-green-50 transition"
+                                        wire:click="viewCycleDetails({{ $cycle->id }})"
+                                        onclick="$openModal('cycleDetailsModal')"
+                                    >
                                         {{ $cycle->cycle_code }}
 
                                         <div class="text-[10px] text-gray-500">
@@ -346,10 +350,23 @@
                                         </div>
                                     </td>
 
+                                    {{-- MILESTONES --}}
+                                    @php
+                                        $milestones = $cycle->milestones->sortBy('scheduled_date')->values();
+
+                                        $milestoneCount = max(1, $milestones->count());
+                                        $laneHeight = 28;
+                                        $timelineHeight = max(180, ($milestoneCount * $laneHeight) + 90);
+                                        $centerLine = $timelineHeight / 2;
+                                    @endphp
+
                                     {{-- TIMELINE --}}
                                     <td colspan="12" class="p-0 overflow-visible">
 
-                                        <div class="relative w-[1728px] h-40 overflow-visible">
+                                        <div
+                                            class="relative w-[1728px] overflow-visible"
+                                            style="height: {{ $timelineHeight }}px;"
+                                        >
 
                                             {{-- MONTH GRID --}}
                                             <div class="absolute inset-0 grid grid-cols-12 z-10">
@@ -367,10 +384,7 @@
                                                 "
                                             ></div>
 
-                                            {{-- MILESTONES --}}
-                                            @php
-                                                $milestones = $cycle->milestones->sortBy('scheduled_date')->values();
-                                            @endphp
+                                            
                                            @foreach($milestones as $index => $milestone)
 
                                                 @php
@@ -400,7 +414,7 @@
                                                         $milestoneWidth = null; 
                                                     }
 
-                                                    $topOffset = -35 + ($index * 20);
+                                                    $top = 45 + ($index * $laneHeight);
                                                     $milestoneDays = $milestoneCompleted ? $milestoneScheduled->diffInDays($milestoneCompleted) : 0;
                                                 @endphp
 
@@ -410,7 +424,7 @@
                                                     style="
                                                         left: {{ $position }}%;
                                                         @if($milestoneWidth) width: {{ $milestoneWidth }}%; @endif
-                                                        top: calc(50% + {{ $topOffset }}px);
+                                                        top: {{ $top }}px;
                                                         /* If it has a dynamic width, don't center-translate it; let it grow naturally to the right */
                                                         transform: @if($milestoneWidth) translateY(-50%) @else translate(-50%, -50%) @endif;
                                                     "
@@ -1124,6 +1138,14 @@
                     />
                 </div>
 
+                @if($newMilestoneType === 'harvest' && $newMilestoneCompleted)
+                    <x-inputs.number
+                        label="Total Harvested Melons"
+                        wire:model.defer="harvestCount"
+                        min="1"
+                    />
+                @endif
+
             </div>
 
             <x-slot name="footer">
@@ -1149,7 +1171,7 @@
 
                 <x-select
                     label="Type"
-                    wire:model.defer="editMilestoneType"
+                    wire:model.live="editMilestoneType"
                     :options="[
                         ['id'=>'greenhouse_transfer','name'=>'Greenhouse Transfer'],
                         ['id'=>'pruning','name'=>'Pruning'],
@@ -1183,6 +1205,14 @@
                         without-time
                     />
                 @endif
+
+                @if($editMilestoneType === 'harvest' && $editMilestoneCompleted)
+                    <x-inputs.number
+                        label="Total Harvested Melons"
+                        wire:model.defer="editHarvestCount"
+                        min="1"
+                    />
+                @endif
                 
             </div>
 
@@ -1195,4 +1225,540 @@
 
         </x-card>
     </x-modal>
+
+    <x-modal blur name="cycleDetailsModal" persistent align="center" max-width="6xl">
+        <x-card title="Cycle Details">
+
+            @if($selectedCycleDetails)
+                <div class="space-y-6">
+
+                    {{-- BASIC INFO --}}
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="p-3 bg-gray-50 rounded-xl">
+                            <p class="text-xs text-gray-500">Cycle Code</p>
+                            <p class="font-semibold">{{ $selectedCycleDetails->cycle_code }}</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl">
+                            <p class="text-xs text-gray-500">Variety</p>
+                            <p class="font-semibold">{{ $selectedCycleDetails->crop_variety }}</p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl">
+                            <p class="text-xs text-gray-500">Status</p>
+                            <p class="font-semibold capitalize">
+                                {{ str_replace('_', ' ', $selectedCycleDetails->status) }}
+                            </p>
+                        </div>
+
+                        {{-- <div class="p-3 bg-gray-50 rounded-xl">
+                            <p class="text-xs text-gray-500">Growth Stage</p>
+                            <p class="font-semibold capitalize">
+                                {{ str_replace('_', ' ', $selectedCycleDetails->growth_stage) }}
+                            </p>
+                        </div> --}}
+                    </div>
+
+                    {{-- DATES --}}
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="p-3 bg-green-50 rounded-xl">
+                            <p class="text-xs text-gray-500">Planting Date</p>
+                            <p class="font-semibold">
+                                {{ $selectedCycleDetails->planting_date?->format('M d, Y') ?? '--' }}
+                            </p>
+                        </div>
+
+                        <div class="p-3 bg-yellow-50 rounded-xl">
+                            <p class="text-xs text-gray-500">Expected Harvest</p>
+                            <p class="font-semibold">
+                                {{ $selectedCycleDetails->expected_harvest_date?->format('M d, Y') ?? '--' }}
+                            </p>
+                        </div>
+
+                        <div class="p-3 bg-red-50 rounded-xl">
+                            <p class="text-xs text-gray-500">Actual Harvest</p>
+                            <p class="font-semibold">
+                                {{ $selectedCycleDetails->actual_harvest_date?->format('M d, Y') ?? '--' }}
+                            </p>
+                        </div>
+                    </div>
+
+                    {{-- BRIX READINGS --}}
+                    <div>
+                        <h6 class="font-semibold text-[#356744] mb-2">Brix Readings</h6>
+
+                        <div class="overflow-hidden rounded-xl border">
+                            <table class="w-full text-xs">
+                                <thead class="bg-gray-100 text-gray-600">
+                                    <tr>
+                                        <th class="px-3 py-2 text-left">Brix Level</th>
+                                        <th class="px-3 py-2 text-left">Reading Date</th>
+                                        <th class="px-3 py-2 text-left">Remarks</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    @forelse($selectedCycleDetails->brixReadings as $brix)
+                                        <tr class="border-t">
+                                            <td class="px-3 py-2 font-semibold text-green-700">
+                                                {{ number_format($brix->brix_level, 1) }} °Brix
+                                            </td>
+                                            <td class="px-3 py-2">
+                                                {{ $brix->reading_at?->format('M d, Y h:i A') }}
+                                            </td>
+                                            <td class="px-3 py-2">
+                                                {{ $brix->remarks ?? '--' }}
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="3" class="px-3 py-4 text-center text-gray-400">
+                                                No Brix readings found.
+                                            </td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    {{-- HARVESTS --}}
+                    <div>
+                        <h6 class="font-semibold text-[#356744] mb-2">Harvest Records</h6>
+
+                        <div class="overflow-hidden rounded-xl border">
+                            <table class="w-full text-xs">
+                                <thead class="bg-gray-100 text-gray-600">
+                                    <tr>
+                                        <th class="px-3 py-2 text-left">Harvested Melons</th>
+                                        <th class="px-3 py-2 text-left">Date Harvested</th>
+                                        <th class="px-3 py-2 text-left">Status</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    @forelse($selectedCycleDetails->harvests as $harvest)
+                                        <tr class="border-t">
+                                            <td class="px-3 py-2 font-semibold">
+                                                {{ number_format($harvest->harvest_count) }}
+                                            </td>
+                                            <td class="px-3 py-2">
+                                                {{ \Carbon\Carbon::parse($harvest->date_harvested)->format('M d, Y') }}
+                                            </td>
+                                            <td class="px-3 py-2 capitalize">
+                                                {{ $harvest->status }}
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="3" class="px-3 py-4 text-center text-gray-400">
+                                                No harvest records found.
+                                            </td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    {{-- MILESTONE TIMELINE --}}
+                    <div>
+                        <h6 class="font-semibold text-[#356744] mb-3">
+                            Milestone Timeline
+                        </h6>
+
+                        @php
+                            $cycle = $selectedCycleDetails;
+                            $tz = 'Asia/Manila';
+
+                            $start = \Carbon\Carbon::parse($cycle->planting_date, $tz)->startOfDay();
+
+                            $end = $cycle->actual_harvest_date
+                                ? \Carbon\Carbon::parse($cycle->actual_harvest_date, $tz)->endOfDay()
+                                : \Carbon\Carbon::parse($cycle->expected_harvest_date, $tz)->endOfDay();
+
+                            $months = [];
+                            $monthCursor = $start->copy()->startOfMonth();
+
+                            while ($monthCursor <= $end) {
+                                $months[] = $monthCursor->copy();
+                                $monthCursor->addMonth();
+                            }
+
+                            $totalDays = max(1, $start->diffInDays($end));
+                            $milestones = $cycle->milestones->sortBy('scheduled_date')->values();
+
+                            $milestoneCount = max(1, $milestones->count());
+                            $laneHeight = 28;
+                            $timelineHeight = max(180, ($milestoneCount * $laneHeight) + 90);
+                        @endphp
+
+                        <div class="overflow-x-auto overflow-y-visible bg-white rounded-xl border border-gray-300 p-4 relative">
+                            <div class="relative overflow-visible">
+                                <table class="w-max text-xs border-collapse table-fixed overflow-visible">
+
+                                    <thead>
+                                        <tr class="bg-gray-100 text-gray-600">
+                                            <th class="text-left px-3 py-2 w-40">
+                                                Cycle
+                                            </th>
+
+                                            @foreach($months as $month)
+                                                <th class="text-center px-2 py-2 w-28 min-w-[110px]">
+                                                    {{ $month->format('M Y') }}
+                                                </th>
+                                            @endforeach
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        <tr class="border-t hover:bg-gray-50">
+
+                                            {{-- CYCLE INFO --}}
+                                            <td class="px-3 py-4 font-semibold w-40 align-top bg-white sticky left-0 z-50 border-r">
+                                                {{ $cycle->cycle_code }}
+
+                                                <div class="text-[10px] text-gray-500">
+                                                    {{ $cycle->crop_variety }}
+                                                </div>
+
+                                                <div class="text-[10px] text-gray-400 mt-1">
+                                                    {{ $start->format('M d, Y') }} - {{ $end->format('M d, Y') }}
+                                                </div>
+                                            </td>
+
+                                            {{-- TIMELINE --}}
+                                            <td colspan="{{ count($months) }}" class="p-0 overflow-visible">
+
+                                                <div
+                                                    class="relative overflow-visible"
+                                                    style="
+                                                        width: {{ max(1, count($months)) * 144 }}px;
+                                                        height: {{ $timelineHeight }}px;
+                                                    "
+                                                >
+
+                                                    {{-- MONTH GRID --}}
+                                                    <div class="absolute inset-0 grid z-10"
+                                                        style="grid-template-columns: repeat({{ count($months) }}, minmax(144px, 1fr));">
+                                                        @foreach($months as $month)
+                                                            <div class="border-l border-gray-200"></div>
+                                                        @endforeach
+                                                    </div>
+
+                                                    {{-- CYCLE RANGE BAR --}}
+                                                    <div
+                                                        class="absolute top-1/2 h-full -translate-y-1/2 bg-gray-300"
+                                                        style="
+                                                            left: 0%;
+                                                            width: 100%;
+                                                        "
+                                                    ></div>
+
+                                                    {{-- MILESTONES --}}
+                                                    @foreach($milestones as $index => $milestone)
+                                                        @php
+                                                            $milestoneScheduled = \Carbon\Carbon::parse($milestone->scheduled_date, $tz)->startOfDay();
+
+                                                            $milestoneCompleted = $milestone->completed_date
+                                                                ? \Carbon\Carbon::parse($milestone->completed_date, $tz)->endOfDay()
+                                                                : null;
+
+                                                            $offsetDays = max(0, $start->diffInDays($milestoneScheduled));
+                                                            $position = ($offsetDays / $totalDays) * 100;
+                                                            $position = max(0, min(100, $position));
+
+                                                            if ($milestoneCompleted && $milestone->completed) {
+                                                                $milestoneDurationDays = max(1, $milestoneScheduled->diffInDays($milestoneCompleted));
+                                                                $milestoneWidth = ($milestoneDurationDays / $totalDays) * 100;
+                                                            } else {
+                                                                $milestoneWidth = null;
+                                                            }
+
+                                                            $top = 45 + ($index * $laneHeight);
+                                                            $milestoneDays = $milestoneCompleted
+                                                                ? $milestoneScheduled->diffInDays($milestoneCompleted)
+                                                                : 0;
+                                                        @endphp
+
+                                                        <div
+                                                            class="absolute group z-20 hover:z-50"
+                                                            style="
+                                                                left: {{ $position }}%;
+                                                                @if($milestoneWidth) width: {{ $milestoneWidth }}%; @endif
+                                                                top: {{ $top }}px;
+                                                                transform: @if($milestoneWidth) translateY(-50%) @else translate(-50%, -50%) @endif;
+                                                            "
+                                                        >
+                                                            <div class="relative flex items-center w-full">
+
+                                                                @if($milestone->completed)
+                                                                    <div class="h-4 rounded-full {{ $milestone->color }} cursor-pointer shadow-sm @if($milestoneWidth) w-full @else w-12 @endif"></div>
+
+                                                                    <div class="absolute inset-0 flex items-center justify-center cursor-pointer pointer-events-none">
+                                                                        <span class="text-[9px] font-semibold text-white px-1 truncate">
+                                                                            {{ ucfirst(str_replace('_', ' ', $milestone->type)) }} ({{ $milestoneDays }}d)
+                                                                        </span>
+                                                                    </div>
+                                                                @else
+                                                                    <div class="w-4 h-4 rounded-full border-2 border-gray-400 bg-white shadow-sm cursor-pointer"></div>
+                                                                @endif
+
+                                                                {{-- TOOLTIP --}}
+                                                                <div class="absolute left-1/2 top-7 -translate-x-1/2 hidden group-hover:block bg-gray-900 text-white text-xs rounded-lg shadow-xl px-3 py-2 min-w-[220px] whitespace-normal z-50">
+                                                                    <div class="font-semibold text-sm border-b border-gray-700 pb-1 mb-2">
+                                                                        {{ $milestone->title }}
+                                                                    </div>
+
+                                                                    <div class="space-y-1">
+                                                                        <div>
+                                                                            <span class="text-gray-400">Type:</span>
+                                                                            {{ ucfirst(str_replace('_', ' ', $milestone->type)) }}
+                                                                        </div>
+
+                                                                        <div>
+                                                                            <span class="text-gray-400">Scheduled:</span>
+                                                                            {{ $milestoneScheduled->format('M d, Y') }}
+                                                                        </div>
+
+                                                                        <div>
+                                                                            <span class="text-gray-400">Status:</span>
+                                                                            @if($milestone->completed)
+                                                                                <span class="text-green-400">Completed</span>
+                                                                            @else
+                                                                                <span class="text-yellow-400">Ongoing</span>
+                                                                            @endif
+                                                                        </div>
+
+                                                                        @if($milestone->completed_date)
+                                                                            <div>
+                                                                                <span class="text-gray-400">Completed:</span>
+                                                                                {{ \Carbon\Carbon::parse($milestone->completed_date)->format('M d, Y') }}
+                                                                            </div>
+
+                                                                            <div>
+                                                                                <span class="text-gray-400">Duration:</span>
+                                                                                {{ $milestoneDays }} days
+                                                                            </div>
+                                                                        @endif
+                                                                    </div>
+
+                                                                    <div class="absolute bottom-full left-1/2 -translate-x-1/2">
+                                                                        <div class="w-0 h-0
+                                                                            border-l-[6px] border-l-transparent
+                                                                            border-r-[6px] border-r-transparent
+                                                                            border-b-[6px] border-b-gray-900">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                            </div>
+                                                        </div>
+                                                    @endforeach
+
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- SENSOR CHART --}}
+                    <div>
+                        <h6 class="font-semibold text-[#356744] mb-2">
+                            Sensor Reading Chart
+                        </h6>
+
+                        @if($selectedCycleDetails && $selectedCycleDetails->dailySensorData->isNotEmpty())
+
+                            <div class="overflow-x-auto bg-white rounded-xl border">
+
+                                <div
+                                    id="sensorChartWrapper"
+                                    class="p-4 h-[350px]"
+                                    style="min-width: 3000px;"
+                                >
+                                    <canvas id="cycleSensorChart"></canvas>
+                                </div>
+
+                            </div>
+
+                        @else
+
+                            <div class="border border-dashed border-gray-300 rounded-xl h-[350px] flex flex-col items-center justify-center bg-gray-50">
+
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                    class="w-14 h-14 text-gray-300 mb-3"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor">
+                                    <path stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="1.5"
+                                        d="M3 3v18h18M7 14l3-3 3 2 4-5" />
+                                </svg>
+
+                                <h3 class="text-lg font-semibold text-gray-600">
+                                    No Sensor Readings
+                                </h3>
+
+                                <p class="text-sm text-gray-500 mt-1 text-center max-w-sm">
+                                    There are no environmental sensor readings recorded for this cycle yet.
+                                    Once readings are collected, a trend chart will appear here.
+                                </p>
+
+                            </div>
+
+                        @endif
+                    </div>
+
+                </div>
+            @else
+                <p class="text-sm text-gray-400">No cycle selected.</p>
+            @endif
+
+            <x-slot name="footer">
+                <div class="flex justify-end">
+                    <x-button flat label="Close" x-on:click="close" />
+                </div>
+            </x-slot>
+
+        </x-card>
+    </x-modal>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        let cycleSensorChart = null;
+
+        function renderCycleSensorChart(labels, data) {
+            const canvas = document.getElementById('cycleSensorChart');
+
+            if (!canvas) return;
+
+            if (cycleSensorChart) {
+                cycleSensorChart.destroy();
+            }
+
+            cycleSensorChart = new Chart(canvas, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Temperature',
+                            data: data.temperature,
+                            borderColor: '#FF5722',
+                            tension: 0,
+                            pointRadius: 2,
+                        },
+                        {
+                            label: 'Humidity',
+                            data: data.humidity,
+                            borderColor: '#00BCD4',
+                            tension: 0,
+                            pointRadius: 2,
+                        },
+                        {
+                            label: 'Soil Moisture',
+                            data: data.soil_moisture,
+                            borderColor: '#4CAF50',
+                            tension: 0,
+                            pointRadius: 2,
+                        },
+                        {
+                            label: 'EC Level',
+                            data: data.ec_level,
+                            borderColor: '#9C27B0',
+                            tension: 0,
+                            pointRadius: 2,
+                        },
+                        {
+                            label: 'pH Level',
+                            data: data.ph_level,
+                            borderColor: '#795548',
+                            tension: 0,
+                            pointRadius: 2,
+                        },
+                        {
+                            label: 'Nitrogen',
+                            data: data.nitrogen,
+                            borderColor: '#22C55E',
+                            tension: 0,
+                            pointRadius: 2,
+                        },
+                        {
+                            label: 'Phosphorus',
+                            data: data.phosphorus,
+                            borderColor: '#F59E0B',
+                            tension: 0,
+                            pointRadius: 2,
+                        },
+                        {
+                            label: 'Potassium',
+                            data: data.potassium,
+                            borderColor: '#EF4444',
+                            tension: 0,
+                            pointRadius: 2,
+                        },
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    const label = context.dataset.label;
+                                    const value = Number(context.parsed.y).toFixed(2);
+
+                                    if (label === 'Temperature') return `${label}: ${value}°C`;
+                                    if (label === 'Humidity' || label === 'Soil Moisture') return `${label}: ${value}%`;
+                                    if (['Nitrogen', 'Phosphorus', 'Potassium'].includes(label)) return `${label}: ${value} ppm`;
+
+                                    return `${label}: ${value}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { display: false },
+                            ticks: {
+                                autoSkip: false,
+                                maxRotation: 45,
+                                minRotation: 45,
+                                font: {
+                                    size: 9
+                                }
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                        }
+                    }
+                }
+            });
+        }
+
+        document.addEventListener('livewire:init', () => {
+            Livewire.on('cycleDetailsLoaded', (payload) => {
+                setTimeout(() => {
+                    renderCycleSensorChart(payload[0].labels, payload[0].data);
+                }, 300);
+            });
+        });
+    </script>
 </div>

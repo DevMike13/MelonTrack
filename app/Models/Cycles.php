@@ -34,13 +34,24 @@ class Cycles extends Model
         'actual_harvest_date' => 'date',
     ];
 
+    public function harvests()
+    {
+        return $this->hasMany(Harvests::class, 'cycle_id');
+    }
+
     public function brixReadings()
     {
-        return $this->hasMany(BrixReading::class);
+        return $this->hasMany(BrixReading::class, 'cycle_id');
     }
 
     public function milestones()
     {
         return $this->hasMany(CycleMilestone::class, 'cycle_id')->orderBy('scheduled_date');
+    }
+
+    public function dailySensorData()
+    {
+        return $this->hasMany(DailySensorData::class, 'cycle_id')
+            ->latest('reading_date');
     }
 }

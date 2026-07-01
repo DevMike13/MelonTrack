@@ -396,7 +396,9 @@ class ParametersMonitoring extends Component
         }
 
         elseif ($this->activeFilter === '7D') {
-            // Last 7 days, average every 12 hours
+            $start = now('Asia/Manila')->subDays(7)->startOfDay();
+            $end = now('Asia/Manila')->endOfDay();
+
             $data = $query
                 ->selectRaw("
                     DATE(reading_date) as date_only,
@@ -413,16 +415,23 @@ class ParametersMonitoring extends Component
                     ROUND(AVG(phosphorus), 2) as phosphorus,
                     ROUND(AVG(potassium), 2) as potassium
                 ")
-                ->where('reading_date', '>=', now('Asia/Manila')->subDays(7))
+                ->whereBetween('reading_date', [
+                    $start->format('Y-m-d H:i:s'),
+                    $end->format('Y-m-d H:i:s'),
+                ])
                 ->groupBy('date_only', 'half_day')
                 ->orderBy('date_only')
                 ->orderByRaw("FIELD(half_day, 'AM', 'PM')")
                 ->get();
 
-            $this->chartDateRange = now('Asia/Manila')->subDays(7)->format('M d, Y') . ' - ' . now('Asia/Manila')->format('M d, Y');
+            $this->chartDateRange = $start->format('M d, Y') . ' - ' . $end->format('M d, Y');
         }
 
         elseif ($this->activeFilter === '30D') {
+
+            $start = now('Asia/Manila')->subDays(30)->startOfDay();
+            $end = now('Asia/Manila')->endOfDay();
+
             // Last 30 days, average per day
             $data = $query
                 ->selectRaw("
@@ -436,12 +445,16 @@ class ParametersMonitoring extends Component
                     ROUND(AVG(phosphorus), 2) as phosphorus,
                     ROUND(AVG(potassium), 2) as potassium
                 ")
-                ->where('reading_date', '>=', now('Asia/Manila')->subDays(30))
+                ->whereBetween('reading_date', [
+                    $start->format('Y-m-d H:i:s'),
+                    $end->format('Y-m-d H:i:s'),
+                ])
                 ->groupBy('grouped_date')
                 ->orderBy('grouped_date')
                 ->get();
 
-            $this->chartDateRange = now('Asia/Manila')->subDays(30)->format('M d, Y') . ' - ' . now('Asia/Manila')->format('M d, Y');
+            $this->chartDateRange =
+                $start->format('M d, Y') . ' - ' . $end->format('M d, Y');
         }
 
         else {

@@ -8,20 +8,36 @@ use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
-| API Routes
+| Sensor APIs
 |--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "api" middleware group. Make something great!
-|
 */
-Route::post('/readings', [SensorController::class, 'storeSensorData']);
-Route::post('/store-daily-readings', [SensorController::class, 'storeDailySensorData']);
+
+// Route::post('/readings', [SensorController::class, 'storeSensorData']);
+Route::post('/daily-sensor-data', [SensorController::class, 'storeDailySensorData']);
+
+/*
+|--------------------------------------------------------------------------
+| Notification APIs
+|--------------------------------------------------------------------------
+*/
+
 Route::post('/notifications', [NotificationController::class, 'store']);
+
+/*
+|--------------------------------------------------------------------------
+| Cycle APIs
+|--------------------------------------------------------------------------
+*/
+
 Route::get('/cycles', [CycleController::class, 'index']);
-Route::put('/cycles/{id}/update-phase', [CycleController::class, 'updatePhase']);
 Route::get('/cycles/latest', [CycleController::class, 'latest']);
+Route::put('/cycles/{id}/update-phase', [CycleController::class, 'updatePhase']);
+
+/*
+|--------------------------------------------------------------------------
+| Authenticated User
+|--------------------------------------------------------------------------
+*/
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();

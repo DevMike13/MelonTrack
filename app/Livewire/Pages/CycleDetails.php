@@ -12,6 +12,7 @@ use App\Models\YieldTracker;
 use Carbon\Carbon;
 use Filament\Notifications\Notification;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 use Kreait\Firebase\Contract\Database;
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -77,6 +78,12 @@ class CycleDetails extends Component
     public $editMilestoneDate;
     public $editMilestoneCompleted = false;
     public $editMilestoneCompletedDate;
+
+
+    public $harvestCount;
+    public $editHarvestCount;
+
+    public $selectedCycleDetails;
 
     public function mount()
     {
@@ -481,40 +488,59 @@ class CycleDetails extends Component
         // Fallback to actual harvest date if expected harvest date isn't populated yet
         $endDate = Carbon::parse($cycle->actual_harvest_date ?? $cycle->expected_harvest_date)->endOfDay();
 
-        $this->validate([
-            'newMilestoneTitle'         => 'required|string',
-            'newMilestoneType'          => 'required',
-            'newMilestoneScheduledDate' => [
-                'required',
-                'date',
-                function ($attribute, $value, $fail) use ($startDate, $endDate) {
-                    $date = Carbon::parse($value);
-                    if ($startDate && $date->lt($startDate)) {
-                        $fail("The scheduled date cannot be before the cycle's planting date (" . $startDate->format('Y-m-d') . ").");
+        try {
+            $this->validate([
+                'newMilestoneTitle'         => 'required|string',
+                'newMilestoneType'          => 'required',
+                'newMilestoneScheduledDate' => [
+                    'required',
+                    'date',
+                    function ($attribute, $value, $fail) use ($startDate, $endDate) {
+                        $date = Carbon::parse($value);
+                        if ($startDate && $date->lt($startDate)) {
+                            $fail("The scheduled date cannot be before the cycle's planting date (" . $startDate->format('Y-m-d') . ").");
+                        }
+                        if ($date->gt($endDate)) {
+                            $fail("The scheduled date cannot be after the cycle's harvest date (" . $endDate->format('Y-m-d') . ").");
+                        }
                     }
-                    if ($date->gt($endDate)) {
-                        $fail("The scheduled date cannot be after the cycle's harvest date (" . $endDate->format('Y-m-d') . ").");
+                ],
+                'newMilestoneCompletedDate' => [
+                    Rule::requiredIf($this->newMilestoneCompleted), 
+                    'nullable', 
+                    'date',
+                    function ($attribute, $value, $fail) use ($startDate, $endDate) {
+                        if (!$value) return;
+                        $date = Carbon::parse($value);
+                        if ($startDate && $date->lt($startDate)) {
+                            $fail("The completion date cannot be before the cycle's planting date (" . $startDate->format('Y-m-d') . ").");
+                        }
+                        if ($date->gt($endDate)) {
+                            $fail("The completion date cannot be after the cycle's harvest date (" . $endDate->format('Y-m-d') . ").");
+                        }
                     }
-                }
-            ],
-            'newMilestoneCompletedDate' => [
-                Rule::requiredIf($this->newMilestoneCompleted), 
-                'nullable', 
-                'date',
-                function ($attribute, $value, $fail) use ($startDate, $endDate) {
-                    if (!$value) return;
-                    $date = Carbon::parse($value);
-                    if ($startDate && $date->lt($startDate)) {
-                        $fail("The completion date cannot be before the cycle's planting date (" . $startDate->format('Y-m-d') . ").");
-                    }
-                    if ($date->gt($endDate)) {
-                        $fail("The completion date cannot be after the cycle's harvest date (" . $endDate->format('Y-m-d') . ").");
-                    }
-                }
-            ],
-        ]);
+                ],
+                'harvestCount' => [
+                    Rule::requiredIf($this->newMilestoneType === 'harvest' && $this->newMilestoneCompleted),
+                    'nullable',
+                    'integer',
+                    'min:1',
+                ],
+            ], [
+                'newMilestoneCompletedDate.required' => 'The completion date is required when marked as completed.',
+                'harvestCount.required' => 'The total harvested melons is required for harvest milestones.',
+            ]);
+        } catch (ValidationException $e) {
+            Notification::make()
+                ->title('Validation Error')
+                ->body(collect($e->validator->errors()->all())->first())
+                ->danger()
+                ->send();
 
-        CycleMilestone::create([
+            throw $e;
+        }
+
+        $milestone = CycleMilestone::create([
             'cycle_id'       => $this->selectedCycleId,
             'title'          => $this->newMilestoneTitle,
             'type'           => $this->newMilestoneType,
@@ -522,6 +548,26 @@ class CycleDetails extends Component
             'completed'      => $this->newMilestoneCompleted,
             'completed_date' => $this->newMilestoneCompleted ? $this->newMilestoneCompletedDate : null,
         ]);
+
+        if ($this->newMilestoneType === 'harvest' && $this->newMilestoneCompleted) {
+            Harvests::updateOrCreate(
+                [
+                    'cycle_id' => $milestone->cycle_id,
+                    'date_harvested' => $this->newMilestoneCompletedDate,
+                ],
+                [
+                    'harvest_count' => $this->harvestCount,
+                    'status' => 'completed',
+                ]
+            );
+
+            $cycle->update([
+                'status' => 'completed',
+                'actual_harvest_date' => $this->newMilestoneCompletedDate,
+                'overall_progress' => 100,
+                'fruit_progress' => 100,
+            ]);
+        }
 
         $this->resetMilestoneFields();
 
@@ -556,41 +602,58 @@ class CycleDetails extends Component
         
         $startDate = $cycle->planting_date ? Carbon::parse($cycle->planting_date)->startOfDay() : null;
         $endDate = Carbon::parse($cycle->actual_harvest_date ?? $cycle->expected_harvest_date)->endOfDay();
+        try {
+            $this->validate([
+                'editMilestoneTitle' => 'required|string',
+                'editMilestoneType'  => 'required',
+                'editMilestoneDate'  => [
+                    'required',
+                    'date',
+                    function ($attribute, $value, $fail) use ($startDate, $endDate) {
+                        $date = Carbon::parse($value);
+                        if ($startDate && $date->lt($startDate)) {
+                            $fail("The scheduled date cannot be before the cycle's planting date (" . $startDate->format('Y-m-d') . ").");
+                        }
+                        if ($date->gt($endDate)) {
+                            $fail("The scheduled date cannot be after the cycle's harvest date (" . $endDate->format('Y-m-d') . ").");
+                        }
+                    }
+                ],
+                'editMilestoneCompletedDate' => [
+                    'required_if:editMilestoneCompleted,true',
+                    'nullable',
+                    'date',
+                    function ($attribute, $value, $fail) use ($startDate, $endDate) {
+                        if (!$value) return;
+                        $date = Carbon::parse($value);
+                        if ($startDate && $date->lt($startDate)) {
+                            $fail("The completion date cannot be before the cycle's planting date (" . $startDate->format('Y-m-d') . ").");
+                        }
+                        if ($date->gt($endDate)) {
+                            $fail("The completion date cannot be after the cycle's harvest date (" . $endDate->format('Y-m-d') . ").");
+                        }
+                    }
+                ],
+                'editHarvestCount' => [
+                    Rule::requiredIf($this->editMilestoneType === 'harvest' && $this->editMilestoneCompleted),
+                    'nullable',
+                    'integer',
+                    'min:1',
+                ],
+            ], [
+                'editMilestoneCompletedDate.required_if' => 'The completion date is required when marked as completed.',
+                'editHarvestCount.required' => 'The total harvested melons is required for harvest milestones.',
+            ]);
+        } catch (ValidationException $e) {
 
-        $this->validate([
-            'editMilestoneTitle' => 'required|string',
-            'editMilestoneType'  => 'required',
-            'editMilestoneDate'  => [
-                'required',
-                'date',
-                function ($attribute, $value, $fail) use ($startDate, $endDate) {
-                    $date = Carbon::parse($value);
-                    if ($startDate && $date->lt($startDate)) {
-                        $fail("The scheduled date cannot be before the cycle's planting date (" . $startDate->format('Y-m-d') . ").");
-                    }
-                    if ($date->gt($endDate)) {
-                        $fail("The scheduled date cannot be after the cycle's harvest date (" . $endDate->format('Y-m-d') . ").");
-                    }
-                }
-            ],
-            'editMilestoneCompletedDate' => [
-                'required_if:editMilestoneCompleted,true',
-                'nullable',
-                'date',
-                function ($attribute, $value, $fail) use ($startDate, $endDate) {
-                    if (!$value) return;
-                    $date = Carbon::parse($value);
-                    if ($startDate && $date->lt($startDate)) {
-                        $fail("The completion date cannot be before the cycle's planting date (" . $startDate->format('Y-m-d') . ").");
-                    }
-                    if ($date->gt($endDate)) {
-                        $fail("The completion date cannot be after the cycle's harvest date (" . $endDate->format('Y-m-d') . ").");
-                    }
-                }
-            ],
-        ], [
-            'editMilestoneCompletedDate.required_if' => 'The completion date is required when marked as completed.',
-        ]);
+            Notification::make()
+                ->title('Validation Error')
+                ->body(collect($e->validator->errors()->all())->first())
+                ->danger()
+                ->send();
+
+            throw $e;
+        }
 
         $milestone->update([
             'title'          => $this->editMilestoneTitle,
@@ -600,6 +663,26 @@ class CycleDetails extends Component
             'completed_date' => $this->editMilestoneCompleted ? $this->editMilestoneCompletedDate : null,
         ]);
 
+        if ($this->editMilestoneType === 'harvest' && $this->editMilestoneCompleted) {
+            Harvests::updateOrCreate(
+                [
+                    'cycle_id' => $milestone->cycle_id,
+                    'date_harvested' => $this->editMilestoneCompletedDate,
+                ],
+                [
+                    'harvest_count' => $this->editHarvestCount,
+                    'status' => 'completed',
+                ]
+            );
+
+            $cycle->update([
+                'status' => 'completed',
+                'actual_harvest_date' => $this->editMilestoneCompletedDate,
+                'overall_progress' => 100,
+                'fruit_progress' => 100,
+            ]);
+        }
+
         $this->resetMilestoneFields();
 
         Notification::make()
@@ -607,6 +690,51 @@ class CycleDetails extends Component
             ->body('Milestone updated successfully.')
             ->success()
             ->send();
+    }
+
+    public function viewCycleDetails($cycleId)
+    {
+        $this->selectedCycleDetails = Cycles::with([
+            'milestones',
+            'brixReadings',
+            'harvests',
+            'dailySensorData',
+        ])->findOrFail($cycleId);
+
+        $readings = $this->selectedCycleDetails->dailySensorData
+            ->groupBy(fn ($reading) =>
+                \Carbon\Carbon::parse($reading->reading_date)->format('Y-m-d')
+            )
+            ->map(function ($items, $date) {
+                return [
+                    'date' => $date,
+                    'label' => \Carbon\Carbon::parse($date)->format('M d'),
+                    'temperature' => round($items->avg('temperature'), 2),
+                    'humidity' => round($items->avg('humidity'), 2),
+                    'soil_moisture' => round($items->avg('soil_moisture'), 2),
+                    'ec_level' => round($items->avg('ec_level'), 2),
+                    'ph_level' => round($items->avg('ph_level'), 2),
+                    'nitrogen' => round($items->avg('nitrogen'), 2),
+                    'phosphorus' => round($items->avg('phosphorus'), 2),
+                    'potassium' => round($items->avg('potassium'), 2),
+                ];
+            })
+            ->sortBy('date')
+            ->values();
+
+        $this->dispatch('cycleDetailsLoaded', [
+            'labels' => $readings->pluck('label')->values(),
+            'data' => [
+                'temperature' => $readings->pluck('temperature')->values(),
+                'humidity' => $readings->pluck('humidity')->values(),
+                'soil_moisture' => $readings->pluck('soil_moisture')->values(),
+                'ec_level' => $readings->pluck('ec_level')->values(),
+                'ph_level' => $readings->pluck('ph_level')->values(),
+                'nitrogen' => $readings->pluck('nitrogen')->values(),
+                'phosphorus' => $readings->pluck('phosphorus')->values(),
+                'potassium' => $readings->pluck('potassium')->values(),
+            ],
+        ]);
     }
 
     public function render()
