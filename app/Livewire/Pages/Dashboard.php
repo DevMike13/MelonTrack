@@ -47,6 +47,26 @@ class Dashboard extends Component
     public $potassiumMinReading;
     public $potassiumMaxReading;
 
+    public $Nitrogen2;
+    public $MinNitrogen2;
+    public $MaxNitrogen2;
+
+    public $Phosphorus2;
+    public $MinPhosphorus2;
+    public $MaxPhosphorus2;
+
+    public $Potassium2;
+    public $MinPotassium2;
+    public $MaxPotassium2;
+
+    public $SoilMoisture2;
+    public $MinSoilMoisture2;
+    public $MaxSoilMoisture2;
+
+    public $WaterLevel;
+    public $MinWaterLevel;
+    public $MaxWaterLevel;
+
     public $chartLabels = [];
     public $chartData = [];
 
@@ -93,6 +113,29 @@ class Dashboard extends Component
         'updatePotassium' => 'handlePotassiumUpdate',
         'updateMinPotassium' => 'handleMinPotassiumUpdate',
         'updateMaxPotassium' => 'handleMaxPotassiumUpdate',
+
+        // NPK Sensor 2
+        'updateNitrogen2' => 'handleNitrogen2Update',
+        'updateMinNitrogen2' => 'handleMinNitrogen2Update',
+        'updateMaxNitrogen2' => 'handleMaxNitrogen2Update',
+
+        'updatePhosphorus2' => 'handlePhosphorus2Update',
+        'updateMinPhosphorus2' => 'handleMinPhosphorus2Update',
+        'updateMaxPhosphorus2' => 'handleMaxPhosphorus2Update',
+
+        'updatePotassium2' => 'handlePotassium2Update',
+        'updateMinPotassium2' => 'handleMinPotassium2Update',
+        'updateMaxPotassium2' => 'handleMaxPotassium2Update',
+
+        // Soil Moisture Sensor 2
+        'updateSoilMoisture2' => 'handleSoilMoisture2Update',
+        'updateMinSoilMoisture2' => 'handleMinSoilMoisture2Update',
+        'updateMaxSoilMoisture2' => 'handleMaxSoilMoisture2Update',
+
+        // Water Level
+        'updateWaterLevel' => 'handleWaterLevelUpdate',
+        'updateMinWaterLevel' => 'handleMinWaterLevelUpdate',
+        'updateMaxWaterLevel' => 'handleMaxWaterLevelUpdate',
     ];
 
 
@@ -207,6 +250,30 @@ class Dashboard extends Component
             $this->potassiumMaxReading = $snapshotMaxPotassium->getValue();
 
 
+            // Soil Moisture 2
+            $this->SoilMoisture2 = $this->database->getReference('SoilMoisture2/SensorValue')->getSnapshot()->getValue();
+            $this->MinSoilMoisture2 = $this->database->getReference('SoilMoisture2/Min')->getSnapshot()->getValue();
+            $this->MaxSoilMoisture2 = $this->database->getReference('SoilMoisture2/Max')->getSnapshot()->getValue();
+
+            // Water Level
+            $this->WaterLevel = $this->database->getReference('WaterLevel/SensorValue')->getSnapshot()->getValue();
+            $this->MinWaterLevel = $this->database->getReference('WaterLevel/Min')->getSnapshot()->getValue();
+            $this->MaxWaterLevel = $this->database->getReference('WaterLevel/Max')->getSnapshot()->getValue();
+
+            // NPK Sensor 2
+            $this->Nitrogen2 = $this->database->getReference('Nitrogen2/SensorValue')->getSnapshot()->getValue();
+            $this->MinNitrogen2 = $this->database->getReference('Nitrogen2/Min')->getSnapshot()->getValue();
+            $this->MaxNitrogen2 = $this->database->getReference('Nitrogen2/Max')->getSnapshot()->getValue();
+
+            $this->Phosphorus2 = $this->database->getReference('Phosphorus2/SensorValue')->getSnapshot()->getValue();
+            $this->MinPhosphorus2 = $this->database->getReference('Phosphorus2/Min')->getSnapshot()->getValue();
+            $this->MaxPhosphorus2 = $this->database->getReference('Phosphorus2/Max')->getSnapshot()->getValue();
+
+            $this->Potassium2 = $this->database->getReference('Potassium2/SensorValue')->getSnapshot()->getValue();
+            $this->MinPotassium2 = $this->database->getReference('Potassium2/Min')->getSnapshot()->getValue();
+            $this->MaxPotassium2 = $this->database->getReference('Potassium2/Max')->getSnapshot()->getValue();
+
+
         } catch (\Exception $e) {
             $this->tempratureReading = 'Error: ' . $e->getMessage();
         }
@@ -316,6 +383,81 @@ class Dashboard extends Component
         $this->potassiumMaxReading = $maxPotassium;
     }
 
+    public function handleSoilMoisture2Update($soilMoisture2)
+    {
+        $this->SoilMoisture2 = $soilMoisture2;
+    }
+
+    public function handleMinSoilMoisture2Update($minSoilMoisture2)
+    {
+        $this->MinSoilMoisture2 = $minSoilMoisture2;
+    }
+
+    public function handleMaxSoilMoisture2Update($maxSoilMoisture2)
+    {
+        $this->MaxSoilMoisture2 = $maxSoilMoisture2;
+    }
+
+    public function handleWaterLevelUpdate($waterLevel)
+    {
+        $this->WaterLevel = $waterLevel;
+    }
+
+    public function handleMinWaterLevelUpdate($minWaterLevel)
+    {
+        $this->MinWaterLevel = $minWaterLevel;
+    }
+
+    public function handleMaxWaterLevelUpdate($maxWaterLevel)
+    {
+        $this->MaxWaterLevel = $maxWaterLevel;
+    }
+
+    public function handleNitrogen2Update($nitrogen2)
+    {
+        $this->Nitrogen2 = $nitrogen2;
+    }
+
+    public function handleMinNitrogen2Update($minNitrogen2)
+    {
+        $this->MinNitrogen2 = $minNitrogen2;
+    }
+
+    public function handleMaxNitrogen2Update($maxNitrogen2)
+    {
+        $this->MaxNitrogen2 = $maxNitrogen2;
+    }
+
+    public function handlePhosphorus2Update($phosphorus2)
+    {
+        $this->Phosphorus2 = $phosphorus2;
+    }
+
+    public function handleMinPhosphorus2Update($minPhosphorus2)
+    {
+        $this->MinPhosphorus2 = $minPhosphorus2;
+    }
+
+    public function handleMaxPhosphorus2Update($maxPhosphorus2)
+    {
+        $this->MaxPhosphorus2 = $maxPhosphorus2;
+    }
+
+    public function handlePotassium2Update($potassium2)
+    {
+        $this->Potassium2 = $potassium2;
+    }
+
+    public function handleMinPotassium2Update($minPotassium2)
+    {
+        $this->MinPotassium2 = $minPotassium2;
+    }
+
+    public function handleMaxPotassium2Update($maxPotassium2)
+    {
+        $this->MaxPotassium2 = $maxPotassium2;
+    }
+
     public function viewCycleDetails($cycleId)
     {
         $this->selectedCycleDetails = Cycles::with([
@@ -336,11 +478,17 @@ class Dashboard extends Component
                     'temperature' => round($items->avg('temperature'), 2),
                     'humidity' => round($items->avg('humidity'), 2),
                     'soil_moisture' => round($items->avg('soil_moisture'), 2),
+                    'soil_moisture2' => round($items->avg('soil_moisture2'), 2),
+                    'water_level' => round($items->avg('water_level'), 2),
                     'ec_level' => round($items->avg('ec_level'), 2),
                     'ph_level' => round($items->avg('ph_level'), 2),
                     'nitrogen' => round($items->avg('nitrogen'), 2),
                     'phosphorus' => round($items->avg('phosphorus'), 2),
                     'potassium' => round($items->avg('potassium'), 2),
+
+                    'nitrogen2' => round($items->avg('nitrogen2'), 2),
+                    'phosphorus2' => round($items->avg('phosphorus2'), 2),
+                    'potassium2' => round($items->avg('potassium2'), 2),
                 ];
             })
             ->sortBy('date')
@@ -352,11 +500,16 @@ class Dashboard extends Component
                 'temperature' => $readings->pluck('temperature')->values(),
                 'humidity' => $readings->pluck('humidity')->values(),
                 'soil_moisture' => $readings->pluck('soil_moisture')->values(),
+                'soil_moisture2' => $readings->pluck('soil_moisture2')->values(),
+                'water_level' => $readings->pluck('water_level')->values(),
                 'ec_level' => $readings->pluck('ec_level')->values(),
                 'ph_level' => $readings->pluck('ph_level')->values(),
                 'nitrogen' => $readings->pluck('nitrogen')->values(),
                 'phosphorus' => $readings->pluck('phosphorus')->values(),
                 'potassium' => $readings->pluck('potassium')->values(),
+                'nitrogen2' => $readings->pluck('nitrogen2')->values(),
+                'phosphorus2' => $readings->pluck('phosphorus2')->values(),
+                'potassium2' => $readings->pluck('potassium2')->values(),
             ],
         ]);
     }
@@ -463,6 +616,26 @@ class Dashboard extends Component
             'Potassium' => $this->potassiumReading,
             'MinPotassium' => $this->potassiumMinReading,
             'MaxPotassium' => $this->potassiumMaxReading,
+
+            'SoilMoisture2' => $this->SoilMoisture2,
+            'MinSoilMoisture2' => $this->MinSoilMoisture2,
+            'MaxSoilMoisture2' => $this->MaxSoilMoisture2,
+
+            'WaterLevel' => $this->WaterLevel,
+            'MinWaterLevel' => $this->MinWaterLevel,
+            'MaxWaterLevel' => $this->MaxWaterLevel,
+
+            'Nitrogen2' => $this->Nitrogen2,
+            'MinNitrogen2' => $this->MinNitrogen2,
+            'MaxNitrogen2' => $this->MaxNitrogen2,
+
+            'Phosphorus2' => $this->Phosphorus2,
+            'MinPhosphorus2' => $this->MinPhosphorus2,
+            'MaxPhosphorus2' => $this->MaxPhosphorus2,
+
+            'Potassium2' => $this->Potassium2,
+            'MinPotassium2' => $this->MinPotassium2,
+            'MaxPotassium2' => $this->MaxPotassium2,
 
             'recentNotifications' => $recentNotifications,
             'totalHarvestedMelons' => $totalHarvestedMelons,

@@ -824,33 +824,48 @@
                 temperature: '#FF5722',
                 humidity: '#00BCD4',
                 soil_moisture: '#4CAF50',
+                soil_moisture2: '#10B981',
+                water_level: '#3B82F6',
                 ec_level: '#9C27B0',
                 ph_level: '#795548',
                 nitrogen: '#22C55E',
                 phosphorus: '#F59E0B',
                 potassium: '#EF4444',
+                nitrogen2: '#84CC16',
+                phosphorus2: '#F97316',
+                potassium2: '#DC2626',
             };
 
             const labels = {
                 temperature: 'Temperature',
                 humidity: 'Humidity',
                 soil_moisture: 'Soil Moisture',
+                soil_moisture2: 'Soil Moisture 2',
+                water_level: 'Water Level',
                 ec_level: 'EC Level',
                 ph_level: 'pH Level',
                 nitrogen: 'Nitrogen',
                 phosphorus: 'Phosphorus',
                 potassium: 'Potassium',
+                nitrogen2: 'Nitrogen 2',
+                phosphorus2: 'Phosphorus 2',
+                potassium2: 'Potassium 2',
             };
 
             const units = {
                 temperature: '°C',
                 humidity: '%',
                 soil_moisture: '%',
+                soil_moisture2: '%',
+                water_level: '%',
                 ec_level: '',
                 ph_level: '',
                 nitrogen: ' ppm',
                 phosphorus: ' ppm',
                 potassium: ' ppm',
+                nitrogen2: ' ppm',
+                phosphorus2: ' ppm',
+                potassium2: ' ppm',
             };
 
             if (mode === 'all') {
@@ -910,15 +925,15 @@
                                         return `${label}: ${value}°C`;
                                     }
 
-                                    if (label.includes('Humidity') || label.includes('Soil Moisture')) {
+                                    if (
+                                        label.includes('Humidity') ||
+                                        label.includes('Soil Moisture') ||
+                                        label.includes('Water Level')
+                                    ) {
                                         return `${label}: ${value}%`;
                                     }
 
-                                    if (label.includes('EC Level')) {
-                                        return `${label}: ${value}`;
-                                    }
-
-                                    if (label.includes('pH Level')) {
+                                    if (label.includes('EC Level') || label.includes('pH Level')) {
                                         return `${label}: ${value}`;
                                     }
 

@@ -3,6 +3,14 @@
 namespace App\Providers;
 
 use App\Http\Responses\LogoutResponse;
+use App\Models\BrixReading;
+use App\Models\CycleMilestone;
+use App\Models\Cycles;
+use App\Models\Harvests;
+use App\Observers\BrixReadingObserver;
+use App\Observers\CycleMilestoneObserver;
+use App\Observers\CycleObserver;
+use App\Observers\HarvestObserver;
 use Filament\Facades\Filament;
 use Filament\Support\Facades\FilamentView;
 use Filament\View\PanelsRenderHook;
@@ -26,6 +34,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Cycles::observe(CycleObserver::class);
+        CycleMilestone::observe(CycleMilestoneObserver::class);
+        BrixReading::observe(BrixReadingObserver::class);
+        Harvests::observe(HarvestObserver::class);
+        
         FilamentView::registerRenderHook(
             PanelsRenderHook::BODY_END,
             fn (): string => Blade::render('<livewire:filament.custom-notification />')

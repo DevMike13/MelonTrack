@@ -156,7 +156,7 @@
                     ],
 
                     [
-                        'label' => 'NPK Level',
+                        'label' => 'NPK Tank 1',
 
                         'value' => [
                             'N' => $Nitrogen !== null ? number_format($Nitrogen, 1) : '--',
@@ -178,6 +178,49 @@
 
                         'color' => '#22c55e',
                         'path' => 'M2 17 C5 10, 8 20, 11 12 S17 6, 22 14',
+                    ],
+
+                    [
+                        'label' => 'NPK Tank 2',
+
+                        'value' => [
+                            'N' => $Nitrogen2 !== null ? number_format($Nitrogen2, 1) : '--',
+                            'P' => $Phosphorus2 !== null ? number_format($Phosphorus2, 1) : '--',
+                            'K' => $Potassium2 !== null ? number_format($Potassium2, 1) : '--',
+                        ],
+
+                        'min' => [
+                            'N' => $MinNitrogen2 !== null ? number_format($MinNitrogen2, 1) : '--',
+                            'P' => $MinPhosphorus2 !== null ? number_format($MinPhosphorus2, 1) : '--',
+                            'K' => $MinPotassium2 !== null ? number_format($MinPotassium2, 1) : '--',
+                        ],
+
+                        'max' => [
+                            'N' => $MaxNitrogen2 !== null ? number_format($MaxNitrogen2, 1) : '--',
+                            'P' => $MaxPhosphorus2 !== null ? number_format($MaxPhosphorus2, 1) : '--',
+                            'K' => $MaxPotassium2 !== null ? number_format($MaxPotassium2, 1) : '--',
+                        ],
+
+                        'color' => '#22c55e',
+                        'path' => 'M2 17 C5 10, 8 20, 11 12 S17 6, 22 14',
+                    ],
+
+                    [
+                        'label' => 'Soil Moisture 2',
+                        'value' => $SoilMoisture2 !== null ? number_format($SoilMoisture2, 1).'%' : '--',
+                        'min' => $MinSoilMoisture2 !== null ? number_format($MinSoilMoisture2,1).'%' : '--',
+                        'max' => $MaxSoilMoisture2 !== null ? number_format($MaxSoilMoisture2,1).'%' : '--',
+                        'color' => '#10b981',
+                        'path' => 'M2 16 C5 8,7 18,10 11 S16 5,22 13',
+                    ],
+
+                    [
+                        'label' => 'Water Level',
+                        'value' => $WaterLevel !== null ? number_format($WaterLevel,1).'%' : '--',
+                        'min' => $MinWaterLevel !== null ? number_format($MinWaterLevel,1).'%' : '--',
+                        'max' => $MaxWaterLevel !== null ? number_format($MaxWaterLevel,1).'%' : '--',
+                        'color' => '#3b82f6',
+                        'path' => 'M2 14 C5 6,8 20,12 11 S17 6,22 14',
                     ],
                 ];
             @endphp
@@ -353,9 +396,29 @@
                                 <tr class="bg-gray-100 text-gray-600">
                                     <th class="text-left px-3 py-2 w-40">Cycle</th>
 
-                                    @foreach(range(1, 12) as $month)
+                                    @php
+                                        $timelineStart = $cycleLists->min('planting_date')
+                                            ? \Carbon\Carbon::parse($cycleLists->min('planting_date'), 'Asia/Manila')->startOfMonth()
+                                            : now('Asia/Manila')->startOfMonth();
+
+                                        $timelineEnd = $cycleLists->max('expected_harvest_date')
+                                            ? \Carbon\Carbon::parse($cycleLists->max('expected_harvest_date'), 'Asia/Manila')->endOfMonth()
+                                            : now('Asia/Manila')->endOfMonth();
+
+                                        $months = [];
+                                        $monthCursor = $timelineStart->copy();
+
+                                        while ($monthCursor <= $timelineEnd) {
+                                            $months[] = $monthCursor->copy();
+                                            $monthCursor->addMonth();
+                                        }
+
+                                        $totalTimelineDays = max(1, $timelineStart->diffInDays($timelineEnd));
+                                    @endphp
+
+                                    @foreach($months as $month)
                                         <th class="text-center px-2 py-2 w-28 min-w-[110px]">
-                                            {{ \Carbon\Carbon::create()->month($month)->format('M') }}
+                                            {{ $month->format('M Y') }}
                                         </th>
                                     @endforeach
                                 </tr>
@@ -377,8 +440,8 @@
                                     $daysInYear = $start->isLeapYear() ? 366 : 365;
 
                                     // Position based on Jan–Dec timeline
-                                    $cycleStart = (($start->dayOfYear - 1) / $daysInYear) * 100;
-                                    $cycleEnd = (($end->dayOfYear - 1) / $daysInYear) * 100;
+                                    $cycleStart = ($timelineStart->diffInDays($start) / $totalTimelineDays) * 100;
+                                    $cycleEnd = ($timelineStart->diffInDays($end) / $totalTimelineDays) * 100;
 
                                     $cycleWidth = max(1, $cycleEnd - $cycleStart);
                                     $cycleDays = max(1, $start->diffInDays($end));
@@ -414,16 +477,22 @@
                                     @endphp
 
                                     {{-- TIMELINE --}}
-                                    <td colspan="12" class="p-0 overflow-visible">
+                                    <td colspan="{{ count($months) }}" class="p-0 overflow-visible">
 
                                         <div
-                                            class="relative w-[1728px] overflow-visible"
-                                            style="height: {{ $timelineHeight }}px;"
+                                            class="relative overflow-visible"
+                                            style="
+                                                width: {{ max(1, count($months)) * 144 }}px;
+                                                height: {{ $timelineHeight }}px;
+                                            "
                                         >
 
                                             {{-- MONTH GRID --}}
-                                            <div class="absolute inset-0 grid grid-cols-12 z-10">
-                                                @foreach(range(1, 12) as $m)
+                                            <div
+                                                class="absolute inset-0 grid z-10"
+                                                style="grid-template-columns: repeat({{ count($months) }}, minmax(144px, 1fr));"
+                                            >
+                                                @foreach($months as $month)
                                                     <div class="border-l border-gray-200"></div>
                                                 @endforeach
                                             </div>
@@ -449,11 +518,9 @@
                                                     // Total operational timeline days of the gray bar
                                                     $cycleTotalDays = max(1, $start->diffInDays($end));
 
-                                                    // 1. CALCULATE POSITION (Where it starts inside the gray bar)
-                                                    $offsetDays = max(0, $start->diffInDays($milestoneScheduled));
-                                                    $positionFraction = $offsetDays / $cycleTotalDays;
-                                                    $position = $cycleStart + ($positionFraction * $cycleWidth);
-                                                    $position = max(0, min(100, $position)); // Safety bounds
+                                                    $offsetDays = $timelineStart->diffInDays($milestoneScheduled);
+                                                    $position = ($offsetDays / $totalTimelineDays) * 100;
+                                                    $position = max(0, min(100, $position));
 
                                                     // 2. CALCULATE DYNAMIC WIDTH (How long it stretches inside the gray bar)
                                                     if ($milestoneCompleted && $milestone->completed) {
@@ -1419,6 +1486,20 @@
                             pointRadius: 2,
                         },
                         {
+                            label: 'Soil Moisture 2',
+                            data: data.soil_moisture2,
+                            borderColor: '#10B981',
+                            tension: 0,
+                            pointRadius: 2,
+                        },
+                        {
+                            label: 'Water Level',
+                            data: data.water_level,
+                            borderColor: '#3B82F6',
+                            tension: 0,
+                            pointRadius: 2,
+                        },
+                        {
                             label: 'EC Level',
                             data: data.ec_level,
                             borderColor: '#9C27B0',
@@ -1453,6 +1534,27 @@
                             tension: 0,
                             pointRadius: 2,
                         },
+                        {
+                            label: 'Nitrogen 2',
+                            data: data.nitrogen2,
+                            borderColor: '#84CC16',
+                            tension: 0,
+                            pointRadius: 2,
+                        },
+                        {
+                            label: 'Phosphorus 2',
+                            data: data.phosphorus2,
+                            borderColor: '#F97316',
+                            tension: 0,
+                            pointRadius: 2,
+                        },
+                        {
+                            label: 'Potassium 2',
+                            data: data.potassium2,
+                            borderColor: '#DC2626',
+                            tension: 0,
+                            pointRadius: 2,
+                        },
                     ]
                 },
                 options: {
@@ -1473,8 +1575,12 @@
                                     const value = Number(context.parsed.y).toFixed(2);
 
                                     if (label === 'Temperature') return `${label}: ${value}°C`;
-                                    if (label === 'Humidity' || label === 'Soil Moisture') return `${label}: ${value}%`;
-                                    if (['Nitrogen', 'Phosphorus', 'Potassium'].includes(label)) return `${label}: ${value} ppm`;
+                                    if (['Humidity', 'Soil Moisture', 'Soil Moisture 2', 'Water Level'].includes(label)) {
+                                        return `${label}: ${value}%`;
+                                    }
+                                    if (['Nitrogen', 'Phosphorus', 'Potassium', 'Nitrogen 2', 'Phosphorus 2', 'Potassium 2'].includes(label)) {
+                                        return `${label}: ${value} ppm`;
+                                    }
 
                                     return `${label}: ${value}`;
                                 }

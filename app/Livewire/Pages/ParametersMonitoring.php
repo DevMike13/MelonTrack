@@ -354,11 +354,16 @@ class ParametersMonitoring extends Component
                     ROUND(AVG(temperature), 2) as temperature,
                     ROUND(AVG(humidity), 2) as humidity,
                     ROUND(AVG(soil_moisture), 2) as soil_moisture,
+                    ROUND(AVG(soil_moisture2), 2) as soil_moisture2,
+                    ROUND(AVG(water_level), 2) as water_level,
                     ROUND(AVG(ec_level), 2) as ec_level,
                     ROUND(AVG(ph_level), 2) as ph_level,
                     ROUND(AVG(nitrogen), 2) as nitrogen,
                     ROUND(AVG(phosphorus), 2) as phosphorus,
-                    ROUND(AVG(potassium), 2) as potassium
+                    ROUND(AVG(potassium), 2) as potassium,
+                    ROUND(AVG(nitrogen2), 2) as nitrogen2,
+                    ROUND(AVG(phosphorus2), 2) as phosphorus2,
+                    ROUND(AVG(potassium2), 2) as potassium2
                 ")
                 ->whereDate('reading_date', now('Asia/Manila')->toDateString())
                 ->groupBy('grouped_date')
@@ -378,11 +383,16 @@ class ParametersMonitoring extends Component
                     ROUND(AVG(temperature), 2) as temperature,
                     ROUND(AVG(humidity), 2) as humidity,
                     ROUND(AVG(soil_moisture), 2) as soil_moisture,
+                    ROUND(AVG(soil_moisture2), 2) as soil_moisture2,
+                    ROUND(AVG(water_level), 2) as water_level,
                     ROUND(AVG(ec_level), 2) as ec_level,
                     ROUND(AVG(ph_level), 2) as ph_level,
                     ROUND(AVG(nitrogen), 2) as nitrogen,
                     ROUND(AVG(phosphorus), 2) as phosphorus,
-                    ROUND(AVG(potassium), 2) as potassium
+                    ROUND(AVG(potassium), 2) as potassium,
+                    ROUND(AVG(nitrogen2), 2) as nitrogen2,
+                    ROUND(AVG(phosphorus2), 2) as phosphorus2,
+                    ROUND(AVG(potassium2), 2) as potassium2
                 ")
                 ->whereBetween('reading_date', [
                     $start->format('Y-m-d H:i:s'),
@@ -409,11 +419,16 @@ class ParametersMonitoring extends Component
                     ROUND(AVG(temperature), 2) as temperature,
                     ROUND(AVG(humidity), 2) as humidity,
                     ROUND(AVG(soil_moisture), 2) as soil_moisture,
+                    ROUND(AVG(soil_moisture2), 2) as soil_moisture2,
+                    ROUND(AVG(water_level), 2) as water_level,
                     ROUND(AVG(ec_level), 2) as ec_level,
                     ROUND(AVG(ph_level), 2) as ph_level,
                     ROUND(AVG(nitrogen), 2) as nitrogen,
                     ROUND(AVG(phosphorus), 2) as phosphorus,
-                    ROUND(AVG(potassium), 2) as potassium
+                    ROUND(AVG(potassium), 2) as potassium,
+                    ROUND(AVG(nitrogen2), 2) as nitrogen2,
+                    ROUND(AVG(phosphorus2), 2) as phosphorus2,
+                    ROUND(AVG(potassium2), 2) as potassium2
                 ")
                 ->whereBetween('reading_date', [
                     $start->format('Y-m-d H:i:s'),
@@ -439,11 +454,16 @@ class ParametersMonitoring extends Component
                     ROUND(AVG(temperature), 2) as temperature,
                     ROUND(AVG(humidity), 2) as humidity,
                     ROUND(AVG(soil_moisture), 2) as soil_moisture,
+                    ROUND(AVG(soil_moisture2), 2) as soil_moisture2,
+                    ROUND(AVG(water_level), 2) as water_level,
                     ROUND(AVG(ec_level), 2) as ec_level,
                     ROUND(AVG(ph_level), 2) as ph_level,
                     ROUND(AVG(nitrogen), 2) as nitrogen,
                     ROUND(AVG(phosphorus), 2) as phosphorus,
-                    ROUND(AVG(potassium), 2) as potassium
+                    ROUND(AVG(potassium), 2) as potassium,
+                    ROUND(AVG(nitrogen2), 2) as nitrogen2,
+                    ROUND(AVG(phosphorus2), 2) as phosphorus2,
+                    ROUND(AVG(potassium2), 2) as potassium2
                 ")
                 ->whereBetween('reading_date', [
                     $start->format('Y-m-d H:i:s'),
@@ -471,11 +491,16 @@ class ParametersMonitoring extends Component
                         ROUND(AVG(temperature), 2) as temperature,
                         ROUND(AVG(humidity), 2) as humidity,
                         ROUND(AVG(soil_moisture), 2) as soil_moisture,
+                        ROUND(AVG(soil_moisture2), 2) as soil_moisture2,
+                        ROUND(AVG(water_level), 2) as water_level,  
                         ROUND(AVG(ec_level), 2) as ec_level,
                         ROUND(AVG(ph_level), 2) as ph_level,
                         ROUND(AVG(nitrogen), 2) as nitrogen,
                         ROUND(AVG(phosphorus), 2) as phosphorus,
-                        ROUND(AVG(potassium), 2) as potassium
+                        ROUND(AVG(potassium), 2) as potassium,
+                        ROUND(AVG(nitrogen2), 2) as nitrogen2,
+                        ROUND(AVG(phosphorus2), 2) as phosphorus2,
+                        ROUND(AVG(potassium2), 2) as potassium2
                     ")
                     ->whereBetween('reading_date', [
                         $start->format('Y-m-d H:i:s'),
@@ -510,11 +535,16 @@ class ParametersMonitoring extends Component
             'temperature' => $data->pluck('temperature')->toArray(),
             'humidity' => $data->pluck('humidity')->toArray(),
             'soil_moisture' => $data->pluck('soil_moisture')->toArray(),
+            'soil_moisture2' => $data->pluck('soil_moisture2')->toArray(),
+            'water_level' => $data->pluck('water_level')->toArray(),
             'ec_level' => $data->pluck('ec_level')->toArray(),
             'ph_level' => $data->pluck('ph_level')->toArray(),
             'nitrogen' => $data->pluck('nitrogen')->toArray(),
             'phosphorus' => $data->pluck('phosphorus')->toArray(),
             'potassium' => $data->pluck('potassium')->toArray(),
+            'nitrogen2' => $data->pluck('nitrogen2')->toArray(),
+            'phosphorus2' => $data->pluck('phosphorus2')->toArray(),
+            'potassium2' => $data->pluck('potassium2')->toArray(),
         ];
     }
 

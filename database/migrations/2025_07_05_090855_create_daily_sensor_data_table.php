@@ -17,9 +17,18 @@ return new class extends Migration
 
             $table->decimal('temperature', 5, 2);
             $table->decimal('humidity', 5, 2);
+
             $table->decimal('soil_moisture', 5, 2);
+            $table->decimal('soil_moisture2', 5, 2);
+
+            $table->decimal('water_level', 5, 2);
+
             $table->decimal('ec_level', 6, 2);
             $table->decimal('ph_level', 4, 2);
+
+            $table->decimal('nitrogen2', 8, 2);
+            $table->decimal('phosphorus2', 8, 2);
+            $table->decimal('potassium2', 8, 2);
             
             $table->timestamp('reading_date');
             $table->timestamps();

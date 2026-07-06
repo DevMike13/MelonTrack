@@ -300,9 +300,29 @@
                                 <tr class="bg-gray-100 text-gray-600">
                                     <th class="text-left px-3 py-2 w-40">Cycle</th>
 
-                                    @foreach(range(1, 12) as $month)
+                                    @php
+                                        $timelineStart = $cycleLists->min('planting_date')
+                                            ? \Carbon\Carbon::parse($cycleLists->min('planting_date'), 'Asia/Manila')->startOfMonth()
+                                            : now('Asia/Manila')->startOfMonth();
+
+                                        $timelineEnd = $cycleLists->max('expected_harvest_date')
+                                            ? \Carbon\Carbon::parse($cycleLists->max('expected_harvest_date'), 'Asia/Manila')->endOfMonth()
+                                            : now('Asia/Manila')->endOfMonth();
+
+                                        $months = [];
+                                        $monthCursor = $timelineStart->copy();
+
+                                        while ($monthCursor <= $timelineEnd) {
+                                            $months[] = $monthCursor->copy();
+                                            $monthCursor->addMonth();
+                                        }
+
+                                        $totalTimelineDays = max(1, $timelineStart->diffInDays($timelineEnd));
+                                    @endphp
+
+                                    @foreach($months as $month)
                                         <th class="text-center px-2 py-2 w-28 min-w-[110px]">
-                                            {{ \Carbon\Carbon::create()->month($month)->format('M') }}
+                                            {{ $month->format('M Y') }}
                                         </th>
                                     @endforeach
                                 </tr>
@@ -324,8 +344,8 @@
                                     $daysInYear = $start->isLeapYear() ? 366 : 365;
 
                                     // Position based on Jan–Dec timeline
-                                    $cycleStart = (($start->dayOfYear - 1) / $daysInYear) * 100;
-                                    $cycleEnd = (($end->dayOfYear - 1) / $daysInYear) * 100;
+                                    $cycleStart = ($timelineStart->diffInDays($start) / $totalTimelineDays) * 100;
+                                    $cycleEnd = ($timelineStart->diffInDays($end) / $totalTimelineDays) * 100;
 
                                     $cycleWidth = max(1, $cycleEnd - $cycleStart);
                                     $cycleDays = max(1, $start->diffInDays($end));
@@ -361,16 +381,22 @@
                                     @endphp
 
                                     {{-- TIMELINE --}}
-                                    <td colspan="12" class="p-0 overflow-visible">
+                                    <td colspan="{{ count($months) }}" class="p-0 overflow-visible">
 
                                         <div
-                                            class="relative w-[1728px] overflow-visible"
-                                            style="height: {{ $timelineHeight }}px;"
+                                            class="relative overflow-visible"
+                                            style="
+                                                width: {{ max(1, count($months)) * 144 }}px;
+                                                height: {{ $timelineHeight }}px;
+                                            "
                                         >
 
                                             {{-- MONTH GRID --}}
-                                            <div class="absolute inset-0 grid grid-cols-12 z-10">
-                                                @foreach(range(1, 12) as $m)
+                                            <div
+                                                class="absolute inset-0 grid z-10"
+                                                style="grid-template-columns: repeat({{ count($months) }}, minmax(144px, 1fr));"
+                                            >
+                                                @foreach($months as $month)
                                                     <div class="border-l border-gray-200"></div>
                                                 @endforeach
                                             </div>
@@ -397,11 +423,9 @@
                                                     // Total operational timeline days of the gray bar
                                                     $cycleTotalDays = max(1, $start->diffInDays($end));
 
-                                                    // 1. CALCULATE POSITION (Where it starts inside the gray bar)
-                                                    $offsetDays = max(0, $start->diffInDays($milestoneScheduled));
-                                                    $positionFraction = $offsetDays / $cycleTotalDays;
-                                                    $position = $cycleStart + ($positionFraction * $cycleWidth);
-                                                    $position = max(0, min(100, $position)); // Safety bounds
+                                                    $offsetDays = $timelineStart->diffInDays($milestoneScheduled);
+                                                    $position = ($offsetDays / $totalTimelineDays) * 100;
+                                                    $position = max(0, min(100, $position));
 
                                                     // 2. CALCULATE DYNAMIC WIDTH (How long it stretches inside the gray bar)
                                                     if ($milestoneCompleted && $milestone->completed) {

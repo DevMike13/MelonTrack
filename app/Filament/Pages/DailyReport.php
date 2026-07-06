@@ -14,6 +14,15 @@ class DailyReport extends Page
 
     protected static ?int $navigationSort = 3;
 
+    protected static ?string $title = 'Monthly Records';
+
+    protected static ?string $slug = 'monthly-records';
+
+    public function getHeading(): string
+    {
+        return '';
+    }
+
     public static function shouldRegisterNavigation(): bool
     {
         return auth()->user()->role == 'admin';

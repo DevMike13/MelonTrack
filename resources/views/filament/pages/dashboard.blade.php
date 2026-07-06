@@ -234,6 +234,136 @@
             console.log('Potassium Max: ', potassiumMax);
             Livewire.dispatch('updateMaxPotassium', { maxPotassium: potassiumMax});
         });
+
+
+        // ============================
+        // Soil Moisture 2
+        // ============================
+
+        const soilMoisture2Ref = ref(database, 'SoilMoisture2/SensorValue');
+        onValue(soilMoisture2Ref, (snapshot) => {
+            Livewire.dispatch('updateSoilMoisture2', {
+                soilMoisture2: snapshot.val()
+            });
+        });
+
+        const soilMoisture2MinRef = ref(database, 'SoilMoisture2/Min');
+        onValue(soilMoisture2MinRef, (snapshot) => {
+            Livewire.dispatch('updateMinSoilMoisture2', {
+                minSoilMoisture2: snapshot.val()
+            });
+        });
+
+        const soilMoisture2MaxRef = ref(database, 'SoilMoisture2/Max');
+        onValue(soilMoisture2MaxRef, (snapshot) => {
+            Livewire.dispatch('updateMaxSoilMoisture2', {
+                maxSoilMoisture2: snapshot.val()
+            });
+        });
+
+
+        // ============================
+        // Water Level
+        // ============================
+
+        const waterLevelRef = ref(database, 'WaterLevel/SensorValue');
+        onValue(waterLevelRef, (snapshot) => {
+            Livewire.dispatch('updateWaterLevel', {
+                waterLevel: snapshot.val()
+            });
+        });
+
+        const waterLevelMinRef = ref(database, 'WaterLevel/Min');
+        onValue(waterLevelMinRef, (snapshot) => {
+            Livewire.dispatch('updateMinWaterLevel', {
+                minWaterLevel: snapshot.val()
+            });
+        });
+
+        const waterLevelMaxRef = ref(database, 'WaterLevel/Max');
+        onValue(waterLevelMaxRef, (snapshot) => {
+            Livewire.dispatch('updateMaxWaterLevel', {
+                maxWaterLevel: snapshot.val()
+            });
+        });
+
+
+        // ============================
+        // Nitrogen 2
+        // ============================
+
+        const nitrogen2Ref = ref(database, 'Nitrogen2/SensorValue');
+        onValue(nitrogen2Ref, (snapshot) => {
+            Livewire.dispatch('updateNitrogen2', {
+                nitrogen2: snapshot.val()
+            });
+        });
+
+        const nitrogen2MinRef = ref(database, 'Nitrogen2/Min');
+        onValue(nitrogen2MinRef, (snapshot) => {
+            Livewire.dispatch('updateMinNitrogen2', {
+                minNitrogen2: snapshot.val()
+            });
+        });
+
+        const nitrogen2MaxRef = ref(database, 'Nitrogen2/Max');
+        onValue(nitrogen2MaxRef, (snapshot) => {
+            Livewire.dispatch('updateMaxNitrogen2', {
+                maxNitrogen2: snapshot.val()
+            });
+        });
+
+
+        // ============================
+        // Phosphorus 2
+        // ============================
+
+        const phosphorus2Ref = ref(database, 'Phosphorus2/SensorValue');
+        onValue(phosphorus2Ref, (snapshot) => {
+            Livewire.dispatch('updatePhosphorus2', {
+                phosphorus2: snapshot.val()
+            });
+        });
+
+        const phosphorus2MinRef = ref(database, 'Phosphorus2/Min');
+        onValue(phosphorus2MinRef, (snapshot) => {
+            Livewire.dispatch('updateMinPhosphorus2', {
+                minPhosphorus2: snapshot.val()
+            });
+        });
+
+        const phosphorus2MaxRef = ref(database, 'Phosphorus2/Max');
+        onValue(phosphorus2MaxRef, (snapshot) => {
+            Livewire.dispatch('updateMaxPhosphorus2', {
+                maxPhosphorus2: snapshot.val()
+            });
+        });
+
+
+        // ============================
+        // Potassium 2
+        // ============================
+
+        const potassium2Ref = ref(database, 'Potassium2/SensorValue');
+        onValue(potassium2Ref, (snapshot) => {
+            Livewire.dispatch('updatePotassium2', {
+                potassium2: snapshot.val()
+            });
+        });
+
+        const potassium2MinRef = ref(database, 'Potassium2/Min');
+        onValue(potassium2MinRef, (snapshot) => {
+            Livewire.dispatch('updateMinPotassium2', {
+                minPotassium2: snapshot.val()
+            });
+        });
+
+        const potassium2MaxRef = ref(database, 'Potassium2/Max');
+        onValue(potassium2MaxRef, (snapshot) => {
+            Livewire.dispatch('updateMaxPotassium2', {
+                maxPotassium2: snapshot.val()
+            });
+        });
     </script>
 
     <script>

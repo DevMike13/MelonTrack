@@ -13,12 +13,23 @@ class DailySensorData extends Model
         'cycle_id',
         'temperature', 
         'humidity',
+
         'soil_moisture',
+        'soil_moisture2',
+
+        'water_level',
+
         'ec_level',
         'ph_level',
+
         'nitrogen',
         'phosphorus',
         'potassium',
+
+        'nitrogen2',
+        'phosphorus2',
+        'potassium2',
+
         'reading_date'
     ];
 }

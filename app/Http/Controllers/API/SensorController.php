@@ -47,13 +47,22 @@ class SensorController extends Controller
 
                 'temperature' => 'required|numeric',
                 'humidity' => 'required|numeric',
+
                 'soil_moisture' => 'required|numeric',
+                'soil_moisture2' => 'required|numeric',
+
+                'water_level' => 'required|numeric',
+
                 'ec_level' => 'required|numeric',
                 'ph_level' => 'required|numeric',
 
                 'nitrogen' => 'nullable|numeric',
                 'phosphorus' => 'nullable|numeric',
                 'potassium' => 'nullable|numeric',
+
+                'nitrogen2' => 'nullable|numeric',
+                'phosphorus2' => 'nullable|numeric',
+                'potassium2' => 'nullable|numeric',
 
                 'reading_date' => 'required|date',
             ]);
