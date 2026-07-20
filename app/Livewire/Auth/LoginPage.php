@@ -21,56 +21,50 @@ class LoginPage extends Component
             'password' => 'required|min:8|max:255',
         ]);
 
-        // Attempt login
         if (!auth()->attempt([
             'email' => $this->email,
-            'password' => $this->password
+            'password' => $this->password,
         ])) {
-
             $this->notification()->error(
-                $title = 'Error!',
-                $description = 'Invalid credentials'
+                title: 'Error!',
+                description: 'Invalid credentials'
             );
 
             return;
         }
+
+        request()->session()->regenerate();
 
         $user = auth()->user();
 
-        // Check if verified
         if (!$user->is_verified) {
-
-            auth()->logout();
+            $this->logoutUser();
 
             $this->notification()->error(
-                $title = 'Error!',
-                $description = 'Your account is not verified.'
+                title: 'Error!',
+                description: 'Your account is not verified.'
             );
 
             return;
         }
 
-        // Check account status
         if ($user->status === 'Inactive') {
-
-            auth()->logout();
+            $this->logoutUser();
 
             $this->notification()->error(
-                $title = 'Error!',
-                $description = 'Your account is inactive.'
+                title: 'Error!',
+                description: 'Your account is inactive.'
             );
 
             return;
         }
 
-        // Optional: Check approval for normal users
         if ($user->role === 'user' && !$user->is_approved) {
-
-            auth()->logout();
+            $this->logoutUser();
 
             $this->notification()->error(
-                $title = 'Error!',
-                $description = 'Your account is pending approval.'
+                title: 'Error!',
+                description: 'Your account is pending approval.'
             );
 
             return;
@@ -79,18 +73,16 @@ class LoginPage extends Component
         $user->update([
             'is_online' => true,
         ]);
-        
-        // Redirect admin
-        if ($user->role === 'admin') {
-            return redirect()->route('filament.admin.pages.dashboard');
-        }
 
-        // Redirect normal user
-        if ($user->role === 'user') {
-            return redirect()->route('filament.admin.pages.dashboard');
-        }
+        return redirect()->route('filament.admin.pages.dashboard');
+    }
 
-        return redirect()->intended();
+    private function logoutUser(): void
+    {
+        auth()->logout();
+
+        request()->session()->invalidate();
+        request()->session()->regenerateToken();
     }
     
     public function render()

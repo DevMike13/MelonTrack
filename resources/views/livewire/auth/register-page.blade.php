@@ -133,13 +133,13 @@
                         <div class="space-y-2 w-[90%] md:w-full">
 
                             <div class="grid grid-cols-2 gap-2">
-                                <div class="relative">
-                                    <x-input icon="user" label="First Name" placeholder="First Name" wire:model="firstname" class="py-2"/>
+                                <div class="relative" x-data @input="$event.target.value = $event.target.value.replace(/[^a-zA-Z\s'-]/g, '')">
+                                    <x-input icon="user" label="First Name" placeholder="First Name" wire:model.live="firstname" class="py-2"/>
                                     <div class="absolute inset-y-0 start-0 flex items-center pointer-events-none ps-2 peer-disabled:opacity-50 peer-disabled:pointer-events-none">
                                     </div>
                                 </div>
-                                <div class="relative">
-                                    <x-input icon="user" label="Last Name" placeholder="Last Name" wire:model="lastname" class="py-2"/>
+                                <div class="relative" x-data @input="$event.target.value = $event.target.value.replace(/[^a-zA-Z\s'-]/g, '')">
+                                    <x-input icon="user" label="Last Name" placeholder="Last Name" wire:model.live="lastname" class="py-2"/>
                                     <div class="absolute inset-y-0 start-0 flex items-center pointer-events-none ps-2 peer-disabled:opacity-50 peer-disabled:pointer-events-none">
                                     </div>
                                 </div>
@@ -176,11 +176,11 @@
 
                                     <label for="terms" class="text-2xs">
                                         I agree to the
-                                        <a href="{{ route('terms') }}" target="_blank" class="underline-none text-[#346844]">
+                                        <a href="#" onclick="$openModal('termsModal')" class="underline-none text-[#346844]">
                                             Terms of Services
                                         </a>
                                         and
-                                        <a href="{{ route('privacy') }}" target="_blank" class="underline-none text-[#346844]">
+                                        <a href="#" onclick="$openModal('policyModal')" class="underline-none text-[#346844]">
                                             Privacy Policy
                                         </a>
                                     </label>
@@ -348,13 +348,13 @@
                     <div class="space-y-2 w-[90%] md:w-full">
 
                         <div class="grid grid-cols-2 gap-2">
-                            <div class="relative">
-                                <x-input icon="user" label="First Name" placeholder="First Name" wire:model="firstname" class="py-2"/>
+                            <div class="relative" x-data  @input="$event.target.value = $event.target.value.replace(/[^a-zA-Z\s'-]/g, '')">
+                                <x-input icon="user" label="First Name" placeholder="First Name" wire:model.live="firstname" class="py-2"/>
                                 <div class="absolute inset-y-0 start-0 flex items-center pointer-events-none ps-2 peer-disabled:opacity-50 peer-disabled:pointer-events-none">
                                 </div>
                             </div>
-                            <div class="relative">
-                                <x-input icon="user" label="Last Name" placeholder="Last Name" wire:model="lastname" class="py-2"/>
+                            <div class="relative" x-data @input="$event.target.value = $event.target.value.replace(/[^a-zA-Z\s'-]/g, '')">
+                                <x-input icon="user" label="Last Name" placeholder="Last Name" wire:model.live="lastname" class="py-2"/>
                                 <div class="absolute inset-y-0 start-0 flex items-center pointer-events-none ps-2 peer-disabled:opacity-50 peer-disabled:pointer-events-none">
                                 </div>
                             </div>
@@ -391,11 +391,11 @@
 
                                 <label for="terms" class="text-2xs">
                                     I agree to the
-                                    <a href="{{ route('terms') }}" target="_blank" class="underline-none text-[#346844]">
+                                    <a href="#" onclick="$openModal('termsModal')" class="underline-none text-[#346844]">
                                         Terms of Services
                                     </a>
                                     and
-                                    <a href="{{ route('privacy') }}" target="_blank" class="underline-none text-[#346844]">
+                                    <a href="#" onclick="$openModal('policyModal')" class="underline-none text-[#346844]">
                                         Privacy Policy
                                     </a>
                                 </label>
@@ -582,4 +582,79 @@
             ></div>
         </div>
     </div>
+
+    <x-modal wire:model.defer="termsModal" align="center">
+        <x-card title="Terms of Services">
+            <div class="w-full min-h-screen h-full py-10">
+                <div class="w-full max-w-[1080px] h-full mx-auto flex flex-col justify-center items-center lg:justify-start lg:items-start gap-5">
+                    <div class="flex justify-center items-center gap-3 mx-auto">
+                        <img src="{{ asset('images/Logo_MelonTrack.png') }}" alt="Logo" class="w-12 h-12 md:w-20 md:h-20 object-contain">
+                        <div>
+                            <h1 class="text-xl md:text-[2.8rem] font-semibold text-[#316943]">
+                                MelonTrack
+                            </h1>
+                            <p class="text-xs md:text-base">Smart Melon Monitoring System</p>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col gap-5 text-sm md:text-base px-10 lg:px-5">
+                        <p>Welcome to the MelonTrack: MelonTrack: An IoT Web-Based Japanese Musk Melon Quality Monitoring and Cultivation Management System Using NPK With SMS Notifications For Bukid Amara. Please agree to the following terms & conditions.</p>
+
+                        <p>Terms and Conditions for the Use of MelonTrack</p>
+
+                        <p>These Terms and Conditions ("Terms") govern the access to and use of the MelonTrack system. By accessing, registering, or using the MelonTrack platform, the user ("User") acknowledges that they have read, understood, and agreed to be bound by these Terms.</p>
+
+                        <p class="font-semibold">1. Purpose of the System</p>
+                        <p>Melon Track is an Internet of Things (IoT)-based monitoring, analytics, and cultivation management system intended to assist in agricultural planning, crop quality monitoring, and harvest forecasting. The system provides decision-support information only and does not guarantee specific agricultural results, yields, or quality outcomes.</p>
+                    
+                        <p class="font-semibold">2. User Obligations</p>
+                        <p>The User shall ensure that all data entered, transmitted, or collected through the system, including but not limited to sensor readings, crop counts, and cultivation parameters, are accurate, complete, and timely. The MelonTrack developers shall not be held liable for any inaccuracies, losses, or damages arising from incorrect or incomplete data input.</p>
+
+                        <p class="font-semibold">3. Accuracy of Information and Limitations of Liability</p>
+                        <p>All analytics, projections, and recommendations generated by MelonTrack are based on available data, system models, and historical records. Actual results may vary due to environmental conditions, equipment limitations, human intervention, or other unforeseen factors. MelonTrack shall not be responsible for any direct, indirect, incidental, or consequential damages resulting from reliance on system outputs.</p>
+
+                        <p class="font-semibold">4. Data Collection, Privacy, and Security</p>
+                        <p>Melon Track collects and processes data solely for system operation, monitoring, analysis, and performance improvement. Reasonable technical and organizational security measures are implemented to protect stored data; however, MelonTrack does not warrant absolute security against unauthorized access, data loss, or cyber threats.</p>
+
+                        <p class="font-semibold">5. System Availability and Maintenance</p>
+                        <p>Melon Track endeavors to maintain continuous system availability but does not guarantee uninterrupted access. Temporary suspension of services may occur due to maintenance, system updates, technical failures, or external factors beyond the control of the developers. No liability shall be incurred for any losses arising from system downtime or service interruption.</p>
+
+                        <p class="font-semibold">6. Acceptable Use</p>
+                        <p>The User agrees to use MelonTrack solely for lawful agricultural monitoring, analysis, and management purposes. Unauthorized use, intentional data manipulation, system interference, or misuse of the platform is strictly prohibited.</p>
+
+                        <p class="font-semibold">7. Modifications to the Terms</p>
+                        <p>Melon Track developers reserve the right to amend, update, or modify these Terms at any time without prior notice. Continued use of the system following such modifications shall constitute acceptance of the revised Terms.</p>
+
+                        <p class="font-semibold">8. Governing Law</p>
+                        <p>These Terms shall be governed by and construed in accordance with the applicable laws of the jurisdiction in which MelonTrack is deployed, without regard to conflict of law principles.</p>
+
+                        <p class="font-semibold">9. Acceptance of Terms</p>
+                        <p>By accessing or using MelonTrack, the User expressly acknowledges and agrees to these Terms and Conditions in full.</p>
+                    </div>
+                </div>
+            </div>
+
+    
+            <x-slot name="footer">
+                <div class="flex justify-end gap-x-4">
+                    <x-button flat label="Cancel" x-on:click="close" />
+                    {{-- <x-button primary label="I Agree" /> --}}
+                </div>
+            </x-slot>
+        </x-card>
+    </x-modal>
+
+    <x-modal wire:model.defer="policyModal" align="center">
+        <x-card title="Privacy Policy">
+            
+
+    
+            <x-slot name="footer">
+                <div class="flex justify-end gap-x-4">
+                    <x-button flat label="Cancel" x-on:click="close" />
+                    {{-- <x-button primary label="I Agree" /> --}}
+                </div>
+            </x-slot>
+        </x-card>
+    </x-modal>
 </div>

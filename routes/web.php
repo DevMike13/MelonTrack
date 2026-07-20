@@ -26,17 +26,6 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-Route::get('/', LoginPage::class)->name('home');
-Route::get('/verify-account', NotVerify::class)->name('verify.account');
-Route::get('/verify-otp', OtpVerify::class)->name('otp.verify');
-Route::get('/not-accepted', NotAcceptedPage::class)
-    ->name('notify.not-accepted');
-Route::get('/about', About::class)->name('about');
-
-
-Route::get('/terms-of-services', TermsOfServicesPage::class)->name('terms');
-Route::get('/privacy-policy', PrivacyPolicyPage::class)->name('privacy');
-
 // Route::get('/logagain', function () {
 //     return redirect( '/ibroccogreens-admin');
 // })->name('login');
@@ -51,3 +40,21 @@ Route::middleware('guest')->group(function () {
     Route::get('/account-verification/{user_id}', AccountVerification::class)->name('account.verify');
     Route::get('/account/resend-verification', ResendVerificationPage::class)->name('account.resend-verification');
 });
+
+// Route::get('/', LoginPage::class)->name('home');
+Route::get('/', function () {
+    if (auth()->check()) {
+        return redirect()->route('filament.admin.pages.dashboard');
+    }
+
+    return redirect()->route('login');
+})->name('home');
+Route::get('/verify-account', NotVerify::class)->name('verify.account');
+Route::get('/verify-otp', OtpVerify::class)->name('otp.verify');
+Route::get('/not-accepted', NotAcceptedPage::class)
+    ->name('notify.not-accepted');
+Route::get('/about', About::class)->name('about');
+
+
+Route::get('/terms-of-services', TermsOfServicesPage::class)->name('terms');
+Route::get('/privacy-policy', PrivacyPolicyPage::class)->name('privacy');
