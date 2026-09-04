@@ -368,6 +368,29 @@
                                         <div class="text-[10px] text-gray-400 mt-1">
                                             {{ $start->format('M d') }} - {{ $end->format('M d') }}
                                         </div>
+
+                                        @if(in_array($cycle->status, ['completed', 'harvested', 'cancelled']))
+                                            <div class="flex gap-1 mt-2" wire:click.stop>
+                                                <x-button
+                                                    xs
+                                                    rounded
+                                                    info
+                                                    icon="pencil"
+                                                    label="Edit"
+                                                    wire:click.stop="getSelectedCycle({{ $cycle->id }})"
+                                                    onclick="$openModal('editCompletedCycle')"
+                                                />
+
+                                                <x-button
+                                                    xs
+                                                    rounded
+                                                    negative
+                                                    icon="x"
+                                                    label="Delete"
+                                                    wire:click.stop="deleteCompletedCycleConfirmation({{ $cycle->id }}, '{{ $cycle->cycle_code }}')"
+                                                />
+                                            </div>
+                                        @endif
                                     </td>
 
                                     {{-- MILESTONES --}}
@@ -1043,6 +1066,105 @@
         </x-card>
     </x-modal>
     
+    <x-modal blur name="editCompletedCycle" persistent align="center" max-width="lg">
+        <x-card title="Edit Completed Cycle">
+
+            <div class="space-y-4">
+
+                <x-input
+                    label="Cycle Code"
+                    wire:model.defer="cycleCode"
+                    disabled
+                />
+
+                <x-input
+                    label="Crop Variety"
+                    wire:model.defer="cropVariety"
+                />
+
+                <div class="grid grid-cols-2 gap-4">
+                    <x-datetime-picker
+                        label="Planting Date"
+                        without-time
+                        wire:model.defer="plantingDate"
+                    />
+
+                    <x-datetime-picker
+                        label="Expected Harvest Date"
+                        without-time
+                        wire:model.defer="expectedHarvestDate"
+                    />
+                </div>
+
+                <x-datetime-picker
+                    label="Actual Harvest Date"
+                    without-time
+                    wire:model.defer="actualHarvestDate"
+                />
+
+                <x-select
+                    label="Status"
+                    wire:model.defer="status"
+                    :options="[
+                        ['id'=>'harvested','name'=>'Harvested'],
+                        ['id'=>'completed','name'=>'Completed'],
+                        ['id'=>'cancelled','name'=>'Cancelled']
+                    ]"
+                    option-label="name"
+                    option-value="id"
+                />
+
+                <x-select
+                    label="Growth Stage"
+                    wire:model.defer="growthStage"
+                    :options="[
+                        ['id'=>'seedling','name'=>'Seedling'],
+                        ['id'=>'transplanting','name'=>'Transplanting'],
+                        ['id'=>'vegetative','name'=>'Vegetative'],
+                        ['id'=>'flowering','name'=>'Flowering'],
+                        ['id'=>'pollination','name'=>'Pollination'],
+                        ['id'=>'fruit_set','name'=>'Fruit Set'],
+                        ['id'=>'fruit_development','name'=>'Fruit Development'],
+                        ['id'=>'ripening','name'=>'Ripening']
+                    ]"
+                    option-label="name"
+                    option-value="id"
+                />
+
+                <div class="grid grid-cols-2 gap-4">
+                    <x-inputs.number
+                        label="Overall Progress"
+                        wire:model.defer="overallProgress"
+                    />
+
+                    <x-inputs.number
+                        label="Fruit Progress"
+                        wire:model.defer="fruitProgress"
+                    />
+                </div>
+
+                <x-inputs.number
+                    label="Current Brix"
+                    wire:model.defer="currentBrix"
+                />
+
+                <x-textarea
+                    label="Notes"
+                    wire:model.defer="notes"
+                />
+
+            </div>
+
+            <x-slot name="footer">
+                <div class="flex justify-end gap-3">
+                    <x-button flat label="Cancel" x-on:click="close" />
+                    <x-button primary label="Update" wire:click="updateCompletedCycle" x-on:click="close" />
+                </div>
+            </x-slot>
+
+        </x-card>
+    </x-modal>
+
     <x-modal blur name="brixModal" persistent align="center" max-width="lg">
         <x-card title="Brix Readings">
 

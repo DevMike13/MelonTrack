@@ -18,7 +18,7 @@
                     <div class="flex flex-col justify-center items-center gap-3">
                         
                         <h1 class="text-[2rem] font-semibold ">
-                            Welcone to <span class="text-[#316943]">MelonTrack</span>
+                            Welcome to <span class="text-[#316943]">MelonTrack</span>
                         </h1>
                         <p class="-mt-3 text-xs ">Your smarter way to monitor, analyze, and maximize melon growth and quality in real-time.</p>
                         
@@ -263,7 +263,7 @@
         <div class="flex flex-col justify-left gap-3 w-full max-w-[55%]">
                         
             <h1 class="text-[1.3rem] font-semibold ">
-                Welcone to <span class="text-[#316943]">MelonTrack</span>
+                Welcome to <span class="text-[#316943]">MelonTrack</span>
             </h1>
             <p class="-mt-3 text-2xs ">Your smarter way to monitor, analyze, and maximize melon growth and quality in real-time.</p>
             

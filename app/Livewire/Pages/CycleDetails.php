@@ -225,7 +225,11 @@ class CycleDetails extends Component
 
     public function deleteCycle($id)
     {
-        Cycles::findOrFail($id)->delete();
+        $cycle = Cycles::findOrFail($id);
+
+        Cycles::withoutEvents(function () use ($cycle) {
+            $cycle->delete();
+        });
 
         Notification::make()
             ->title('Deleted')
@@ -241,6 +245,73 @@ class CycleDetails extends Component
             'description' => "Delete cycle {$code} permanently?",
             'acceptLabel' => 'Yes delete',
             'method' => 'deleteCycle',
+            'params' => $id
+        ]);
+    }
+
+
+    // COMPLETED CYCLES ONLY: update without syncing historical data to /active_cycle in Firebase
+    public function updateCompletedCycle()
+    {
+        $this->validate();
+
+        $cycle = Cycles::whereIn('status', [
+            'completed',
+            'harvested',
+            'cancelled'
+        ])->findOrFail($this->selectedCycleId);
+
+        $cycle->update([
+            'cycle_code' => $this->cycleCode,
+            'crop_variety' => $this->cropVariety,
+            'planting_date' => $this->plantingDate,
+            'expected_harvest_date' => $this->expectedHarvestDate,
+            'actual_harvest_date' => $this->actualHarvestDate,
+            'growth_stage' => $this->growthStage,
+            'status' => $this->status,
+            'overall_progress' => $this->overallProgress,
+            'fruit_progress' => $this->fruitProgress,
+            'current_brix' => $this->currentBrix,
+            'final_brix' => $this->finalBrix,
+            'yield_kg' => $this->yieldKg,
+            'yield_rate' => $this->yieldRate,
+            'notes' => $this->notes,
+        ]);
+
+        Notification::make()
+            ->title('Updated')
+            ->body('Completed cycle updated successfully.')
+            ->success()
+            ->send();
+    }
+
+    // COMPLETED CYCLES ONLY
+    public function deleteCompletedCycle($id)
+    {
+        $cycle = Cycles::whereIn('status', [
+            'completed',
+            'harvested',
+            'cancelled'
+        ])->findOrFail($id);
+
+        Cycles::withoutEvents(function () use ($cycle) {
+            $cycle->delete();
+        });
+
+        Notification::make()
+            ->title('Deleted')
+            ->body('Completed cycle deleted successfully.')
+            ->success()
+            ->send();
+    }
+
+    public function deleteCompletedCycleConfirmation($id, $code)
+    {
+        $this->dialog()->confirm([
+            'title' => 'Delete Completed Cycle?',
+            'description' => "Delete completed cycle {$code} permanently?",
+            'acceptLabel' => 'Yes delete',
+            'method' => 'deleteCompletedCycle',
             'params' => $id
         ]);
     }
