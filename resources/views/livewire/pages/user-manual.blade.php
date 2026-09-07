@@ -1,6 +1,10 @@
 <div class="relative overflow-hidden bg-white">
-    <div class="fixed right-0 top-0 h-screen w-[25vw] lg:w-[30vw] xl:w-[35vw] pointer-events-none z-0">
-        <div class="h-full w-full bg-[url('../../public/images/melon-right-bg.png')] bg-no-repeat bg-contain bg-right opacity-100"></div>
+    <div class="fixed right-0 top-0 h-screen pointer-events-none z-0 overflow-hidden">
+        <img
+            src="{{ asset('images/melon-right-bg.png') }}"
+            alt=""
+            class="h-full w-auto max-w-none object-cover object-right"
+        >
     </div>
 
     <div class="relative z-10 bg-transparent">
@@ -222,7 +226,7 @@
             </div>
         </div>
 
-         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 xl:grid-cols-2 gap-5 mb-8 items-stretch">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 xl:grid-cols-2 gap-5 mb-8 items-stretch">
             <div class="flex flex-col justify-center w-full h-full bg-white rounded-2xl border border-[#356744] p-4 lg:p-6">
                 <div class="flex items-center gap-3 mb-5">
                     <svg class="w-10 h-10 text-[#2b6444] p-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-8">
@@ -236,13 +240,13 @@
 
                 <div class="w-full">
                     <video
-                        class="w-full h-[260px] md:h-[320px] lg:h-[380px] rounded-xl shadow-sm border border-gray-200 object-cover"
+                        class="w-full h-[260px] md:h-[320px] lg:h-[380px]
+                            rounded-xl shadow-sm border border-gray-200
+                            object-contain bg-black"
                         controls
-                        autoplay
-                        muted
                         loop
                     >
-                        <source src="{{ asset('videos/crop-overview.mp4') }}" type="video/mp4">
+                        <source src="{{ asset('images/tuts/Hardware-Tutorial.mp4') }}" type="video/mp4">
                         Your browser does not support the video tag.
                     </video>
                 </div>
@@ -262,13 +266,13 @@
 
                 <div class="w-full">
                     <video
-                        class="w-full h-[260px] md:h-[320px] lg:h-[380px] rounded-xl shadow-sm border border-gray-200 object-cover"
+                        class="w-full h-[260px] md:h-[320px] lg:h-[380px]
+                            rounded-xl shadow-sm border border-gray-200
+                            object-contain bg-black"
                         controls
-                        autoplay
-                        muted
                         loop
                     >
-                        <source src="{{ asset('videos/crop-overview.mp4') }}" type="video/mp4">
+                        <source src="{{ asset('images/tuts/Software-Tutorial.mp4') }}" type="video/mp4">
                         Your browser does not support the video tag.
                     </video>
                 </div>

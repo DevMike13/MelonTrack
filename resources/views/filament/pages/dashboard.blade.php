@@ -4,7 +4,7 @@
     @livewireScripts
     @vite(['resources/css/custom.css', 'resources/css/app.css', 'resources/js/app.js'])
 
-    <div class="mb-6">
+    <div class="mb-6 z-20">
         <h1 class="text-3xl font-bold flex items-center gap-2">
             Welcome back,
             <span class="text-[#356744]">
@@ -13,7 +13,7 @@
             <img 
                 src="{{ asset('images/leaf-icon.png') }}" 
                 alt="Leaf Icon"
-                class="w-10 h-10 object-contain bg-white rounded-md shadow-sm rotate-[40deg]"
+                class="w-10 h-10 object-contain rotate-[40deg]"
             >
         </h1>
 

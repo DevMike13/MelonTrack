@@ -1,7 +1,11 @@
 <div class="relative overflow-hidden bg-white">
     
-    <div class="fixed right-0 top-0 h-screen w-[25vw] lg:w-[30vw] xl:w-[35vw] pointer-events-none z-0">
-        <div class="h-full w-full bg-[url('../../public/images/melon-right-bg.png')] bg-no-repeat bg-contain bg-right opacity-100"></div>
+    <div class="fixed right-0 top-0 h-screen pointer-events-none z-0 overflow-hidden">
+        <img
+            src="{{ asset('images/melon-right-bg.png') }}"
+            alt=""
+            class="h-full w-auto max-w-none object-cover object-right"
+        >
     </div>
 
     <div class="relative z-10 bg-transparent w-full">

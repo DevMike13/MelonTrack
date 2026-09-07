@@ -1,7 +1,11 @@
 <div class="relative overflow-hidden">
 
-    <div class="fixed right-0 top-0 h-screen w-[35%] pointer-events-none z-0">
-        <div class="h-full w-full bg-[url('../../public/images/melon-right-bg.png')] bg-no-repeat bg-cover bg-right opacity-100"></div>
+    <div class="fixed right-0 top-0 h-screen pointer-events-none z-0 overflow-hidden">
+        <img
+            src="{{ asset('images/melon-right-bg.png') }}"
+            alt=""
+            class="h-full w-auto max-w-none object-cover object-right"
+        >
     </div>
 
     <div class="relative z-10 space-y-6">
@@ -65,7 +69,7 @@
 
             @foreach($summaryCards as $card)
                 <div class="{{ $card['bg'] }} rounded-2xl p-4 min-h-[130px] relative overflow-hidden">
-                    <div class="relative z-10">
+                    <div class="relative z-10 pr-14">
                         <p class="text-[11px] font-semibold {{ $card['text'] }}">
                             {{ $card['label'] }}
                         </p>
@@ -225,7 +229,7 @@
                 ];
             @endphp
 
-            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-4">
 
                 @foreach($readings as $reading)
                     <div class="min-w-0 rounded-xl border border-gray-100 p-3 hover:shadow-sm transition">
