@@ -17,42 +17,61 @@
 
         {{-- CYCLE CARD --}}
         <div class="flex flex-col justify-start items-start">
+
             <h4 class="font-lg font-semibold mb-3">Active Cycle</h4>
 
             @if($activeCycle)
+
                 <div class="flex flex-col w-full border border-gray-500 rounded-xl overflow-hidden">
 
-                    <div class="w-full grid grid-cols-7 bg-[#e1eeda] p-4">
+                    {{-- ========================================================= --}}
+                    {{-- TOP CYCLE INFORMATION --}}
+                    {{-- ========================================================= --}}
+                    <div class="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7 gap-4 xl:gap-0 bg-[#e1eeda] p-4">
 
                         {{-- LEFT: ICON + TITLE --}}
-                        <div class="col-span-2">
-                            <div class="flex items-center gap-3">
-                                <img 
-                                    src="{{ asset('images/leaf-icon-soil.png') }}" 
-                                    class="w-12 h-12 object-contain bg-[#75bd6f] rounded-full p-2"
+                        <div class="sm:col-span-2 lg:col-span-2 xl:col-span-2 min-w-0">
+
+                            <div class="flex items-center gap-3 min-w-0">
+
+                                <img
+                                    src="{{ asset('images/leaf-icon-soil.png') }}"
+                                    class="w-12 h-12 flex-shrink-0 object-contain bg-[#75bd6f] rounded-full p-2"
+                                    alt=""
                                 >
-                                <div>
-                                    <h6 class="font-semibold text-[#2b6444] text-lg">
+
+                                <div class="min-w-0">
+
+                                    <h6 class="font-semibold text-[#2b6444] text-lg truncate">
                                         {{ $activeCycle->cycle_code }}
                                     </h6>
+
                                     <span class="inline-flex items-center gap-2 px-2 py-1 rounded-full bg-gray-100 text-xs font-medium text-gray-700">
-    
-                                        {{-- ping dot --}}
-                                        <span class="relative flex h-2 w-2">
+
+                                        {{-- PING DOT --}}
+                                        <span class="relative flex h-2 w-2 flex-shrink-0">
+
                                             <span class="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75
                                                 {{ $activeCycle->status === 'ongoing' ? 'bg-blue-500' : 'bg-gray-400' }}">
                                             </span>
+
                                             <span class="relative inline-flex rounded-full h-2 w-2
                                                 {{ $activeCycle->status === 'ongoing' ? 'bg-blue-600' : 'bg-gray-500' }}">
                                             </span>
+
                                         </span>
 
                                         {{ ucfirst(str_replace('_', ' ', $activeCycle->status)) }}
+
                                     </span>
+
                                 </div>
+
                             </div>
-                            
-                            <div class="mt-2">
+
+                            {{-- ACTION BUTTONS --}}
+                            <div class="mt-2 flex flex-wrap gap-1">
+
                                 <x-button
                                     xs
                                     rounded
@@ -71,164 +90,358 @@
                                     label="Delete"
                                     wire:click="deleteCycleConfirmation({{ $activeCycle->id }}, '{{ $activeCycle->cycle_code }}')"
                                 />
+
                             </div>
-                            
+
                         </div>
 
-                        <div>
-                            <p class="text-xs text-gray-600">Variety</p>
-                            <p class="font-semibold">{{ $activeCycle->crop_variety }}</p>
+
+                        {{-- VARIETY --}}
+                        <div class="min-w-0">
+
+                            <p class="text-xs text-gray-600">
+                                Variety
+                            </p>
+
+                            <p class="font-semibold break-words">
+                                {{ $activeCycle->crop_variety }}
+                            </p>
+
                         </div>
 
-                        <div>
-                            <p class="text-xs text-gray-600">Planting Date</p>
-                            <p class="font-semibold">{{ $activeCycle->planting_date?->format('F d, Y') }}</p>
+
+                        {{-- PLANTING DATE --}}
+                        <div class="min-w-0">
+
+                            <p class="text-xs text-gray-600">
+                                Planting Date
+                            </p>
+
+                            <p class="font-semibold">
+                                {{ $activeCycle->planting_date?->format('F d, Y') }}
+                            </p>
+
                         </div>
 
-                        {{-- STAGE --}}
-                        <div>
-                            <p class="text-xs text-gray-600">Growth Stage</p>
-                            <p class="font-semibold capitalize">
+
+                        {{-- GROWTH STAGE --}}
+                        <div class="min-w-0">
+
+                            <p class="text-xs text-gray-600">
+                                Growth Stage
+                            </p>
+
+                            <p class="font-semibold capitalize break-words">
                                 {{ str_replace('_', ' ', $activeCycle->growth_stage) }}
                             </p>
+
                         </div>
 
+
+                        {{-- BRIX CALCULATION --}}
                         @php
                             $brix = $activeCycle->current_brix;
-                            $isOptimal = $brix !== null && $brix >= 12 && $brix <= 18;
-                        @endphp
 
-                        @php
+                            $isOptimal =
+                                $brix !== null &&
+                                $brix >= 12 &&
+                                $brix <= 18;
+
                             $maxBrix = 15;
-                            $brixValue = $activeCycle->current_brix ?? 0;
 
-                            $percentage = min(100, ($brixValue / $maxBrix) * 100);
+                            $brixValue =
+                                $activeCycle->current_brix ?? 0;
+
+                            $percentage =
+                                min(100, ($brixValue / $maxBrix) * 100);
                         @endphp
+
+
                         {{-- BRIX --}}
-                        <div class="col-span-2 flex flex-row justify-between">
-                            <div>
-                                <p class="text-xs text-gray-600">Brix Level</p>
-                                <div class="flex items-center gap-2">
-                                    <p class="font-semibold text-green-700 text-lg">
-                                        {{ $activeCycle->current_brix !== null 
-                                            ? number_format($activeCycle->current_brix, 1) 
-                                            : '--' 
+                        <div class="sm:col-span-2 lg:col-span-2 xl:col-span-2 flex flex-row justify-between items-center gap-3 min-w-0">
+
+                            <div class="min-w-0">
+
+                                <p class="text-xs text-gray-600">
+                                    Brix Level
+                                </p>
+
+                                <div class="flex flex-wrap items-center gap-2">
+
+                                    <p class="font-semibold text-green-700 text-lg whitespace-nowrap">
+
+                                        {{ $activeCycle->current_brix !== null
+                                            ? number_format($activeCycle->current_brix, 1)
+                                            : '--'
                                         }} °Brix
+
                                     </p>
 
                                     @if($activeCycle->current_brix)
+
                                         @php
-                                            $isOptimal = $activeCycle->current_brix >= 12 && $activeCycle->current_brix <= 18;
+                                            $isOptimal =
+                                                $activeCycle->current_brix >= 12 &&
+                                                $activeCycle->current_brix <= 18;
                                         @endphp
 
-                                        <span class="px-2 py-1 text-2xs rounded-full font-semibold
-                                            {{ $isOptimal ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600' }}">
-                                            {{ $isOptimal ? 'Optimal' : 'Not Optimal' }}
+                                        <span class="px-2 py-1 text-2xs rounded-full font-semibold whitespace-nowrap
+                                            {{ $isOptimal
+                                                ? 'bg-green-100 text-green-700'
+                                                : 'bg-red-100 text-red-600'
+                                            }}">
+
+                                            {{ $isOptimal
+                                                ? 'Optimal'
+                                                : 'Not Optimal'
+                                            }}
+
                                         </span>
+
                                     @endif
 
-                                    
                                 </div>
+
                             </div>
-                            <div class="relative flex items-center justify-center w-16 h-16">
-                                <div class="donut"
-                                    style="--percent: {{ $percentage }}; --color: {{ $isOptimal ? '#22c55e' : '#699973' }};">
+
+
+                            {{-- DONUT --}}
+                            <div class="relative flex items-center justify-center w-16 h-16 flex-shrink-0">
+
+                                <div
+                                    class="donut"
+                                    style="
+                                        --percent: {{ $percentage }};
+                                        --color: {{ $isOptimal ? '#22c55e' : '#699973' }};
+                                    "
+                                >
                                 </div>
 
                                 <div class="absolute text-[10px] font-semibold text-gray-700">
+
                                     {{ number_format($percentage, 0) }}%
+
                                 </div>
+
                             </div>
+
                         </div>
 
                     </div>
 
+
+                    {{-- ========================================================= --}}
                     {{-- PROGRESS BAR SECTION --}}
-                    <div class="p-4 bg-white grid grid-cols-3 gap-4">
+                    {{-- ========================================================= --}}
+                    <div class="p-4 bg-white grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
 
                         @php
-                            // Fetch loaded milestones collection directly from relationship
-                            $cycleMilestones = $activeCycle->milestones;
-                            $totalCount = $cycleMilestones->count();
-                            $completedCount = $cycleMilestones->where('completed', true)->count();
 
-                            // Dynamically compute progress percentage on the fly
-                            $milestoneProgress = $totalCount > 0 
-                                ? round(($completedCount / $totalCount) * 100) 
+                            // Fetch loaded milestones collection directly
+                            // from relationship
+                            $cycleMilestones = $activeCycle->milestones;
+
+                            $totalCount = $cycleMilestones->count();
+
+                            $completedCount = $cycleMilestones
+                                ->where('completed', true)
+                                ->count();
+
+
+                            // Dynamically compute progress percentage
+                            $milestoneProgress = $totalCount > 0
+                                ? round(($completedCount / $totalCount) * 100)
                                 : 0;
 
-                            // Find the single next upcoming pending milestone sequentially
-                            $uncompletedMilestone = $cycleMilestones->where('completed', false)->first();
+
+                            // Find next upcoming pending milestone
+                            $uncompletedMilestone = $cycleMilestones
+                                ->where('completed', false)
+                                ->first();
+
 
                             // Calculate Days left context for display
                             $today = \Carbon\Carbon::now()->startOfDay();
-                            $nextMilestoneDate = $uncompletedMilestone ? \Carbon\Carbon::parse($uncompletedMilestone->scheduled_date)->startOfDay() : null;
-                            $daysLeft = $nextMilestoneDate ? $today->diffInDays($nextMilestoneDate, false) : null;
+
+                            $nextMilestoneDate = $uncompletedMilestone
+                                ? \Carbon\Carbon::parse(
+                                    $uncompletedMilestone->scheduled_date
+                                )->startOfDay()
+                                : null;
+
+                            $daysLeft = $nextMilestoneDate
+                                ? $today->diffInDays(
+                                    $nextMilestoneDate,
+                                    false
+                                )
+                                : null;
+
                         @endphp
 
-                        {{-- COLUMN 1: TRACKING MILESTONES PROGRESS --}}
-                        <div>
-                            <div class="flex justify-between items-center mb-1">
-                                <p class="text-xs text-gray-500">Milestone Progression</p>
-                                <span class="text-[10px] font-bold text-gray-600 bg-gray-100 px-1.5 py-0.5 rounded">
+
+                        {{-- ===================================================== --}}
+                        {{-- COLUMN 1: MILESTONE PROGRESSION --}}
+                        {{-- ===================================================== --}}
+                        <div class="min-w-0">
+
+                            <div class="flex flex-wrap justify-between items-center gap-2 mb-1">
+
+                                <p class="text-xs text-gray-500">
+                                    Milestone Progression
+                                </p>
+
+                                <span class="text-[10px] font-bold text-gray-600 bg-gray-100 px-1.5 py-0.5 rounded whitespace-nowrap">
+
                                     {{ $completedCount }}/{{ $totalCount }} Done
+
                                 </span>
+
                             </div>
 
+
+                            {{-- PROGRESS BAR --}}
                             <div class="w-full bg-gray-200 rounded-full h-2">
-                                {{-- This bar now updates instantly whenever a milestone changes status --}}
-                                <div class="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                                    style="width: {{ $milestoneProgress }}%">
-                                </div>
-                            </div>
 
-                            <div class="mt-2 space-y-1 flex flex-row justify-between items-center">
-                                <div>
-                                    <p class="text-2xs text-gray-500">Current Stage</p>
-                                    <p class="text-xs font-semibold text-gray-800 capitalize">
-                                        {{ str_replace('_', ' ', $activeCycle->growth_stage ?? 'N/A') }}
-                                    </p>
+                                <div
+                                    class="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                                    style="width: {{ $milestoneProgress }}%"
+                                >
                                 </div>
 
-                                <div>
-                                    <p class="text-2xs text-gray-500">Target Milestone</p>
-                                    <p class="text-xs font-semibold text-blue-600 truncate max-w-[120px]">
-                                        {{ $uncompletedMilestone ? ucfirst(str_replace('_', ' ', $uncompletedMilestone->type)) : 'All Cleared!' }}
-                                    </p>
-                                </div>
                             </div>
+
+
+                            {{-- DETAILS --}}
+                            <div class="mt-2 flex flex-col sm:flex-row gap-2 sm:gap-4 justify-between sm:items-center">
+
+                                {{-- CURRENT STAGE --}}
+                                <div class="min-w-0">
+
+                                    <p class="text-2xs text-gray-500">
+                                        Current Stage
+                                    </p>
+
+                                    <p class="text-xs font-semibold text-gray-800 capitalize break-words">
+
+                                        {{ str_replace(
+                                            '_',
+                                            ' ',
+                                            $activeCycle->growth_stage ?? 'N/A'
+                                        ) }}
+
+                                    </p>
+
+                                </div>
+
+
+                                {{-- TARGET MILESTONE --}}
+                                <div class="min-w-0 sm:text-right">
+
+                                    <p class="text-2xs text-gray-500">
+                                        Target Milestone
+                                    </p>
+
+                                    <p class="text-xs font-semibold text-blue-600 truncate sm:max-w-[120px]">
+
+                                        {{ $uncompletedMilestone
+                                            ? ucfirst(
+                                                str_replace(
+                                                    '_',
+                                                    ' ',
+                                                    $uncompletedMilestone->type
+                                                )
+                                            )
+                                            : 'All Cleared!'
+                                        }}
+
+                                    </p>
+
+                                </div>
+
+                            </div>
+
                         </div>
 
-                        {{-- COLUMN 2: FIELD/FRUIT PRODUCTION ESTIMATION --}}
-                        <div>
-                            <p class="text-xs text-gray-500 mb-1">Fruit Development Progress</p>
+
+                        {{-- ===================================================== --}}
+                        {{-- COLUMN 2: FRUIT DEVELOPMENT --}}
+                        {{-- ===================================================== --}}
+                        <div class="min-w-0">
+
+                            <p class="text-xs text-gray-500 mb-1">
+                                Fruit Development Progress
+                            </p>
+
+
+                            {{-- PROGRESS BAR --}}
                             <div class="w-full bg-gray-200 rounded-full h-2">
-                                <div class="bg-[#417151] h-2 rounded-full"
-                                    style="width: {{ $activeCycle->fruit_progress ?? 0 }}%">
-                                </div>
-                            </div>
 
-                            <div class="mt-2 space-y-1 flex flex-row justify-between items-center">
-                                <div>
-                                    <p class="text-2xs text-gray-500">Planting Timestamp</p>
-                                    <p class="text-xs font-semibold text-gray-800">
-                                        {{ $activeCycle->planting_date ? $activeCycle->planting_date->format('M d, Y') : 'N/A' }}
-                                    </p>
+                                <div
+                                    class="bg-[#417151] h-2 rounded-full"
+                                    style="width: {{ $activeCycle->fruit_progress ?? 0 }}%"
+                                >
                                 </div>
 
-                                <div>
-                                    <p class="text-2xs text-gray-500">Expected Harvest</p>
-                                    <p class="text-xs font-semibold text-gray-800">
-                                        {{ $activeCycle->expected_harvest_date ? $activeCycle->expected_harvest_date->format('M d, Y') : 'Not set' }}
-                                    </p>
-                                </div>
                             </div>
+
+
+                            {{-- DATES --}}
+                            <div class="mt-2 flex flex-col sm:flex-row gap-2 sm:gap-4 justify-between sm:items-center">
+
+                                {{-- PLANTING TIMESTAMP --}}
+                                <div class="min-w-0">
+
+                                    <p class="text-2xs text-gray-500">
+                                        Planting Timestamp
+                                    </p>
+
+                                    <p class="text-xs font-semibold text-gray-800 whitespace-nowrap">
+
+                                        {{ $activeCycle->planting_date
+                                            ? $activeCycle->planting_date->format('M d, Y')
+                                            : 'N/A'
+                                        }}
+
+                                    </p>
+
+                                </div>
+
+
+                                {{-- EXPECTED HARVEST --}}
+                                <div class="min-w-0 sm:text-right">
+
+                                    <p class="text-2xs text-gray-500">
+                                        Expected Harvest
+                                    </p>
+
+                                    <p class="text-xs font-semibold text-gray-800 whitespace-nowrap">
+
+                                        {{ $activeCycle->expected_harvest_date
+                                            ? $activeCycle->expected_harvest_date->format('M d, Y')
+                                            : 'Not set'
+                                        }}
+
+                                    </p>
+
+                                </div>
+
+                            </div>
+
                         </div>
 
-                        {{-- COLUMN 3: LIVE ACTIONS TRIGGER MODULE --}}
-                        <div class="grid grid-cols-2 gap-2 border-l border-gray-100 pl-2">
-                            <div class="w-full flex flex-col justify-center items-center text-center">
-                                <p class="text-2xs text-gray-400 mb-1.5 font-medium">Record Sugar Level (Bx)</p>
+
+                        {{-- ===================================================== --}}
+                        {{-- COLUMN 3: LIVE ACTIONS --}}
+                        {{-- ===================================================== --}}
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 xl:border-l border-gray-100 xl:pl-2 md:col-span-2 xl:col-span-1">
+
+                            {{-- ADD BRIX --}}
+                            <div class="w-full flex flex-col justify-center items-center text-center min-w-0">
+
+                                <p class="text-2xs text-gray-400 mb-1.5 font-medium">
+                                    Record Sugar Level (Bx)
+                                </p>
+
                                 <x-button
                                     xs
                                     rounded
@@ -238,14 +451,20 @@
                                     onclick="$openModal('brixModal')"
                                     class="w-full !text-[11px]"
                                 />
+
                             </div>
 
-                            <div class="w-full flex flex-col justify-center items-center text-center">
+
+                            {{-- MILESTONE ACTION --}}
+                            <div class="w-full flex flex-col justify-center items-center text-center min-w-0">
+
                                 <p class="text-2xs text-gray-400 mb-1.5 font-medium">
                                     Record Milestone
                                 </p>
-                                
+
+
                                 @if($uncompletedMilestone)
+
                                     <x-button
                                         xs
                                         rounded
@@ -256,7 +475,9 @@
                                         onclick="$openModal('editMilestoneModal')"
                                         class="w-full !text-[11px]"
                                     />
+
                                 @else
+
                                     <x-button
                                         xs
                                         rounded
@@ -267,18 +488,30 @@
                                         onclick="$openModal('createMilestoneModal')"
                                         class="w-full !text-[11px]"
                                     />
+
                                 @endif
+
                             </div>
+
                         </div>
 
                     </div>
 
                 </div>
+
             @else
+
+                {{-- NO ACTIVE CYCLE --}}
                 <div class="p-4 text-gray-500 border border-gray-400 border-dashed w-full rounded-lg py-20">
-                    <p class="italic text-center">No active cycle found.</p> 
-                </div
+
+                    <p class="italic text-center">
+                        No active cycle found.
+                    </p>
+
+                </div>
+
             @endif
+
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 xl:grid-cols-1 gap-5 mb-8 mt-5">

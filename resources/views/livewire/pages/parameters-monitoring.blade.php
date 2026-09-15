@@ -743,76 +743,73 @@
                         </tr>
                     </thead>
 
-                    <tbody class="divide-y divide-gray-100">
+                    <tbody
+                        class="divide-y divide-gray-100"
+                        wire:poll.5s="fetchSensorDevices"
+                    >
+                        @forelse($sensorDevices as $device)
 
-                        {{-- Temperature --}}
-                        <tr class="hover:bg-gray-50 transition">
-                            <td class="px-5 py-3 font-medium text-gray-800">Temperature</td>
-                            <td class="px-5 py-3">
-                                <span class="inline-flex items-center px-2.5 py-1 text-xs font-medium rounded-full bg-green-50 text-green-600 ring-1 ring-green-200">
-                                    ● Online
-                                </span>
-                            </td>
-                            <td class="px-5 py-3 text-gray-500">{{ Carbon::now('Asia/Manila')->format('h:i A, F d, Y') }}</td>
-                        </tr>
+                            <tr class="hover:bg-gray-50 transition">
 
-                        {{-- Humidity --}}
-                        <tr class="hover:bg-gray-50 transition">
-                            <td class="px-5 py-3 font-medium text-gray-800">Humidity</td>
-                            <td class="px-5 py-3">
-                                <span class="inline-flex items-center px-2.5 py-1 text-xs font-medium rounded-full bg-red-50 text-red-600 ring-1 ring-red-200">
-                                    ● Offline
-                                </span>
-                            </td>
-                            <td class="px-5 py-3 text-gray-500">{{ Carbon::now('Asia/Manila')->format('h:i A, F d, Y') }}</td>
-                        </tr>
+                                {{-- SENSOR NAME --}}
+                                <td class="px-5 py-3 font-medium text-gray-800">
+                                    {{ $device['name'] }}
+                                </td>
 
-                        {{-- Soil Moisture --}}
-                        <tr class="hover:bg-gray-50 transition">
-                            <td class="px-5 py-3 font-medium text-gray-800">Soil Moisture</td>
-                            <td class="px-5 py-3">
-                                <span class="inline-flex items-center px-2.5 py-1 text-xs font-medium rounded-full bg-green-50 text-green-600 ring-1 ring-green-200">
-                                    ● Online
-                                </span>
-                            </td>
-                            <td class="px-5 py-3 text-gray-500">{{ Carbon::now('Asia/Manila')->format('h:i A, F d, Y') }}</td>
-                        </tr>
+                                {{-- STATUS --}}
+                                <td class="px-5 py-3">
 
-                        {{-- EC Level --}}
-                        <tr class="hover:bg-gray-50 transition">
-                            <td class="px-5 py-3 font-medium text-gray-800">EC Level</td>
-                            <td class="px-5 py-3">
-                                <span class="inline-flex items-center px-2.5 py-1 text-xs font-medium rounded-full bg-green-50 text-green-600 ring-1 ring-green-200">
-                                    ● Online
-                                </span>
-                            </td>
-                            <td class="px-5 py-3 text-gray-500">{{ Carbon::now('Asia/Manila')->format('h:i A, F d, Y') }}</td>
-                        </tr>
+                                    @if($device['status'] === 'Online')
 
-                        {{-- pH Level --}}
-                        <tr class="hover:bg-gray-50 transition">
-                            <td class="px-5 py-3 font-medium text-gray-800">pH Level</td>
-                            <td class="px-5 py-3">
-                                <span class="inline-flex items-center px-2.5 py-1 text-xs font-medium rounded-full bg-green-50 text-green-600 ring-1 ring-green-200">
-                                    ● Online
-                                </span>
-                            </td>
-                            <td class="px-5 py-3 text-gray-500">{{ Carbon::now('Asia/Manila')->format('h:i A, F d, Y') }}</td>
-                        </tr>
+                                        <span
+                                            class="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-full bg-green-50 text-green-600 ring-1 ring-green-200"
+                                        >
+                                            <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+                                            Online
+                                        </span>
 
-                        {{-- NPK Sensor --}}
-                        <tr class="hover:bg-gray-50 transition">
-                            <td class="px-5 py-3 font-medium text-gray-800">NPK Sensor</td>
-                            <td class="px-5 py-3">
-                                <span class="inline-flex items-center px-2.5 py-1 text-xs font-medium rounded-full bg-green-50 text-green-600 ring-1 ring-green-200">
-                                    ● Online
-                                </span>
-                            </td>
-                            <td class="px-5 py-3 text-gray-500">
-                                {{ Carbon::now('Asia/Manila')->format('h:i A, F d, Y') }}
-                            </td>
-                        </tr>
+                                    @else
 
+                                        <span
+                                            class="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-full bg-red-50 text-red-600 ring-1 ring-red-200"
+                                        >
+                                            <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span>
+                                            Offline
+                                        </span>
+
+                                    @endif
+
+                                </td>
+
+                                {{-- LAST UPDATE --}}
+                                <td class="px-5 py-3 text-gray-500">
+
+                                    @if($device['last_update'])
+
+                                        {{ $device['last_update']->format('h:i A, F d, Y') }}
+
+                                    @else
+
+                                        No reading yet
+
+                                    @endif
+
+                                </td>
+
+                            </tr>
+
+                        @empty
+
+                            <tr>
+                                <td
+                                    colspan="3"
+                                    class="px-5 py-6 text-center text-sm text-gray-500"
+                                >
+                                    No sensor device information available.
+                                </td>
+                            </tr>
+
+                        @endforelse
                     </tbody>
                 </table>
 

@@ -51,6 +51,8 @@ class ParametersMonitoring extends Component
     public $customEndDate;
     public $maxDateTime;
     public string $chartDateRange = '';
+
+    public $sensorDevices = [];
     
 
     protected $listeners = [
@@ -97,6 +99,8 @@ class ParametersMonitoring extends Component
         $this->fetchData();
         $this->loadChartData();
         $this->maxDateTime = now('Asia/Manila')->format('Y-m-d H:i:s');
+
+        $this->fetchSensorDevices();
     }
 
     public function fetchData()
@@ -212,6 +216,72 @@ class ParametersMonitoring extends Component
 
         } catch (\Exception $e) {
             $this->tempratureReading = 'Error: ' . $e->getMessage();
+        }
+    }
+
+    public function fetchSensorDevices()
+    {
+        try {
+
+            $database = app(\Kreait\Firebase\Contract\Database::class);
+
+            $data = $database
+                ->getReference('SensorDevices')
+                ->getValue() ?? [];
+
+            $devices = [
+                'Temperature' => 'Temperature',
+                'Humidity' => 'Humidity',
+                'PH' => 'pH Level',
+
+                'SoilMoisture1' => 'Soil Moisture 1',
+                'SoilMoisture2' => 'Soil Moisture 2',
+
+                'WaterLevel' => 'Water Level',
+
+                'EC' => 'EC Level',
+
+                'NPK1' => 'NPK Sensor 1',
+                'NPK2' => 'NPK Sensor 2',
+            ];
+
+            $now = now('Asia/Manila');
+
+            $this->sensorDevices = [];
+
+            foreach ($devices as $key => $label) {
+
+                $firebaseStatus = $data[$key]['Status'] ?? 'Offline';
+                $timestamp = $data[$key]['LastUpdate'] ?? null;
+
+                $lastUpdate = null;
+                $online = false;
+
+                if ($timestamp) {
+
+                    // Firebase timestamp is milliseconds
+                    $lastUpdate = \Carbon\Carbon::createFromTimestampMs(
+                        $timestamp,
+                        'Asia/Manila'
+                    );
+
+                    // ESP32 updates approximately every 5 seconds.
+                    // If no update for 20 seconds, consider sensor offline.
+                    $online =
+                        $firebaseStatus === 'Online' &&
+                        $lastUpdate->diffInSeconds($now, true) <= 20;
+                }
+
+                $this->sensorDevices[] = [
+                    'name' => $label,
+                    'status' => $online ? 'Online' : 'Offline',
+                    'last_update' => $lastUpdate,
+                ];
+            }
+
+        } catch (\Exception $e) {
+
+            $this->sensorDevices = [];
         }
     }
 
