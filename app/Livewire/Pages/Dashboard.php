@@ -9,6 +9,7 @@ use App\Models\Harvests;
 use App\Models\Notifications;
 use Kreait\Firebase\Database;
 use Livewire\Component;
+use App\Models\Sale;
 
 class Dashboard extends Component
 {
@@ -569,6 +570,41 @@ class Dashboard extends Component
             ->get();
 
         $totalHarvestedMelons = Harvests::sum('harvest_count');
+
+        // ================================
+        // SALES DASHBOARD
+        // ================================
+
+        $totalSales = Sale::where('status', 'completed')
+            ->sum('total_amount');
+
+        $totalOrders = Sale::where('status', 'completed')
+            ->count();
+
+        $totalKgSold = Sale::where('status', 'completed')
+            ->sum('quantity_kg');
+
+        $averagePricePerKg = $totalKgSold > 0
+            ? $totalSales / $totalKgSold
+            : 0;
+
+        $recentSales = Sale::with('cycle')
+            ->where('status', 'completed')
+            ->latest('sale_date')
+            ->limit(5)
+            ->get();
+
+        $salesByCycle = Cycles::with([
+                'sales' => function ($query) {
+                    $query->where('status', 'completed');
+                }
+            ])
+            ->whereHas('sales', function ($query) {
+                $query->where('status', 'completed');
+            })
+            ->latest()
+            ->limit(5)
+            ->get();
             
 
         return view('livewire.pages.dashboard', [
@@ -639,6 +675,14 @@ class Dashboard extends Component
 
             'recentNotifications' => $recentNotifications,
             'totalHarvestedMelons' => $totalHarvestedMelons,
+
+            // Sales
+            'totalSales' => $totalSales,
+            'totalOrders' => $totalOrders,
+            'totalKgSold' => $totalKgSold,
+            'averagePricePerKg' => $averagePricePerKg,
+            'recentSales' => $recentSales,
+            'salesByCycle' => $salesByCycle,
         ]);
     }
 }

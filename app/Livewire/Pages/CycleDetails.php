@@ -7,6 +7,7 @@ use App\Models\BrixReading;
 use App\Models\CycleMilestone;
 use App\Models\Cycles;
 use App\Models\Harvests;
+use App\Models\Sale;
 use App\Models\Shrimps;
 use App\Models\YieldTracker;
 use Carbon\Carbon;
@@ -84,6 +85,19 @@ class CycleDetails extends Component
     public $editHarvestCount;
 
     public $selectedCycleDetails;
+
+    // SALES REPORT
+    public $saleCycleId;
+    public $saleDate;
+    public $customerName;
+    public $quantityKg;
+    public $pricePerKg;
+    public $saleStatus = 'completed';
+    public $saleRemarks;
+
+    public $selectedSaleId;
+    public $selectedSalesCycle;
+    public $selectedSales = [];
 
     public function mount()
     {
@@ -808,12 +822,245 @@ class CycleDetails extends Component
         ]);
     }
 
+
+    // =========================================================
+    // SALES REPORT
+    // =========================================================
+
+    public function openAddSaleModal($cycleId = null)
+    {
+        $this->resetSaleFields();
+
+        $this->saleCycleId = $cycleId;
+        $this->saleDate = now('Asia/Manila')->format('Y-m-d');
+        $this->saleStatus = 'completed';
+    }
+
+    public function saveSale()
+    {
+        $this->validate([
+            'saleCycleId' => 'required|exists:cycles,id',
+            'saleDate' => 'required|date',
+            'customerName' => 'nullable|string|max:255',
+            'quantityKg' => 'required|numeric|min:0.01',
+            'pricePerKg' => 'required|numeric|min:0',
+            'saleStatus' => 'required|in:pending,completed,cancelled',
+            'saleRemarks' => 'nullable|string|max:1000',
+        ]);
+
+        Sale::create([
+            'cycle_id' => $this->saleCycleId,
+            'sale_date' => $this->saleDate,
+            'customer_name' => $this->customerName,
+            'quantity_kg' => $this->quantityKg,
+            'price_per_kg' => $this->pricePerKg,
+            'total_amount' => round((float) $this->quantityKg * (float) $this->pricePerKg, 2),
+            'status' => $this->saleStatus,
+            'remarks' => $this->saleRemarks,
+        ]);
+
+        $this->resetSaleFields();
+
+        $this->dispatch('close-sales-modal', name: 'addSaleModal');
+
+        Notification::make()
+            ->title('Saved')
+            ->body('Sale recorded successfully.')
+            ->success()
+            ->send();
+    }
+
+    public function viewSalesDetails($cycleId)
+    {
+        $this->selectedSalesCycle = Cycles::with([
+            'brixReadings',
+            'harvests',
+            'sales' => fn ($query) => $query->latest('sale_date')->latest('id'),
+        ])->findOrFail($cycleId);
+
+        $this->selectedSales = $this->selectedSalesCycle->sales;
+    }
+
+    public function getSelectedSale($id)
+    {
+        $sale = Sale::findOrFail($id);
+
+        $this->selectedSaleId = $sale->id;
+        $this->saleCycleId = $sale->cycle_id;
+        $this->saleDate = $sale->sale_date?->format('Y-m-d');
+        $this->customerName = $sale->customer_name;
+        $this->quantityKg = $sale->quantity_kg;
+        $this->pricePerKg = $sale->price_per_kg;
+        $this->saleStatus = $sale->status;
+        $this->saleRemarks = $sale->remarks;
+    }
+
+    public function updateSale()
+    {
+        $this->validate([
+            'saleCycleId' => 'required|exists:cycles,id',
+            'saleDate' => 'required|date',
+            'customerName' => 'nullable|string|max:255',
+            'quantityKg' => 'required|numeric|min:0.01',
+            'pricePerKg' => 'required|numeric|min:0',
+            'saleStatus' => 'required|in:pending,completed,cancelled',
+            'saleRemarks' => 'nullable|string|max:1000',
+        ]);
+
+        $sale = Sale::findOrFail($this->selectedSaleId);
+
+        $cycleId = $sale->cycle_id;
+
+        $sale->update([
+            'cycle_id' => $this->saleCycleId,
+            'sale_date' => $this->saleDate,
+            'customer_name' => $this->customerName,
+            'quantity_kg' => $this->quantityKg,
+            'price_per_kg' => $this->pricePerKg,
+            'total_amount' => round((float) $this->quantityKg * (float) $this->pricePerKg, 2),
+            'status' => $this->saleStatus,
+            'remarks' => $this->saleRemarks,
+        ]);
+
+        if ($this->selectedSalesCycle) {
+            $this->viewSalesDetails($this->saleCycleId ?? $cycleId);
+        }
+
+        $this->resetSaleFields();
+
+        $this->dispatch('close-sales-modal', name: 'editSaleModal');
+
+        Notification::make()
+            ->title('Updated')
+            ->body('Sale updated successfully.')
+            ->success()
+            ->send();
+    }
+
+    public function deleteSaleConfirmation($id)
+    {
+        $this->dialog()->confirm([
+            'title' => 'Delete Sale?',
+            'description' => 'This sale record will be permanently deleted.',
+            'acceptLabel' => 'Yes delete',
+            'method' => 'deleteSale',
+            'params' => $id,
+        ]);
+    }
+
+    public function deleteSale($id)
+    {
+        $sale = Sale::findOrFail($id);
+        $cycleId = $sale->cycle_id;
+
+        $sale->delete();
+
+        if ($this->selectedSalesCycle && $this->selectedSalesCycle->id == $cycleId) {
+            $this->viewSalesDetails($cycleId);
+        }
+
+        Notification::make()
+            ->title('Deleted')
+            ->body('Sale deleted successfully.')
+            ->success()
+            ->send();
+    }
+
+    private function resetSaleFields()
+    {
+        $this->reset([
+            'saleCycleId',
+            'saleDate',
+            'customerName',
+            'quantityKg',
+            'pricePerKg',
+            'saleRemarks',
+            'selectedSaleId',
+        ]);
+
+        $this->saleStatus = 'completed';
+    }
+
+    public function exportSalesReport()
+    {
+        $cycles = Cycles::with(['brixReadings', 'sales'])
+            ->latest()
+            ->get();
+
+        $fileName = 'sales-report-' . now('Asia/Manila')->format('Y-m-d-His') . '.csv';
+
+        return response()->streamDownload(function () use ($cycles) {
+            $handle = fopen('php://output', 'w');
+
+            fputcsv($handle, [
+                'Cycle ID',
+                'Variety',
+                'Harvest Date',
+                'Total Yield (kg)',
+                'Average Brix',
+                'Total Sales',
+                'Average Price / kg',
+                'Number of Orders',
+                'Cycle Status',
+            ]);
+
+            $grandYield = 0;
+            $grandSales = 0;
+            $grandOrders = 0;
+
+            foreach ($cycles as $cycle) {
+                $completedSales = $cycle->sales->where('status', 'completed');
+
+                $totalSales = (float) $completedSales->sum('total_amount');
+                $totalKgSold = (float) $completedSales->sum('quantity_kg');
+                $averagePrice = $totalKgSold > 0 ? $totalSales / $totalKgSold : 0;
+                $averageBrix = $cycle->brixReadings->avg('brix_level');
+
+                $grandYield += (float) ($cycle->yield_kg ?? 0);
+                $grandSales += $totalSales;
+                $grandOrders += $completedSales->count();
+
+                fputcsv($handle, [
+                    $cycle->cycle_code,
+                    $cycle->crop_variety,
+                    $cycle->actual_harvest_date?->format('Y-m-d') ?? '',
+                    number_format((float) ($cycle->yield_kg ?? 0), 2, '.', ''),
+                    $averageBrix !== null ? number_format((float) $averageBrix, 2, '.', '') : '',
+                    number_format($totalSales, 2, '.', ''),
+                    number_format($averagePrice, 2, '.', ''),
+                    $completedSales->count(),
+                    ucfirst(str_replace('_', ' ', $cycle->status)),
+                ]);
+            }
+
+            fputcsv($handle, []);
+            fputcsv($handle, [
+                'TOTAL',
+                '',
+                '',
+                number_format($grandYield, 2, '.', ''),
+                '',
+                number_format($grandSales, 2, '.', ''),
+                '',
+                $grandOrders,
+                '',
+            ]);
+
+            fclose($handle);
+        }, $fileName, [
+            'Content-Type' => 'text/csv',
+        ]);
+    }
+
     public function render()
     {
         return view('livewire.pages.cycle-details', [
             'cycleLists' => Cycles::with('milestones')->latest()->get(),
             'activeCycle' => $this->activeCycle,
             'completedCycles' => $this->completedCycles,
+            'salesReportCycles' => Cycles::with(['brixReadings', 'sales'])
+                ->latest()
+                ->get(),
         ]);
     }
 }

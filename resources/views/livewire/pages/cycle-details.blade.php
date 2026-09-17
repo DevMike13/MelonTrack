@@ -1109,6 +1109,288 @@
         </div>
     </div>
 
+
+    {{-- ========================================================= --}}
+    {{-- SALES REPORT --}}
+    {{-- ========================================================= --}}
+    <div class="grid grid-cols-1 gap-5 mb-8 relative z-20">
+        <div class="flex flex-col w-full bg-white rounded-2xl border border-[#356744] p-4 lg:p-6">
+
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+                <div class="flex items-center gap-3">
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                        class="size-6">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 0 1 3 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 0 0-.75.75v.75m0 0H3.75m0 0H3a.75.75 0 0 1-.75-.75V15m1.5 1.5v-.75A.75.75 0 0 0 3 15h-.75M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm3 0h.008v.008H18V10.5Zm-12 0h.008v.008H6V10.5Z" />
+                    </svg>
+
+                    <div>
+                        <h6 class="font-semibold text-[#2b6444] text-md">
+                            Sales Report
+                        </h6>
+                        <p class="text-xs text-gray-500">
+                            Cultivation cycle sales performance and financial outcome.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap gap-2">
+                    <x-button
+                        sm
+                        rounded
+                        positive
+                        icon="plus"
+                        label="Add Sale"
+                        wire:click="openAddSaleModal"
+                        onclick="$openModal('addSaleModal')"
+                    />
+
+                    <div class="hidden sm:block">
+                        <x-button
+                            sm
+                            rounded
+                            icon="download"
+                            label="Export Report"
+                            wire:click="exportSalesReport"
+                        />
+                    </div>
+                </div>
+            </div>
+
+            @php
+                $reportTotalYield = $salesReportCycles->sum(fn ($cycle) => (float) ($cycle->yield_kg ?? 0));
+
+                $reportTotalSales = $salesReportCycles->sum(function ($cycle) {
+                    return (float) $cycle->sales
+                        ->where('status', 'completed')
+                        ->sum('total_amount');
+                });
+
+                $reportTotalOrders = $salesReportCycles->sum(function ($cycle) {
+                    return $cycle->sales
+                        ->where('status', 'completed')
+                        ->count();
+                });
+            @endphp
+
+            {{-- DESKTOP / TABLET TABLE --}}
+            <div class="hidden md:block overflow-x-auto rounded-xl border border-gray-200">
+                <table class="w-full min-w-[1200px] text-xs">
+                    <thead class="bg-gray-100 text-gray-600">
+                        <tr>
+                            <th class="px-3 py-3 text-left">Cycle ID</th>
+                            <th class="px-3 py-3 text-left">Variety</th>
+                            <th class="px-3 py-3 text-left">Harvest Date</th>
+                            <th class="px-3 py-3 text-right">Total Yield</th>
+                            <th class="px-3 py-3 text-right">Average Brix</th>
+                            <th class="px-3 py-3 text-right">Total Sales</th>
+                            <th class="px-3 py-3 text-right">Price / kg</th>
+                            <th class="px-3 py-3 text-center">Orders</th>
+                            <th class="px-3 py-3 text-left">Cycle Status</th>
+                            <th class="px-3 py-3 text-center">Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @forelse($salesReportCycles as $cycle)
+                            @php
+                                $completedSales = $cycle->sales->where('status', 'completed');
+
+                                $cycleTotalSales = (float) $completedSales->sum('total_amount');
+                                $cycleTotalKgSold = (float) $completedSales->sum('quantity_kg');
+                                $cycleAveragePrice = $cycleTotalKgSold > 0
+                                    ? $cycleTotalSales / $cycleTotalKgSold
+                                    : 0;
+
+                                $cycleAverageBrix = $cycle->brixReadings->avg('brix_level');
+                                $cycleOrders = $completedSales->count();
+                            @endphp
+
+                            <tr class="border-t hover:bg-gray-50">
+                                <td class="px-3 py-3 font-semibold text-[#2b6444] whitespace-nowrap">
+                                    {{ $cycle->cycle_code }}
+                                </td>
+
+                                <td class="px-3 py-3">
+                                    {{ $cycle->crop_variety }}
+                                </td>
+
+                                <td class="px-3 py-3 whitespace-nowrap">
+                                    {{ $cycle->actual_harvest_date?->format('M d, Y') ?? '--' }}
+                                </td>
+
+                                <td class="px-3 py-3 text-right whitespace-nowrap font-semibold">
+                                    {{ number_format((float) ($cycle->yield_kg ?? 0), 2) }} kg
+                                </td>
+
+                                <td class="px-3 py-3 text-right whitespace-nowrap">
+                                    {{ $cycleAverageBrix !== null ? number_format($cycleAverageBrix, 2) . ' °Bx' : '--' }}
+                                </td>
+
+                                <td class="px-3 py-3 text-right whitespace-nowrap font-semibold text-green-700">
+                                    ₱{{ number_format($cycleTotalSales, 2) }}
+                                </td>
+
+                                <td class="px-3 py-3 text-right whitespace-nowrap">
+                                    ₱{{ number_format($cycleAveragePrice, 2) }}
+                                </td>
+
+                                <td class="px-3 py-3 text-center font-semibold">
+                                    {{ $cycleOrders }}
+                                </td>
+
+                                <td class="px-3 py-3">
+                                    <span class="inline-flex px-2 py-1 rounded-full text-[10px] font-semibold
+                                        {{ in_array($cycle->status, ['completed', 'harvested'])
+                                            ? 'bg-green-100 text-green-700'
+                                            : ($cycle->status === 'cancelled'
+                                                ? 'bg-red-100 text-red-700'
+                                                : 'bg-blue-100 text-blue-700') }}">
+                                        {{ ucfirst(str_replace('_', ' ', $cycle->status)) }}
+                                    </span>
+                                </td>
+
+                                <td class="px-3 py-3 text-center">
+                                    <x-button
+                                        xs
+                                        rounded
+                                        info
+                                        icon="eye"
+                                        label="View"
+                                        wire:click="viewSalesDetails({{ $cycle->id }})"
+                                        onclick="$openModal('salesDetailsModal')"
+                                    />
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="10" class="px-3 py-8 text-center text-gray-400 italic">
+                                    No cycles available for the sales report.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+
+                    <tfoot class="bg-[#e1eeda] border-t-2 border-[#356744]">
+                        <tr>
+                            <td colspan="3" class="px-3 py-3 font-bold text-[#2b6444]">
+                                TOTAL
+                            </td>
+
+                            <td class="px-3 py-3 text-right font-bold whitespace-nowrap">
+                                {{ number_format($reportTotalYield, 2) }} kg
+                            </td>
+
+                            <td class="px-3 py-3"></td>
+
+                            <td class="px-3 py-3 text-right font-bold text-green-700 whitespace-nowrap">
+                                ₱{{ number_format($reportTotalSales, 2) }}
+                            </td>
+
+                            <td class="px-3 py-3"></td>
+
+                            <td class="px-3 py-3 text-center font-bold">
+                                {{ $reportTotalOrders }}
+                            </td>
+
+                            <td colspan="2" class="px-3 py-3"></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            {{-- MOBILE COMPACT TABLE --}}
+            <div class="md:hidden overflow-x-auto rounded-xl border border-gray-200">
+                <table class="w-full min-w-[820px] text-[11px]">
+                    <thead class="bg-gray-100 text-gray-600">
+                        <tr>
+                            <th class="px-2 py-2 text-left">Cycle</th>
+                            <th class="px-2 py-2 text-left">Variety</th>
+                            <th class="px-2 py-2 text-left">Harvest</th>
+                            <th class="px-2 py-2 text-right">Yield</th>
+                            <th class="px-2 py-2 text-right">Brix</th>
+                            <th class="px-2 py-2 text-right">Sales</th>
+                            <th class="px-2 py-2 text-right">₱/kg</th>
+                            <th class="px-2 py-2 text-center">Orders</th>
+                            <th class="px-2 py-2 text-left">Status</th>
+                            <th class="px-2 py-2 text-center">View</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @forelse($salesReportCycles as $cycle)
+                            @php
+                                $completedSales = $cycle->sales->where('status', 'completed');
+                                $cycleTotalSales = (float) $completedSales->sum('total_amount');
+                                $cycleTotalKgSold = (float) $completedSales->sum('quantity_kg');
+                                $cycleAveragePrice = $cycleTotalKgSold > 0 ? $cycleTotalSales / $cycleTotalKgSold : 0;
+                                $cycleAverageBrix = $cycle->brixReadings->avg('brix_level');
+                            @endphp
+
+                            <tr class="border-t">
+                                <td class="px-2 py-2 font-semibold text-[#2b6444] whitespace-nowrap">
+                                    {{ $cycle->cycle_code }}
+                                </td>
+                                <td class="px-2 py-2 whitespace-nowrap">{{ $cycle->crop_variety }}</td>
+                                <td class="px-2 py-2 whitespace-nowrap">{{ $cycle->actual_harvest_date?->format('M d, Y') ?? '--' }}</td>
+                                <td class="px-2 py-2 text-right whitespace-nowrap">{{ number_format((float) ($cycle->yield_kg ?? 0), 2) }} kg</td>
+                                <td class="px-2 py-2 text-right whitespace-nowrap">{{ $cycleAverageBrix !== null ? number_format($cycleAverageBrix, 2) : '--' }}</td>
+                                <td class="px-2 py-2 text-right whitespace-nowrap font-semibold text-green-700">₱{{ number_format($cycleTotalSales, 2) }}</td>
+                                <td class="px-2 py-2 text-right whitespace-nowrap">₱{{ number_format($cycleAveragePrice, 2) }}</td>
+                                <td class="px-2 py-2 text-center">{{ $completedSales->count() }}</td>
+                                <td class="px-2 py-2 capitalize whitespace-nowrap">{{ str_replace('_', ' ', $cycle->status) }}</td>
+                                <td class="px-2 py-2 text-center">
+                                    <x-button
+                                        xs
+                                        rounded
+                                        info
+                                        icon="eye"
+                                        wire:click="viewSalesDetails({{ $cycle->id }})"
+                                        onclick="$openModal('salesDetailsModal')"
+                                    />
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="10" class="px-3 py-6 text-center text-gray-400 italic">
+                                    No cycles available.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+
+                    <tfoot class="bg-[#e1eeda] border-t-2 border-[#356744]">
+                        <tr>
+                            <td colspan="3" class="px-2 py-2 font-bold text-[#2b6444]">TOTAL</td>
+                            <td class="px-2 py-2 text-right font-bold whitespace-nowrap">{{ number_format($reportTotalYield, 2) }} kg</td>
+                            <td></td>
+                            <td class="px-2 py-2 text-right font-bold text-green-700 whitespace-nowrap">₱{{ number_format($reportTotalSales, 2) }}</td>
+                            <td></td>
+                            <td class="px-2 py-2 text-center font-bold">{{ $reportTotalOrders }}</td>
+                            <td colspan="2"></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            {{-- MOBILE EXPORT BUTTON BELOW TABLE --}}
+            <div class="sm:hidden mt-4">
+                <x-button
+                    class="w-full"
+                    rounded
+                    icon="download"
+                    label="Export Report"
+                    wire:click="exportSalesReport"
+                />
+            </div>
+
+        </div>
+    </div>
+
     <x-modal blur name="newCycle" persistent align="center" max-width="lg">
         <x-card title="Create New Cycle">
             
@@ -1603,6 +1885,362 @@
                 <div class="flex justify-end gap-3">
                     <x-button flat label="Cancel" x-on:click="close" />
                     <x-button success label="Update Milestone" wire:click="updateMilestone" x-on:click="close" />
+                </div>
+            </x-slot>
+
+        </x-card>
+    </x-modal>
+
+
+    {{-- ========================================================= --}}
+    {{-- ADD SALE MODAL --}}
+    {{-- ========================================================= --}}
+    <x-modal blur name="addSaleModal" persistent align="center" max-width="lg">
+        <x-card title="Add Sale">
+
+            <div class="space-y-4">
+
+                <x-select
+                    label="Cycle"
+                    wire:model.defer="saleCycleId"
+                    :options="$cycleLists->map(fn($cycle) => [
+                        'id' => $cycle->id,
+                        'name' => $cycle->cycle_code . ' - ' . $cycle->crop_variety
+                    ])->values()->toArray()"
+                    option-label="name"
+                    option-value="id"
+                />
+
+                <x-input
+                    label="Customer Name"
+                    wire:model.defer="customerName"
+                    placeholder="Optional"
+                />
+
+                <x-datetime-picker
+                    label="Sale Date"
+                    without-time
+                    wire:model.defer="saleDate"
+                />
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <x-inputs.number
+                        label="Quantity Sold (kg)"
+                        wire:model.defer="quantityKg"
+                        min="0.01"
+                        step="0.01"
+                    />
+
+                    <x-inputs.number
+                        label="Price per Kilogram"
+                        prefix="₱"
+                        wire:model.defer="pricePerKg"
+                        min="0"
+                        step="0.01"
+                    />
+                </div>
+
+                <div class="p-3 bg-green-50 border border-green-200 rounded-xl">
+                    <p class="text-xs text-gray-500">Total Amount</p>
+                    <p class="text-xl font-bold text-green-700">
+                        ₱{{ number_format(((float) ($quantityKg ?? 0)) * ((float) ($pricePerKg ?? 0)), 2) }}
+                    </p>
+                </div>
+
+                <x-select
+                    label="Status"
+                    wire:model.defer="saleStatus"
+                    :options="[
+                        ['id'=>'pending','name'=>'Pending'],
+                        ['id'=>'completed','name'=>'Completed'],
+                        ['id'=>'cancelled','name'=>'Cancelled']
+                    ]"
+                    option-label="name"
+                    option-value="id"
+                />
+
+                <x-textarea
+                    label="Remarks"
+                    wire:model.defer="saleRemarks"
+                />
+
+            </div>
+
+            <x-slot name="footer">
+                <div class="flex justify-end gap-3">
+                    <x-button flat label="Cancel" x-on:click="close" />
+                    <x-button positive label="Save Sale" wire:click="saveSale" />
+                </div>
+            </x-slot>
+
+        </x-card>
+    </x-modal>
+
+    {{-- ========================================================= --}}
+    {{-- EDIT SALE MODAL --}}
+    {{-- ========================================================= --}}
+    <x-modal blur name="editSaleModal" persistent align="center" max-width="lg" z-index="z-50" >
+        <x-card title="Edit Sale">
+
+            <div class="space-y-4">
+
+                <x-select
+                    label="Cycle"
+                    wire:model.defer="saleCycleId"
+                    :options="$cycleLists->map(fn($cycle) => [
+                        'id' => $cycle->id,
+                        'name' => $cycle->cycle_code . ' - ' . $cycle->crop_variety
+                    ])->values()->toArray()"
+                    option-label="name"
+                    option-value="id"
+                />
+
+                <x-input
+                    label="Customer Name"
+                    wire:model.defer="customerName"
+                />
+
+                <x-datetime-picker
+                    label="Sale Date"
+                    without-time
+                    wire:model.defer="saleDate"
+                />
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <x-inputs.number
+                        label="Quantity Sold (kg)"
+                        wire:model.defer="quantityKg"
+                        min="0.01"
+                        step="0.01"
+                    />
+
+                    <x-inputs.number
+                        label="Price per Kilogram"
+                        prefix="₱"
+                        wire:model.defer="pricePerKg"
+                        min="0"
+                        step="0.01"
+                    />
+                </div>
+
+                <div class="p-3 bg-green-50 border border-green-200 rounded-xl">
+                    <p class="text-xs text-gray-500">Total Amount</p>
+                    <p class="text-xl font-bold text-green-700">
+                        ₱{{ number_format(((float) ($quantityKg ?? 0)) * ((float) ($pricePerKg ?? 0)), 2) }}
+                    </p>
+                </div>
+
+                <x-select
+                    label="Status"
+                    wire:model.defer="saleStatus"
+                    :options="[
+                        ['id'=>'pending','name'=>'Pending'],
+                        ['id'=>'completed','name'=>'Completed'],
+                        ['id'=>'cancelled','name'=>'Cancelled']
+                    ]"
+                    option-label="name"
+                    option-value="id"
+                />
+
+                <x-textarea
+                    label="Remarks"
+                    wire:model.defer="saleRemarks"
+                />
+
+            </div>
+
+            <x-slot name="footer">
+                <div class="flex justify-end gap-3">
+                    <x-button flat label="Cancel" x-on:click="close" />
+                    <x-button primary label="Update Sale" wire:click="updateSale" />
+                </div>
+            </x-slot>
+
+        </x-card>
+    </x-modal>
+
+    {{-- ========================================================= --}}
+    {{-- SALES DETAILS MODAL --}}
+    {{-- ========================================================= --}}
+    <x-modal blur name="salesDetailsModal" persistent align="center" max-width="6xl" z-index="z-40">
+        <x-card title="Sales Details">
+
+            @if($selectedSalesCycle)
+                @php
+                    $detailCompletedSales = collect($selectedSales)->where('status', 'completed');
+                    $detailTotalSales = (float) $detailCompletedSales->sum('total_amount');
+                    $detailKgSold = (float) $detailCompletedSales->sum('quantity_kg');
+                    $detailAveragePrice = $detailKgSold > 0 ? $detailTotalSales / $detailKgSold : 0;
+                    $detailAverageBrix = $selectedSalesCycle->brixReadings->avg('brix_level');
+                @endphp
+
+                <div class="space-y-5">
+
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                        <div class="p-3 bg-gray-50 rounded-xl">
+                            <p class="text-xs text-gray-500">Cycle</p>
+                            <p class="font-semibold text-[#2b6444]">
+                                {{ $selectedSalesCycle->cycle_code }}
+                            </p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl">
+                            <p class="text-xs text-gray-500">Variety</p>
+                            <p class="font-semibold">
+                                {{ $selectedSalesCycle->crop_variety }}
+                            </p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl">
+                            <p class="text-xs text-gray-500">Harvest Date</p>
+                            <p class="font-semibold">
+                                {{ $selectedSalesCycle->actual_harvest_date?->format('M d, Y') ?? '--' }}
+                            </p>
+                        </div>
+
+                        <div class="p-3 bg-gray-50 rounded-xl">
+                            <p class="text-xs text-gray-500">Total Yield</p>
+                            <p class="font-semibold">
+                                {{ number_format((float) ($selectedSalesCycle->yield_kg ?? 0), 2) }} kg
+                            </p>
+                        </div>
+
+                        <div class="p-3 bg-green-50 rounded-xl">
+                            <p class="text-xs text-gray-500">Average Brix</p>
+                            <p class="font-semibold text-green-700">
+                                {{ $detailAverageBrix !== null ? number_format($detailAverageBrix, 2) . ' °Bx' : '--' }}
+                            </p>
+                        </div>
+
+                        <div class="p-3 bg-green-50 rounded-xl">
+                            <p class="text-xs text-gray-500">Total Sales</p>
+                            <p class="font-semibold text-green-700">
+                                ₱{{ number_format($detailTotalSales, 2) }}
+                            </p>
+                        </div>
+
+                        <div class="p-3 bg-green-50 rounded-xl">
+                            <p class="text-xs text-gray-500">Average Price / kg</p>
+                            <p class="font-semibold text-green-700">
+                                ₱{{ number_format($detailAveragePrice, 2) }}
+                            </p>
+                        </div>
+
+                        <div class="p-3 bg-green-50 rounded-xl">
+                            <p class="text-xs text-gray-500">Completed Orders</p>
+                            <p class="font-semibold text-green-700">
+                                {{ $detailCompletedSales->count() }}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end">
+                        <x-button
+                            sm
+                            rounded
+                            positive
+                            icon="plus"
+                            label="Add Sale"
+                            wire:click="openAddSaleModal({{ $selectedSalesCycle->id }})"
+                            onclick="$openModal('addSaleModal')"
+                        />
+                    </div>
+
+                    <div class="overflow-x-auto rounded-xl border border-gray-200">
+                        <table class="w-full min-w-[900px] text-xs">
+                            <thead class="bg-gray-100 text-gray-600">
+                                <tr>
+                                    <th class="px-3 py-2 text-left">Date</th>
+                                    <th class="px-3 py-2 text-left">Customer</th>
+                                    <th class="px-3 py-2 text-right">Quantity</th>
+                                    <th class="px-3 py-2 text-right">Price / kg</th>
+                                    <th class="px-3 py-2 text-right">Total</th>
+                                    <th class="px-3 py-2 text-left">Status</th>
+                                    <th class="px-3 py-2 text-left">Remarks</th>
+                                    <th class="px-3 py-2 text-center">Action</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                @forelse($selectedSales as $sale)
+                                    <tr class="border-t">
+                                        <td class="px-3 py-2 whitespace-nowrap">
+                                            {{ $sale->sale_date?->format('M d, Y') ?? '--' }}
+                                        </td>
+
+                                        <td class="px-3 py-2">
+                                            {{ $sale->customer_name ?? '--' }}
+                                        </td>
+
+                                        <td class="px-3 py-2 text-right whitespace-nowrap">
+                                            {{ number_format((float) $sale->quantity_kg, 2) }} kg
+                                        </td>
+
+                                        <td class="px-3 py-2 text-right whitespace-nowrap">
+                                            ₱{{ number_format((float) $sale->price_per_kg, 2) }}
+                                        </td>
+
+                                        <td class="px-3 py-2 text-right font-semibold text-green-700 whitespace-nowrap">
+                                            ₱{{ number_format((float) $sale->total_amount, 2) }}
+                                        </td>
+
+                                        <td class="px-3 py-2">
+                                            <span class="px-2 py-1 rounded-full text-[10px] font-semibold
+                                                {{ $sale->status === 'completed'
+                                                    ? 'bg-green-100 text-green-700'
+                                                    : ($sale->status === 'cancelled'
+                                                        ? 'bg-red-100 text-red-700'
+                                                        : 'bg-yellow-100 text-yellow-700') }}">
+                                                {{ ucfirst($sale->status) }}
+                                            </span>
+                                        </td>
+
+                                        <td class="px-3 py-2">
+                                            {{ $sale->remarks ?? '--' }}
+                                        </td>
+
+                                        <td class="px-3 py-2">
+                                            <div class="flex justify-center gap-1">
+                                                <x-button
+                                                    xs
+                                                    rounded
+                                                    info
+                                                    icon="pencil"
+                                                    wire:click="getSelectedSale({{ $sale->id }})"
+                                                    onclick="$openModal('editSaleModal')"
+                                                />
+
+                                                <x-button
+                                                    xs
+                                                    rounded
+                                                    negative
+                                                    icon="trash"
+                                                    wire:click="deleteSaleConfirmation({{ $sale->id }})"
+                                                />
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="8" class="px-3 py-8 text-center text-gray-400 italic">
+                                            No sales have been recorded for this cycle.
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            @else
+                <p class="text-sm text-gray-400 text-center py-8">
+                    No sales cycle selected.
+                </p>
+            @endif
+
+            <x-slot name="footer">
+                <div class="flex justify-end">
+                    <x-button flat label="Close" x-on:click="close" />
                 </div>
             </x-slot>
 
@@ -2141,6 +2779,12 @@
                 setTimeout(() => {
                     renderCycleSensorChart(payload[0].labels, payload[0].data);
                 }, 300);
+            });
+
+            Livewire.on('close-sales-modal', (event) => {
+                if (event?.name) {
+                    window.$closeModal(event.name);
+                }
             });
         });
     </script>

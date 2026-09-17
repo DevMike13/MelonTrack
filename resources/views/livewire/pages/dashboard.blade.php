@@ -96,6 +96,112 @@
 
         </div>
 
+        {{-- SALES OVERVIEW --}}
+        <div>
+            <div class="flex items-center justify-between mb-3">
+                <div>
+                    <h6 class="font-semibold text-[#356744] text-sm">
+                        Sales Overview
+                    </h6>
+
+                    <p class="text-[10px] text-gray-500">
+                        Current sales performance across cultivation cycles
+                    </p>
+                </div>
+
+                <a
+                    href="{{ url('/admin/cycle-details') }}"
+                    class="text-[10px] px-3 py-1 rounded-full border border-[#356744] text-[#356744] hover:bg-[#356744] hover:text-white transition"
+                >
+                    View Sales
+                </a>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+
+                {{-- TOTAL SALES --}}
+                <div class="bg-green-50 rounded-2xl p-4 min-h-[130px] relative overflow-hidden">
+                    <div class="relative z-10">
+                        <p class="text-[11px] font-semibold text-green-700">
+                            Total Sales
+                        </p>
+
+                        <h3 class="text-2xl font-bold text-gray-900 mt-2">
+                            ₱{{ number_format($totalSales ?? 0, 2) }}
+                        </h3>
+
+                        <div class="flex items-center gap-1 mt-6 text-[9px] text-gray-600">
+                            <span class="w-4 h-4 rounded-full bg-white/70 flex items-center justify-center">
+                                ₱
+                            </span>
+                            <span>Completed sales revenue.</span>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- TOTAL ORDERS --}}
+                <div class="bg-blue-50 rounded-2xl p-4 min-h-[130px] relative overflow-hidden">
+                    <div class="relative z-10">
+                        <p class="text-[11px] font-semibold text-blue-700">
+                            Total Orders
+                        </p>
+
+                        <h3 class="text-2xl font-bold text-gray-900 mt-2">
+                            {{ number_format($totalOrders ?? 0) }}
+                        </h3>
+
+                        <div class="flex items-center gap-1 mt-6 text-[9px] text-gray-600">
+                            <span class="w-4 h-4 rounded-full bg-white/70 flex items-center justify-center">
+                                ✓
+                            </span>
+                            <span>Completed customer orders.</span>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- KG SOLD --}}
+                <div class="bg-amber-50 rounded-2xl p-4 min-h-[130px] relative overflow-hidden">
+                    <div class="relative z-10">
+                        <p class="text-[11px] font-semibold text-amber-700">
+                            Total KG Sold
+                        </p>
+
+                        <h3 class="text-2xl font-bold text-gray-900 mt-2">
+                            {{ number_format($totalKgSold ?? 0, 2) }} kg
+                        </h3>
+
+                        <div class="flex items-center gap-1 mt-6 text-[9px] text-gray-600">
+                            <span class="w-4 h-4 rounded-full bg-white/70 flex items-center justify-center">
+                                kg
+                            </span>
+                            <span>Total completed sales volume.</span>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- AVG PRICE --}}
+                <div class="bg-purple-50 rounded-2xl p-4 min-h-[130px] relative overflow-hidden">
+                    <div class="relative z-10">
+                        <p class="text-[11px] font-semibold text-purple-700">
+                            Average Price / KG
+                        </p>
+
+                        <h3 class="text-2xl font-bold text-gray-900 mt-2">
+                            ₱{{ number_format($averagePricePerKg ?? 0, 2) }}
+                        </h3>
+
+                        <div class="flex items-center gap-1 mt-6 text-[9px] text-gray-600">
+                            <span class="w-4 h-4 rounded-full bg-white/70 flex items-center justify-center">
+                                ₱
+                            </span>
+                            <span>Weighted average selling price.</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
         {{-- ENVIRONMENTAL OVERVIEW --}}
         <div class="bg-white border border-gray-200 rounded-2xl p-4 shadow-sm mb-8">
 
@@ -1041,6 +1147,176 @@
                     <span>→</span>
                 </button>
             </div>
+        </div>
+
+        {{-- SALES INFORMATION --}}
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+
+            {{-- RECENT SALES --}}
+            <div class="bg-white border border-[#356744] rounded-2xl p-5">
+
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <h6 class="font-semibold text-[#356744]">
+                            Recent Sales
+                        </h6>
+
+                        <p class="text-[10px] text-gray-500 mt-1">
+                            Latest completed sales transactions
+                        </p>
+                    </div>
+
+                    <a
+                        href="{{ url('/admin/cycle-details') }}"
+                        class="text-[10px] px-3 py-1 rounded-full border border-[#356744] text-[#356744] hover:bg-[#356744] hover:text-white transition"
+                    >
+                        View All
+                    </a>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+
+                        <thead class="text-left text-xs text-gray-500 uppercase">
+                            <tr>
+                                <th class="py-3">Cycle</th>
+                                <th class="py-3">Customer</th>
+                                <th class="py-3">Quantity</th>
+                                <th class="py-3">Amount</th>
+                                <th class="py-3">Date</th>
+                            </tr>
+                        </thead>
+
+                        <tbody class="divide-y">
+
+                            @forelse($recentSales as $sale)
+
+                                <tr>
+                                    <td class="py-3 font-medium">
+                                        {{ $sale->cycle?->cycle_code ?? '--' }}
+                                    </td>
+
+                                    <td class="py-3">
+                                        {{ $sale->customer_name ?? '--' }}
+                                    </td>
+
+                                    <td class="py-3">
+                                        {{ number_format($sale->quantity_kg, 2) }} kg
+                                    </td>
+
+                                    <td class="py-3 font-semibold text-green-700">
+                                        ₱{{ number_format($sale->total_amount, 2) }}
+                                    </td>
+
+                                    <td class="py-3 whitespace-nowrap">
+                                        {{ optional($sale->sale_date)->format('M d, Y') }}
+                                    </td>
+                                </tr>
+
+                            @empty
+
+                                <tr>
+                                    <td
+                                        colspan="5"
+                                        class="py-6 text-center text-gray-500"
+                                    >
+                                        No sales records yet.
+                                    </td>
+                                </tr>
+
+                            @endforelse
+
+                        </tbody>
+
+                    </table>
+                </div>
+
+            </div>
+
+            {{-- SALES BY CYCLE --}}
+            <div class="bg-white border border-[#356744] rounded-2xl p-5">
+
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <h6 class="font-semibold text-[#356744]">
+                            Sales by Cycle
+                        </h6>
+
+                        <p class="text-[10px] text-gray-500 mt-1">
+                            Financial performance per cultivation cycle
+                        </p>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+
+                        <thead class="text-left text-xs text-gray-500 uppercase">
+                            <tr>
+                                <th class="py-3">Cycle</th>
+                                <th class="py-3">Variety</th>
+                                <th class="py-3">KG Sold</th>
+                                <th class="py-3">Orders</th>
+                                <th class="py-3">Sales</th>
+                            </tr>
+                        </thead>
+
+                        <tbody class="divide-y">
+
+                            @forelse($salesByCycle as $cycle)
+
+                                @php
+                                    $cycleSales = $cycle->sales;
+
+                                    $cycleKgSold = $cycleSales->sum('quantity_kg');
+
+                                    $cycleTotalSales = $cycleSales->sum('total_amount');
+
+                                    $cycleOrders = $cycleSales->count();
+                                @endphp
+
+                                <tr>
+                                    <td class="py-3 font-medium">
+                                        {{ $cycle->cycle_code }}
+                                    </td>
+
+                                    <td class="py-3">
+                                        {{ $cycle->crop_variety }}
+                                    </td>
+
+                                    <td class="py-3">
+                                        {{ number_format($cycleKgSold, 2) }} kg
+                                    </td>
+
+                                    <td class="py-3">
+                                        {{ number_format($cycleOrders) }}
+                                    </td>
+
+                                    <td class="py-3 font-semibold text-green-700">
+                                        ₱{{ number_format($cycleTotalSales, 2) }}
+                                    </td>
+                                </tr>
+
+                            @empty
+
+                                <tr>
+                                    <td
+                                        colspan="5"
+                                        class="py-6 text-center text-gray-500"
+                                    >
+                                        No cycle sales records yet.
+                                    </td>
+                                </tr>
+
+                            @endforelse
+
+                        </tbody>
+
+                    </table>
+                </div>
+
+            </div>
+
         </div>
 
     </div>

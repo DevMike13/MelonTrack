@@ -54,4 +54,9 @@ class Cycles extends Model
         return $this->hasMany(DailySensorData::class, 'cycle_id')
             ->latest('reading_date');
     }
+
+    public function sales()
+    {
+        return $this->hasMany(Sale::class, 'cycle_id');
+    }
 }
