@@ -4,7 +4,7 @@
     @livewireScripts
     @vite(['resources/css/custom.css', 'resources/css/app.css', 'resources/js/app.js'])
 
-    <div class="mb-6 z-20">
+    <div class="mb-6 z-10">
         <h1 class="text-3xl font-bold flex items-center gap-2">
             Welcome back,
             <span class="text-[#356744]">

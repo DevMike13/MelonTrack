@@ -5,7 +5,7 @@ namespace App\Livewire\Pages;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 
-#[Title('About Us')]
+#[Title('About')]
 class About extends Component
 {
     public function render()
