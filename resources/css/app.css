@@ -7,4 +7,9 @@
     body {
         font-family: 'Poppins', sans-serif;
     }
+
+    .required-field label::after {
+        content: " *";
+        color: #ef4444;
+    }
 }

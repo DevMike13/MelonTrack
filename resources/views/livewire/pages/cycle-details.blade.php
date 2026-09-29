@@ -1029,6 +1029,14 @@
                                 @endif
                             </div>
 
+                            {{-- OPTIMAL BRIX RANGE --}}
+                            <p class="text-xs text-gray-500">
+                                Optimal Range:
+                                <span class="font-semibold text-[#356744]">
+                                    12 - 18 °Bx
+                                </span>
+                            </p>
+
                             @if($brixReading)
                                 <p class="text-xs text-gray-500">
                                     {{ \Carbon\Carbon::parse($brixReading->reading_at)->format('F d, Y h:i A') }}
@@ -1690,14 +1698,28 @@
             {{-- Add new Brix --}}
             <div class="space-y-3 border-b pb-4 mb-4">
 
-                <x-inputs.number
-                    label="Brix Level"
-                    wire:model.defer="brixLevel"
-                />
+                <div>
+                    <x-inputs.number
+                        label="Brix Level"
+                        wire:model.defer="brixLevel"
+                        min="12"
+                        max="18"
+                        step="0.1"
+                    />
+
+                    <p class="text-xs text-gray-500 mt-1">
+                        Optimal Range:
+                        <span class="font-semibold text-[#356744]">
+                            12 - 18 °Bx
+                        </span>
+                    </p>
+                </div>
 
                 <x-datetime-picker
                     label="Reading Date"
                     wire:model.defer="readingAt"
+                    :min="$brixMinDate"
+                    :max="$brixMaxDate"
                 />
 
                 <x-textarea
@@ -1785,6 +1807,8 @@
                     label="Scheduled Date"
                     wire:model.defer="newMilestoneScheduledDate"
                     without-time
+                    :min="$milestoneMinDate"
+                    :max="$milestoneMaxDate"
                 />
 
                 <div wire:key="new-checkbox-container">
@@ -1800,6 +1824,8 @@
                         label="Completed Date"
                         wire:model.defer="newMilestoneCompletedDate"
                         without-time
+                        :min="$milestoneMinDate"
+                        :max="$milestoneMaxDate"
                     />
                 </div>
 
@@ -1853,6 +1879,8 @@
                     label="Scheduled Date"
                     wire:model.defer="editMilestoneDate"
                     without-time
+                    :min="$milestoneMinDate"
+                    :max="$milestoneMaxDate"
                 />
 
                
@@ -1868,6 +1896,8 @@
                         label="Completed Date"
                         wire:model.defer="editMilestoneCompletedDate"
                         without-time
+                        :min="$milestoneMinDate"
+                        :max="$milestoneMaxDate"
                     />
                 @endif
 
@@ -2650,6 +2680,131 @@
         </x-card>
     </x-modal>
 
+    {{-- ========================================================= --}}
+    {{-- DELETE AUTHORIZATION PIN MODAL --}}
+    {{-- ========================================================= --}}
+    <x-modal
+        blur
+        name="deletePinModal"
+        persistent
+        align="center"
+        max-width="sm"
+    >
+        <x-card title="Delete Authorization">
+
+            <div class="space-y-5">
+
+                <div class="text-center">
+                    <div class="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="1.5"
+                            stroke="currentColor"
+                            class="w-6 h-6 text-red-600"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M16.5 10.5V6.75a4.5 4.5 0 0 0-9 0v3.75m-.75 0h10.5A2.25 2.25 0 0 1 19.5 12.75v6A2.25 2.25 0 0 1 17.25 21H6.75A2.25 2.25 0 0 1 4.5 18.75v-6A2.25 2.25 0 0 1 6.75 10.5Z"
+                            />
+                        </svg>
+                    </div>
+
+                    <h3 class="font-semibold text-gray-800">
+                        Administrator PIN Required
+                    </h3>
+
+                    <p class="text-xs text-gray-500 mt-1">
+                        Enter the 6-digit administrator PIN to continue deleting this record.
+                    </p>
+                </div>
+
+
+                {{-- PIN INPUTS --}}
+                <div
+                    class="flex justify-center gap-2"
+                    x-data
+                    x-on:input="
+                        if ($event.target.matches('[data-pin-input]')) {
+                            $event.target.value = $event.target.value
+                                .replace(/[^0-9]/g, '')
+                                .slice(0, 1);
+
+                            if ($event.target.value) {
+                                let next = $event.target.nextElementSibling;
+
+                                if (next) {
+                                    next.focus();
+                                }
+                            }
+                        }
+                    "
+                    x-on:keydown.backspace="
+                        if (
+                            $event.target.matches('[data-pin-input]') &&
+                            !$event.target.value
+                        ) {
+                            let previous = $event.target.previousElementSibling;
+
+                            if (previous) {
+                                previous.focus();
+                            }
+                        }
+                    "
+                >
+
+                    @for ($i = 0; $i < 6; $i++)
+                        <input
+                            type="password"
+                            inputmode="numeric"
+                            maxlength="1"
+                            data-pin-input
+                            wire:model.defer="deletePin.{{ $i }}"
+                            class="w-11 h-12 text-center text-lg font-bold
+                                border border-gray-300 rounded-lg
+                                focus:border-[#356744]
+                                focus:ring-[#356744]"
+                        />
+                    @endfor
+
+                </div>
+
+
+                {{-- ERROR --}}
+                @error('deletePin')
+                    <p class="text-xs text-red-500 text-center">
+                        {{ $message }}
+                    </p>
+                @enderror
+
+            </div>
+
+
+            <x-slot name="footer">
+
+                <div class="flex justify-end gap-3">
+
+                    <x-button
+                        flat
+                        label="Cancel"
+                        x-on:click="close"
+                    />
+
+                    <x-button
+                        negative
+                        icon="trash"
+                        label="Authorize Delete"
+                        wire:click="verifyDeletePin"
+                    />
+
+                </div>
+
+            </x-slot>
+
+        </x-card>
+    </x-modal>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -2785,6 +2940,27 @@
                 if (event?.name) {
                     window.$closeModal(event.name);
                 }
+            });
+
+            // OPEN DELETE PIN MODAL
+            Livewire.on('open-delete-pin-modal', () => {
+                window.$openModal('deletePinModal');
+
+                setTimeout(() => {
+                    const firstInput = document.querySelector(
+                        '[data-pin-input]'
+                    );
+
+                    if (firstInput) {
+                        firstInput.focus();
+                    }
+                }, 200);
+            });
+
+
+            // CLOSE DELETE PIN MODAL
+            Livewire.on('close-delete-pin-modal', () => {
+                window.$closeModal('deletePinModal');
             });
         });
     </script>

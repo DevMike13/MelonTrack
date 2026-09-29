@@ -1,15 +1,6 @@
 <div 
     x-data="{ open: false }"
-    x-on:toggle-custom-sidebar.window="
-        open = !open;
-        if (open) {
-            $nextTick(() => {
-                $wire.markAsRead().then(() => {
-                    Livewire.dispatch('notificationsRead');
-                });
-            });
-        }
-    "
+    x-on:toggle-custom-sidebar.window="open = !open"
     x-show="open"
     x-transition:enter="transition ease-out duration-200"
     x-transition:enter-start="opacity-0 translate-x-full"
@@ -35,16 +26,150 @@
         </div>
     </div>
     <div class="p-4 space-y-3 overflow-y-auto h-[calc(100%-64px)]">
-        @forelse ($notifications as $notification)
-            <div class="bg-gray-100 dark:bg-gray-800 p-3 rounded shadow text-sm">
-                {{ $notification->message }}
-                <span class="block text-xs text-gray-500 mt-1">
-                    {{ $notification->created_at->format('M d, Y h:i A') }} - 
-                    {{ $notification->created_at->diffForHumans() }}
-                </span>
+
+    {{-- ===================================================== --}}
+    {{-- EXISTING FIREBASE NOTIFICATIONS --}}
+    {{-- ===================================================== --}}
+    @foreach ($notifications as $notification)
+
+        <div
+            wire:key="notification-{{ $notification->id }}"
+            class="p-3 rounded shadow text-sm
+                {{ $notification->is_read
+                    ? 'bg-gray-100 dark:bg-gray-800'
+                    : 'bg-green-50 border border-green-200 dark:bg-gray-800'
+                }}"
+        >
+
+            <div class="flex items-start justify-between gap-3">
+
+                <div class="flex-1">
+
+                    <p class="{{ !$notification->is_read ? 'font-semibold' : '' }}">
+                        {{ $notification->message }}
+                    </p>
+
+                    <span class="block text-xs text-gray-500 mt-1">
+                        {{ $notification->created_at->format('M d, Y h:i A') }}
+                        -
+                        {{ $notification->created_at->diffForHumans() }}
+                    </span>
+
+                </div>
+
+                {{-- UNREAD DOT --}}
+                @if(!$notification->is_read)
+                    <span
+                        class="w-2 h-2 bg-green-600 rounded-full flex-shrink-0 mt-2"
+                        title="Unread"
+                    ></span>
+                @endif
+
             </div>
-        @empty
-            <p class="text-sm text-gray-500">No notifications</p>
-        @endforelse
+
+            {{-- MARK AS READ --}}
+            @if(!$notification->is_read)
+
+                <div class="flex justify-end mt-2">
+
+                    <button
+                        type="button"
+                        wire:click="markNotificationAsRead({{ $notification->id }})"
+                        class="text-xs text-[#356744] hover:underline"
+                    >
+                        Mark as read
+                    </button>
+
+                </div>
+
+            @endif
+
+        </div>
+
+    @endforeach
+
+
+    {{-- ===================================================== --}}
+    {{-- USER DELETE NOTIFICATIONS --}}
+    {{-- ===================================================== --}}
+    @foreach ($deleteNotifications as $notification)
+
+        <div
+            wire:key="delete-notification-{{ $notification->id }}"
+            class="p-3 rounded shadow text-sm
+                {{ $notification->is_read
+                    ? 'bg-gray-100 dark:bg-gray-800'
+                    : 'bg-green-50 border border-green-200 dark:bg-gray-800'
+                }}"
+        >
+
+            <div class="flex items-start justify-between gap-3">
+
+                <div class="flex-1">
+
+                    <p class="{{ !$notification->is_read ? 'font-semibold' : '' }}">
+                        {{ $notification->message }}
+                    </p>
+
+                    <span class="block text-xs text-gray-500 mt-1">
+                        {{ $notification->created_at->format('M d, Y h:i A') }}
+                        -
+                        {{ $notification->created_at->diffForHumans() }}
+                    </span>
+
+                </div>
+
+                {{-- UNREAD DOT --}}
+                @if(!$notification->is_read)
+                    <span
+                        class="w-2 h-2 bg-green-600 rounded-full flex-shrink-0 mt-2"
+                        title="Unread"
+                    ></span>
+                @endif
+
+            </div>
+
+            {{-- MARK AS READ --}}
+            @if(!$notification->is_read)
+
+                <div class="flex justify-end mt-2">
+
+                    <button
+                        type="button"
+                        wire:click="markDeleteNotificationAsRead({{ $notification->id }})"
+                        class="text-xs text-[#356744] hover:underline"
+                    >
+                        Mark as read
+                    </button>
+
+                </div>
+
+            @endif
+
+        </div>
+
+    @endforeach
+
+
+    {{-- ===================================================== --}}
+        {{-- NO NOTIFICATIONS --}}
+        {{-- Only show when BOTH tables are empty --}}
+        {{-- ===================================================== --}}
+        @if($notifications->isEmpty() && $deleteNotifications->isEmpty())
+
+            <div class="flex flex-col items-center justify-center py-10 text-center">
+
+                <x-heroicon-o-bell-slash
+                    class="w-8 h-8 text-gray-400 mb-2"
+                />
+
+                <p class="text-sm text-gray-500">
+                    No notifications
+                </p>
+
+            </div>
+
+        @endif
+
     </div>
 </div>

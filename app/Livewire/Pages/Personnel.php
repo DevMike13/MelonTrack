@@ -31,6 +31,9 @@ class Personnel extends Component
     public $editEmail;
     public $editStatus = 'Active';
 
+    public $deletePin = [];
+    public $deletePinConfirmation = [];
+
     public function createNewPersonnel(){
         
         $this->validate([ 
@@ -177,6 +180,46 @@ class Personnel extends Component
         ]);
     }
 
+    public function setDeletePin()
+    {
+        if (auth()->user()->role !== 'admin') {
+            Notification::make()
+                ->title('Unauthorized')
+                ->body('Only the administrator can set the deletion PIN.')
+                ->danger()
+                ->send();
+
+            return;
+        }
+
+        $pin = implode('', $this->deletePin);
+        $confirmPin = implode('', $this->deletePinConfirmation);
+
+        if (strlen($pin) !== 6 || !ctype_digit($pin)) {
+            $this->addError('deletePin', 'Please enter a complete 6-digit PIN.');
+            return;
+        }
+
+        if ($pin !== $confirmPin) {
+            $this->addError('deletePinConfirmation', 'PIN confirmation does not match.');
+            return;
+        }
+
+        $admin = auth()->user();
+
+        $admin->update([
+            'delete_pin' => Hash::make($pin),
+        ]);
+
+        $this->deletePin = [];
+        $this->deletePinConfirmation = [];
+
+        Notification::make()
+            ->title('Success!')
+            ->body('Delete authorization PIN has been updated.')
+            ->success()
+            ->send();
+    }
 
     // public function render()
     // {
@@ -188,19 +231,34 @@ class Personnel extends Component
     // }
     public function render()
     {
-        $totalUsers = User::count();
+        $totalUsers = User::where('role', 'user')
+            ->where('is_verified', true)
+            ->count();
 
-        $onlineUsers = User::where('is_online', true)->count();
+        $onlineUsers = User::where('role', 'user')
+            ->where('is_verified', true)
+            ->where('is_online', true)
+            ->count();
 
-        $offlineUsers = User::where('is_online', false)->count();
+        $offlineUsers = User::where('role', 'user')
+            ->where('is_verified', true)
+            ->where('is_online', false)
+            ->count();
 
-        $pendingApprovalUsers = User::where('is_approved', false)->count();
+        $pendingApprovalUsers = User::where('role', 'user')
+            ->where('is_verified', true)
+            ->where('is_approved', false)
+            ->count();
 
-        $pendingPersonnelLists = User::where('is_approved', false)
+        $pendingPersonnelLists = User::where('role', 'user')
+            ->where('is_verified', true)
+            ->where('is_approved', false)
             ->orderByDesc('created_at')
             ->get();
 
-        $approvedPersonnelLists = User::where('is_approved', true)
+        $approvedPersonnelLists = User::where('role', 'user')
+            ->where('is_verified', true)
+            ->where('is_approved', true)
             ->orderByDesc('created_at')
             ->get();
 

@@ -3,14 +3,14 @@
 namespace App\Livewire\Filament;
 
 use App\Models\Notifications;
+use App\Models\DeleteNotification;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 class CustomNotification extends Component
 {
     public $notifications = [];
-
-    protected $listeners = ['markNotificationsAsRead' => 'markAsRead'];
+    public $deleteNotifications = [];
 
     public function mount()
     {
@@ -19,21 +19,54 @@ class CustomNotification extends Component
 
     public function loadNotifications()
     {
-        $this->notifications = Notifications::latest()->take(10)->get();
+        // EXISTING FIREBASE NOTIFICATIONS
+        $this->notifications = Notifications::latest()
+            ->take(10)
+            ->get();
+
+        // USER DELETE NOTIFICATIONS
+        $this->deleteNotifications = DeleteNotification::latest()
+            ->take(10)
+            ->get();
     }
 
-    public function markAsRead()
+    public function markNotificationAsRead($id)
     {
-        Notifications::where('is_read', false)->update(['is_read' => true]);
+        $notification = Notifications::findOrFail($id);
+
+        $notification->update([
+            'is_read' => true
+        ]);
+
         $this->loadNotifications();
+
+        $this->dispatch('notificationsRead');
+    }
+
+    public function markDeleteNotificationAsRead($id)
+    {
+        $notification = DeleteNotification::findOrFail($id);
+
+        $notification->update([
+            'is_read' => true
+        ]);
+
+        $this->loadNotifications();
+
+        $this->dispatch('notificationsRead');
     }
 
     public function clearAll()
     {
         DB::table('notifications')->delete();
-        $this->notifications = [];
-    }
 
+        DeleteNotification::query()->delete();
+
+        $this->notifications = [];
+        $this->deleteNotifications = [];
+
+        $this->dispatch('notificationsRead');
+    }
 
     public function render()
     {

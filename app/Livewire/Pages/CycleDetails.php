@@ -20,6 +20,9 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use Maatwebsite\Excel\Facades\Excel;
 use WireUi\Traits\Actions;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+use App\Models\DeleteNotification;
 
 class CycleDetails extends Component
 {
@@ -64,6 +67,11 @@ class CycleDetails extends Component
     public $currentCycleCodeForBrix;
     public $currentCycleIdForBrix;
 
+    public $milestoneMinDate;
+    public $milestoneMaxDate;
+
+    public $brixMinDate;
+    public $brixMaxDate;
 
     // CREATION PROPERTIES (Changed naming keys to resolve collisions)
     public $newMilestoneTitle;
@@ -99,6 +107,11 @@ class CycleDetails extends Component
     public $selectedSalesCycle;
     public $selectedSales = [];
 
+
+    public $deletePin = [];
+    public $pendingDeleteId = null;
+    public $pendingDeleteType = null;
+
     public function mount()
     {
         $this->activeTab = session('activeTab', 'cycle');
@@ -120,6 +133,107 @@ class CycleDetails extends Component
         $this->newMilestoneTitle =
             'Milestone by ' . auth()->user()->name . ' - ' .
             ucwords(str_replace('_', ' ', $this->newMilestoneType));
+    }
+
+    public function requestDeleteAuthorization($type, $id)
+    {
+        // Admin can delete directly
+        if (auth()->user()->role === 'admin') {
+
+            if ($type === 'cycle') {
+                $this->deleteCycle($id);
+            }
+
+            if ($type === 'completed_cycle') {
+                $this->deleteCompletedCycle($id);
+            }
+
+            if ($type === 'sale') {
+                $this->deleteSale($id);
+            }
+
+            if ($type === 'brix') {
+                $this->deleteBrix($id);
+            }
+
+            return;
+        }
+
+        // User role requires admin PIN
+        $this->pendingDeleteType = $type;
+        $this->pendingDeleteId = $id;
+        $this->deletePin = [];
+
+        $this->dispatch('open-delete-pin-modal');
+    }
+
+    public function verifyDeletePin()
+    {
+        if (auth()->user()->role === 'admin') {
+            return;
+        }
+
+        $pin = implode('', $this->deletePin);
+
+        if (strlen($pin) !== 6 || !ctype_digit($pin)) {
+            $this->addError(
+                'deletePin',
+                'Please enter a complete 6-digit PIN.'
+            );
+
+            return;
+        }
+
+        $admin = User::where('role', 'admin')
+            ->whereNotNull('delete_pin')
+            ->first();
+
+        if (!$admin) {
+            Notification::make()
+                ->title('Delete PIN Not Set')
+                ->body('The administrator has not configured a deletion PIN.')
+                ->danger()
+                ->send();
+
+            return;
+        }
+
+        if (!Hash::check($pin, $admin->delete_pin)) {
+
+            $this->deletePin = [];
+
+            $this->addError(
+                'deletePin',
+                'Incorrect administrator PIN.'
+            );
+
+            return;
+        }
+
+        $type = $this->pendingDeleteType;
+        $id = $this->pendingDeleteId;
+
+        $this->deletePin = [];
+        $this->pendingDeleteType = null;
+        $this->pendingDeleteId = null;
+
+        $this->dispatch('close-delete-pin-modal');
+
+        if ($type === 'cycle') {
+            $this->deleteCycle($id);
+        }
+
+        if ($type === 'completed_cycle') {
+            $this->deleteCompletedCycle($id);
+        }
+
+        if ($type === 'sale') {
+            $this->deleteSale($id);
+        }
+
+        if ($type === 'brix') {
+            $this->deleteBrix($id);
+        }
     }
 
     public function createCycle(Database $database)
@@ -241,9 +355,25 @@ class CycleDetails extends Component
     {
         $cycle = Cycles::findOrFail($id);
 
+        $cycleCode = $cycle->cycle_code;
+        $deletedId = $cycle->id;
+
         Cycles::withoutEvents(function () use ($cycle) {
             $cycle->delete();
         });
+
+        if (auth()->user()->role === 'user') {
+
+            DeleteNotification::create([
+                'user_id' => auth()->id(),
+                'user_name' => auth()->user()->name,
+                'deleted_type' => 'Cycle',
+                'deleted_id' => $deletedId,
+                'message' => auth()->user()->name .
+                    ' deleted cycle ' . $cycleCode . '.',
+                'is_read' => false,
+            ]);
+        }
 
         Notification::make()
             ->title('Deleted')
@@ -258,8 +388,8 @@ class CycleDetails extends Component
             'title' => 'Delete Cycle?',
             'description' => "Delete cycle {$code} permanently?",
             'acceptLabel' => 'Yes delete',
-            'method' => 'deleteCycle',
-            'params' => $id
+            'method' => 'requestDeleteAuthorization',
+            'params' => ['cycle', $id]
         ]);
     }
 
@@ -308,9 +438,24 @@ class CycleDetails extends Component
             'cancelled'
         ])->findOrFail($id);
 
+        $cycleCode = $cycle->cycle_code;
+        $deletedId = $cycle->id;
+
         Cycles::withoutEvents(function () use ($cycle) {
             $cycle->delete();
         });
+
+        if (auth()->user()->role === 'user') {
+            DeleteNotification::create([
+                'user_id' => auth()->id(),
+                'user_name' => auth()->user()->name,
+                'deleted_type' => 'Completed Cycle',
+                'deleted_id' => $deletedId,
+                'message' => auth()->user()->name .
+                    ' deleted completed cycle ' . $cycleCode . '.',
+                'is_read' => false,
+            ]);
+        }
 
         Notification::make()
             ->title('Deleted')
@@ -325,8 +470,8 @@ class CycleDetails extends Component
             'title' => 'Delete Completed Cycle?',
             'description' => "Delete completed cycle {$code} permanently?",
             'acceptLabel' => 'Yes delete',
-            'method' => 'deleteCompletedCycle',
-            'params' => $id
+            'method' => 'requestDeleteAuthorization',
+            'params' => ['completed_cycle', $id]
         ]);
     }
 
@@ -334,6 +479,16 @@ class CycleDetails extends Component
     {
         $this->currentCycleIdForBrix = $cycleId;
         $this->currentCycleCodeForBrix = $cycleCode;
+
+        $cycle = Cycles::findOrFail($cycleId);
+
+        $this->brixMinDate = $cycle->planting_date
+            ? Carbon::parse($cycle->planting_date)->format('Y-m-d')
+            : null;
+
+        $this->brixMaxDate = $cycle->expected_harvest_date
+            ? Carbon::parse($cycle->expected_harvest_date)->format('Y-m-d')
+            : null;
 
         $this->loadBrixList($cycleId);
     }
@@ -369,8 +524,38 @@ class CycleDetails extends Component
     public function saveBrix()
     {
         $this->validate([
-            'brixLevel' => 'required|numeric',
-            'readingAt' => 'required|date',
+            'brixLevel' => 'required|numeric|min:12|max:18',
+            'readingAt' => [
+                'required',
+                'date',
+                function ($attribute, $value, $fail) {
+                    $date = Carbon::parse($value);
+
+                    if ($this->brixMinDate) {
+                        $startDate = Carbon::parse($this->brixMinDate)->startOfDay();
+
+                        if ($date->lt($startDate)) {
+                            $fail(
+                                "The reading date cannot be before the cycle's planting date (" .
+                                $startDate->format('Y-m-d') .
+                                ")."
+                            );
+                        }
+                    }
+
+                    if ($this->brixMaxDate) {
+                        $endDate = Carbon::parse($this->brixMaxDate)->endOfDay();
+
+                        if ($date->gt($endDate)) {
+                            $fail(
+                                "The reading date cannot be after the cycle's expected harvest date (" .
+                                $endDate->format('Y-m-d') .
+                                ")."
+                            );
+                        }
+                    }
+                },
+            ],
         ]);
 
         BrixReading::create([
@@ -404,9 +589,27 @@ class CycleDetails extends Component
     public function deleteBrix($id)
     {
         $brix = BrixReading::findOrFail($id);
+        $deletedId = $brix->id;
         $cycleId = $brix->cycle_id;
+        $brixLevel = $brix->brix_level;
+
+        $cycle = Cycles::find($cycleId);
+        $cycleCode = $cycle?->cycle_code ?? 'Unknown Cycle';
 
         $brix->delete();
+
+        if (auth()->user()->role === 'user') {
+            DeleteNotification::create([
+                'user_id' => auth()->id(),
+                'user_name' => auth()->user()->name,
+                'deleted_type' => 'Brix Reading',
+                'deleted_id' => $deletedId,
+                'message' => auth()->user()->name .
+                    ' deleted Brix reading ' . $brixLevel .
+                    ' from cycle ' . $cycleCode . '.',
+                'is_read' => false,
+            ]);
+        }
 
         // update latest after delete
         $latest = BrixReading::where('cycle_id', $cycleId)
@@ -462,8 +665,8 @@ class CycleDetails extends Component
         $this->dialog()->confirm([
             'title' => 'Delete Brix?',
             'description' => 'This will remove the reading.',
-            'method' => 'deleteBrix',
-            'params' => $id
+            'method' => 'requestDeleteAuthorization',
+            'params' => ['brix', $id]
         ]);
     }
 
@@ -529,6 +732,18 @@ class CycleDetails extends Component
 
     public function openMilestoneModal($cycleId)
     {
+        $cycle = Cycles::findOrFail($cycleId);
+
+        $this->selectedCycleId = $cycle->id;
+
+        $this->milestoneMinDate = $cycle->planting_date
+            ? \Carbon\Carbon::parse($cycle->planting_date)->format('Y-m-d')
+            : null;
+
+        $this->milestoneMaxDate = $cycle->expected_harvest_date
+            ? \Carbon\Carbon::parse($cycle->expected_harvest_date)->format('Y-m-d')
+            : null;
+            
         $this->resetMilestoneFields();
 
         $this->selectedCycleId = $cycleId;
@@ -675,6 +890,16 @@ class CycleDetails extends Component
         $this->editMilestoneCompleted = (bool)$milestone->completed;
         $this->editMilestoneCompletedDate = $milestone->completed_date 
             ? \Carbon\Carbon::parse($milestone->completed_date)->format('Y-m-d') 
+            : null;
+        
+        $cycle = Cycles::findOrFail($milestone->cycle_id);
+
+        $this->milestoneMinDate = $cycle->planting_date
+            ? \Carbon\Carbon::parse($cycle->planting_date)->format('Y-m-d')
+            : null;
+
+        $this->milestoneMaxDate = $cycle->expected_harvest_date
+            ? \Carbon\Carbon::parse($cycle->expected_harvest_date)->format('Y-m-d')
             : null;
     }
 
@@ -943,17 +1168,39 @@ class CycleDetails extends Component
             'title' => 'Delete Sale?',
             'description' => 'This sale record will be permanently deleted.',
             'acceptLabel' => 'Yes delete',
-            'method' => 'deleteSale',
-            'params' => $id,
+            'method' => 'requestDeleteAuthorization',
+            'params' => ['sale', $id],
         ]);
     }
 
     public function deleteSale($id)
     {
         $sale = Sale::findOrFail($id);
+
+        $deletedId = $sale->id;
         $cycleId = $sale->cycle_id;
+        $customerName = $sale->customer_name;
+        $quantityKg = $sale->quantity_kg;
+
+        $cycle = Cycles::find($cycleId);
+        $cycleCode = $cycle?->cycle_code ?? 'Unknown Cycle';
 
         $sale->delete();
+
+        if (auth()->user()->role === 'user') {
+            DeleteNotification::create([
+                'user_id' => auth()->id(),
+                'user_name' => auth()->user()->name,
+                'deleted_type' => 'Sale',
+                'deleted_id' => $deletedId,
+                'message' => auth()->user()->name .
+                    ' deleted a sale record from cycle ' .
+                    $cycleCode .
+                    ($customerName ? ' for customer ' . $customerName : '') .
+                    ' (' . $quantityKg . ' kg).',
+                'is_read' => false,
+            ]);
+        }
 
         if ($this->selectedSalesCycle && $this->selectedSalesCycle->id == $cycleId) {
             $this->viewSalesDetails($cycleId);

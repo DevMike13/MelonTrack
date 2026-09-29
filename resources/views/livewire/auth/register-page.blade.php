@@ -1,30 +1,45 @@
 <div class="relative flex justify-center h-auto">
+
     {{-- DESKTOP --}}
     <div class="relative w-full justify-center h-fit min-h-screen hidden md:flex flex-col gap-10">
+
         <div class="w-full flex justify-center h-auto z-10">
+
             {{-- LEFT --}}
             <div class="w-1/2 relative">
+
                 <div class="w-full flex flex-col items-center gap-6 text-center mt-10 px-10">
+
                     <div class="flex justify-center items-center gap-3">
+
                         <img src="{{ asset('images/Logo_MelonTrack.png') }}" alt="Logo" class="w-20 h-20 object-contain">
+
                         <div>
                             <h1 class="text-[2.8rem] font-semibold text-[#316943]">
                                 MelonTrack
                             </h1>
+
                             <p class="-mt-3">Smart Melon Monitoring System</p>
                         </div>
+
                     </div>
 
+
                     <div class="flex flex-col justify-center items-center gap-3">
-                        
+
                         <h1 class="text-[2rem] font-semibold text-[#95d78e]">
                             <span class="text-[#316943]">Create</span> your account
                         </h1>
-                        <p class="-mt-3 text-xs ">Join MelonTack and start monitong, analyzing, and maximizing your melon harvest.</p>
-                        
+
+                        <p class="-mt-3 text-xs">
+                            Join MelonTack and start monitong, analyzing, and maximizing your melon harvest.
+                        </p>
+
                     </div>
 
+
                     <div class="relative w-full max-w-lg my-4">
+
                         <hr class="border-[#316943] w-full" />
 
                         <img 
@@ -32,636 +47,1197 @@
                             alt="Or Divider"
                             class="absolute left-1/2 -translate-x-1/2 bg-white px-2 -top-3 w-10 h-6 object-contain"
                         >
+
                     </div>
 
+
                     <div class="w-full px-6">
+
                         <div class="grid grid-cols-4 gap-4">
 
                             <!-- CARD 1 -->
                             <div class="bg-white rounded-xl py-0 px-5 flex flex-col items-center text-center">
+
                                 <div class="w-20 h-20 flex items-center justify-center rounded-full bg-[#f1f6e2] mb-4">
+
                                     <img 
                                         src="{{ asset('images/real-time-icon.png') }}" 
                                         alt="Icon"
                                         class="w-12 h-12 object-contain"
                                     >
+
                                 </div>
 
                                 <h3 class="font-semibold text-black text-sm">Monitoring</h3>
+
                                 <p class="text-xs text-gray-500 mt-2">
                                     Track environmental conditions and crop health 24/7
                                 </p>
+
                             </div>
+
 
                             <!-- CARD 2 -->
                             <div class="bg-white rounded-xl py-0 px-5 flex flex-col items-center text-center">
+
                                 <div class="w-20 h-20 flex items-center justify-center rounded-full bg-[#f1f6e2] mb-4">
+
                                     <img 
                                         src="{{ asset('images/data-icon.png') }}" 
                                         alt="Icon"
                                         class="w-12 h-12 object-contain"
                                     >
+
                                 </div>
 
                                 <h3 class="font-semibold text-black text-sm">Data-Driven Insight</h3>
+
                                 <p class="text-xs text-gray-500 mt-2">
                                     Get accurate KPIs and analytics for better decisions
                                 </p>
+
                             </div>
+
 
                             <!-- CARD 3 -->
                             <div class="bg-white rounded-xl py-0 px-5 flex flex-col items-center text-center">
+
                                 <div class="w-20 h-20 flex items-center justify-center rounded-full bg-[#f1f6e2] mb-4">
+
                                     <img 
                                         src="{{ asset('images/alert-icon.png') }}" 
                                         alt="Icon"
                                         class="w-12 h-12 object-contain"
                                     >
+
                                 </div>
 
                                 <h3 class="font-semibold text-black text-sm">Smart Alerts</h3>
+
                                 <p class="text-xs text-gray-500 mt-2">
                                     Receive SMS alert for critical challenges and recommendation
                                 </p>
+
                             </div>
+
 
                             <!-- CARD 4 -->
                             <div class="bg-white rounded-xl py-0 px-5 flex flex-col items-center text-center">
+
                                 <div class="w-20 h-20 flex items-center justify-center rounded-full bg-[#f1f6e2] mb-4">
+
                                     <img 
                                         src="{{ asset('images/yield-icon.png') }}" 
                                         alt="Icon"
                                         class="w-12 h-12 object-contain"
                                     >
+
                                 </div>
 
                                 <h3 class="font-semibold text-black text-sm">Better Yields</h3>
+
                                 <p class="text-xs text-gray-500 mt-2">
                                     Improve quality, increase yield, and maximize profit
                                 </p>
+
                             </div>
 
                         </div>
+
                     </div>
-                    
+
+
                     <div class="w-full px-6 flex justify-between items-center bg-[#f1f6e2] border border-[#346844] max-w-xl rounded-lg">
+
                         <img 
                             src="{{ asset('images/leaf-icon-soil.png') }}" 
                             alt="Icon"
                             class="w-12 h-12 object-contain"
                         >
-                        <p class="text-sm text-[#346844]">Empowering farmers with technology for a sweeter tomorrow.</p>
+
+                        <p class="text-sm text-[#346844]">
+                            Empowering farmers with technology for a sweeter tomorrow.
+                        </p>
+
                     </div>
+
                 </div>
+
             </div>
+
 
             {{-- RIGHT --}}
             <div class="relative w-full md:w-1/2 flex justify-center overflow-hidden">
-                
+
                 <form wire:submit.prevent="register" class="w-full h-fit max-w-sm flex flex-col justify-center items-center px-10 py-3 bg-white z-10 rounded-xl mt-10">
+
                     <div class="flex flex-col justify-center items-center mb-4">
-                        <div class="w-12 h-12 bg-[#f2f5e2] rounded-full px-2 py-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M18 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0ZM3 19.235v-.11a6.375 6.375 0 0 1 12.75 0v.109A12.318 12.318 0 0 1 9.374 21c-2.331 0-4.512-.645-6.374-1.766Z" />
+
+                        <div class="w-12 h-12 bg-[#f2f5e2] rounded-full flex items-center justify-center">
+
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke-width="1.5"
+                                stroke="currentColor"
+                                class="w-7 h-7"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M18 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0ZM3 19.235v-.11a6.375 6.375 0 0 1 12.75 0v.109A12.318 12.318 0 0 1 9.374 21c-2.331 0-4.512-.645-6.374-1.766Z"
+                                />
                             </svg>
+
                         </div>
 
                         <h1 class="font-semibold text-lg">Sign-Up</h1>
-                        <p class="text-xs text-center">Create your MelonTrack account to get started.</p>
+
+                        <p class="text-xs text-center">
+                            Create your MelonTrack account to get started.
+                        </p>
+
                     </div>
+
+
                     <div class="w-full flex flex-col justify-center items-center">
+
                         <div class="space-y-2 w-[90%] md:w-full">
 
+                            {{-- FIRST NAME / LAST NAME --}}
                             <div class="grid grid-cols-2 gap-2">
-                                <div class="relative" x-data @input="$event.target.value = $event.target.value.replace(/[^a-zA-Z\s'-]/g, '')">
-                                    <x-input icon="user" label="First Name" placeholder="First Name" wire:model.live="firstname" class="py-2"/>
+
+                                <div
+                                    class="relative required-field"
+                                    x-data
+                                    @input="$event.target.value = $event.target.value.replace(/[^a-zA-Z\s'-]/g, '')"
+                                >
+                                    <x-input
+                                        icon="user"
+                                        label="First Name"
+                                        placeholder="First Name"
+                                        wire:model.live="firstname"
+                                        class="py-2"
+                                    />
+
                                     <div class="absolute inset-y-0 start-0 flex items-center pointer-events-none ps-2 peer-disabled:opacity-50 peer-disabled:pointer-events-none">
                                     </div>
                                 </div>
-                                <div class="relative" x-data @input="$event.target.value = $event.target.value.replace(/[^a-zA-Z\s'-]/g, '')">
-                                    <x-input icon="user" label="Last Name" placeholder="Last Name" wire:model.live="lastname" class="py-2"/>
+
+
+                                <div
+                                    class="relative required-field"
+                                    x-data
+                                    @input="$event.target.value = $event.target.value.replace(/[^a-zA-Z\s'-]/g, '')"
+                                >
+                                    <x-input
+                                        icon="user"
+                                        label="Last Name"
+                                        placeholder="Last Name"
+                                        wire:model.live="lastname"
+                                        class="py-2"
+                                    />
+
                                     <div class="absolute inset-y-0 start-0 flex items-center pointer-events-none ps-2 peer-disabled:opacity-50 peer-disabled:pointer-events-none">
+                                    </div>
+                                </div>
+
+                            </div>
+
+
+                            {{-- EMAIL --}}
+                            <div class="relative required-field">
+
+                                <x-input
+                                    icon="mail"
+                                    label="Email Address"
+                                    placeholder="Email Address"
+                                    wire:model="email"
+                                    class="py-2"
+                                />
+
+                                <div class="absolute inset-y-0 start-0 flex items-center pointer-events-none ps-2 peer-disabled:opacity-50 peer-disabled:pointer-events-none">
+                                </div>
+
+                            </div>
+
+
+                            {{-- USERNAME --}}
+                            <div class="relative required-field">
+
+                                <x-input
+                                    icon="user"
+                                    label="Username"
+                                    placeholder="Username"
+                                    wire:model="username"
+                                    class="py-2"
+                                />
+
+                                <div class="absolute inset-y-0 start-0 flex items-center pointer-events-none ps-2 peer-disabled:opacity-50 peer-disabled:pointer-events-none">
+                                </div>
+
+                            </div>
+
+
+                            {{-- PASSWORD --}}
+                            {{-- <div
+                                class="relative required-field"
+                                x-data
+                                @input="$event.target.value = $event.target.value.slice(0, 16)"
+                            >
+
+                                <x-inputs.password
+                                    icon="lock-closed"
+                                    label="Password"
+                                    placeholder="Password"
+                                    class="py-2"
+                                    wire:model="password"
+                                />
+
+                                <div class="absolute inset-y-0 start-0 flex items-center pointer-events-none ps-2 peer-disabled:opacity-50 peer-disabled:pointer-events-none">
+                                </div>
+
+                            </div> --}}
+                            {{-- PASSWORD --}}
+                            <div
+                                class="relative required-field"
+                                x-data="{
+                                    password: '',
+                                    focused: false
+                                }"
+                            >
+                                <div
+                                    @input="
+                                        let value = $event.target.value.slice(0, 16);
+                                        $event.target.value = value;
+                                        password = value;
+                                    "
+                                    @focusin="
+                                        focused = true;
+                                        password = $event.target.value;
+                                    "
+                                    @focusout="focused = false"
+                                >
+                                    <x-inputs.password
+                                        icon="lock-closed"
+                                        label="Password"
+                                        placeholder="Password"
+                                        class="py-2"
+                                        wire:model="password"
+                                    />
+                                </div>
+
+                                {{-- Animated Password Popup --}}
+                                <div
+                                    x-cloak
+                                    x-show="focused"
+                                    x-transition:enter="transition ease-out duration-200"
+                                    x-transition:enter-start="opacity-0 -translate-y-1 scale-95"
+                                    x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                                    x-transition:leave="transition ease-in duration-150"
+                                    x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                                    x-transition:leave-end="opacity-0 -translate-y-1 scale-95"
+                                    class="absolute z-50 left-0 mt-1 w-full px-3 py-2
+                                        bg-white border border-gray-200
+                                        text-xs rounded-lg shadow-md"
+                                >
+                                    <div class="flex items-center justify-between gap-3">
+
+                                        {{-- Minimum requirement --}}
+                                        <span
+                                            :class="password.length >= 8
+                                                ? 'text-green-600'
+                                                : 'text-red-500'"
+                                        >
+                                            <span x-show="password.length < 8">
+                                                Minimum 8 characters
+                                            </span>
+
+                                            <span x-show="password.length >= 8">
+                                                ✓ Minimum length reached
+                                            </span>
+                                        </span>
+
+                                        {{-- Character counter --}}
+                                        <span
+                                            class="font-medium"
+                                            :class="password.length >= 16
+                                                ? 'text-red-500'
+                                                : 'text-gray-500'"
+                                        >
+                                            <span x-text="password.length"></span>/16
+                                        </span>
+
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="relative">
-                                <x-input icon="mail" label="Email Address" placeholder="Email Address" wire:model="email" class="py-2"/>
+
+                            {{-- CONFIRM PASSWORD --}}
+                            <div
+                                class="relative required-field"
+                                x-data
+                                @input="$event.target.value = $event.target.value.slice(0, 16)"
+                            >
+
+                                <x-inputs.password
+                                    icon="lock-closed"
+                                    label="Confirm Password"
+                                    placeholder="Confirm Password"
+                                    class="py-2"
+                                    wire:model="confirmPassword"
+                                />
+
                                 <div class="absolute inset-y-0 start-0 flex items-center pointer-events-none ps-2 peer-disabled:opacity-50 peer-disabled:pointer-events-none">
                                 </div>
+
                             </div>
 
-                            <div class="relative">
-                                <x-input icon="user" label="Username" placeholder="Username" wire:model="username" class="py-2"/>
-                                <div class="absolute inset-y-0 start-0 flex items-center pointer-events-none ps-2 peer-disabled:opacity-50 peer-disabled:pointer-events-none">
-                                </div>
-                            </div>
 
-                            <div class="relative">
-                                <x-inputs.password icon="lock-closed" label="Password" placeholder="Password" class="py-2" wire:model="password"/>
-                                <div class="absolute inset-y-0 start-0 flex items-center pointer-events-none ps-2 peer-disabled:opacity-50 peer-disabled:pointer-events-none">
-                                </div>
-                            </div>
+                            {{-- TERMS --}}
+                            <div class="flex flex-col justify-between items-center">
 
-                            <div class="relative">
-                                <x-inputs.password icon="lock-closed" label="Confirm Password" placeholder="Confirm Password" class="py-2" wire:model="confirmPassword"/>
-                                <div class="absolute inset-y-0 start-0 flex items-center pointer-events-none ps-2 peer-disabled:opacity-50 peer-disabled:pointer-events-none">
-                                </div>
-                            </div>
-
-                           <div class="flex flex-col justify-between items-center">
-    
                                 <div class="flex items-center gap-2">
-                                    <input id="terms" type="checkbox" wire:model="terms" class="rounded border-gray-300">
+
+                                    <input
+                                        id="terms"
+                                        type="checkbox"
+                                        wire:model="terms"
+                                        class="rounded border-gray-300"
+                                    >
 
                                     <label for="terms" class="text-2xs">
                                         I agree to the
+
                                         <a href="#" onclick="$openModal('termsModal')" class="underline-none text-[#346844]">
                                             Terms of Services
                                         </a>
+
                                         and
+
                                         <a href="#" onclick="$openModal('policyModal')" class="underline-none text-[#346844]">
                                             Privacy Policy
                                         </a>
                                     </label>
+
                                 </div>
+
                                 @error('terms')
                                     <span class="text-red-500 text-sm">{{ $message }}</span>
                                 @enderror
 
                             </div>
+
                         </div>
+
                     </div>
-                    <button type="submit" class="w-[90%] md:w-full py-2 px-4 mt-5 mb-2 inline-flex justify-center items-center gap-x-2 text-base font-medium border border-transparent bg-[#346844] text-white hover:bg-[#346844] disabled:opacity-50 disabled:pointer-events-none rounded-xl">
+
+
+                    <button
+                        type="submit"
+                        class="w-[90%] md:w-full py-2 px-4 mt-5 mb-2 inline-flex justify-center items-center gap-x-2 text-base font-medium border border-transparent bg-[#346844] text-white hover:bg-[#346844] disabled:opacity-50 disabled:pointer-events-none rounded-xl"
+                    >
                         Create Account
 
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M18 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0ZM3 19.235v-.11a6.375 6.375 0 0 1 12.75 0v.109A12.318 12.318 0 0 1 9.374 21c-2.331 0-4.512-.645-6.374-1.766Z" />
                         </svg>
+
                     </button>
 
-                    {{-- <div class="relative w-[90%] md:w-full my-4">
-                        <hr class="border-gray-300" />
-
-                        <span class="absolute left-1/2 -translate-x-1/2 bg-white px-4 text-sm text-gray-500 -top-3">
-                            Or
-                        </span>
-                    </div> --}}
-
-                    {{-- <a href="{{ route('login') }}" class="w-[90%] mb-5 md:w-full py-2 px-4 inline-flex justify-center items-center gap-x-2 text-base font-medium border border-[#346844] bg-[#346844]/10 text-[#346844] hover:bg-[#346844]/10 disabled:opacity-50 disabled:pointer-events-none rounded-xl">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                        </svg>
-                        Back to Login
-                    </a> --}}
 
                     <div class="flex text-sm gap-1">
-                        <span>Already have an account?</span> <a href="{{ route('login') }}" class="text-[#95d78e]">Login here.</a>
+                        <span>Already have an account?</span>
+                        <a href="{{ route('login') }}" class="text-[#95d78e]">
+                            Login here.
+                        </a>
                     </div>
+
                 </form>
-                
+
             </div>
+
         </div>
+
 
         <div class="w-[90%] h-fit bg-[#f1f6e2] rounded-2xl border border-[#346844] mx-auto z-10">
+
             <div class="grid grid-cols-4 gap-4">
+
                 <div class="bg-transparent rounded-xl py-0 px-5 flex items-center text-center">
+
                     <div class="w-20 h-20 flex items-center justify-center rounded-full bg-[#f1f6e2]">
-                        <img 
-                            src="{{ asset('images/pin-icon.png') }}" 
+                        <img
+                            src="{{ asset('images/pin-icon.png') }}"
                             alt="Icon"
                             class="w-12 h-12 object-contain"
                         >
                     </div>
+
                     <div>
                         <h3 class="font-semibold text-black text-sm">Bukid Amara</h3>
-                        <p class="text-xs text-gray-500 -mt-1">
-                            Lucban Quezon
-                        </p>
+                        <p class="text-xs text-gray-500 -mt-1">Lucban Quezon</p>
                     </div>
+
                 </div>
 
+
                 <div class="bg-transparent rounded-xl py-0 px-5 flex items-center text-center">
+
                     <div class="w-20 h-20 flex items-center justify-center rounded-full bg-[#f1f6e2]">
-                        <img 
-                            src="{{ asset('images/single-leaf-icon.png') }}" 
+                        <img
+                            src="{{ asset('images/single-leaf-icon.png') }}"
                             alt="Icon"
                             class="w-12 h-12 object-contain"
                         >
                     </div>
+
                     <div>
                         <h3 class="font-semibold text-black text-sm">Japanese Muskmelon</h3>
-                        <p class="text-xs text-gray-500 -mt-1">
-                            Premium Quality
-                        </p>
+                        <p class="text-xs text-gray-500 -mt-1">Premium Quality</p>
                     </div>
+
                 </div>
 
+
                 <div class="bg-transparent rounded-xl py-0 px-5 flex items-center text-center">
+
                     <div class="w-20 h-20 flex items-center justify-center rounded-full bg-[#f1f6e2]">
-                        <img 
-                            src="{{ asset('images/analytics-icon.png') }}" 
+                        <img
+                            src="{{ asset('images/analytics-icon.png') }}"
                             alt="Icon"
                             class="w-12 h-12 object-contain"
                         >
                     </div>
+
                     <div>
                         <h3 class="font-semibold text-black text-sm">Data You Can Trust</h3>
-                        <p class="text-xs text-gray-500 -mt-1">
-                            Accurate - Timely - Actionable
-                        </p>
+                        <p class="text-xs text-gray-500 -mt-1">Accurate - Timely - Actionable</p>
                     </div>
+
                 </div>
 
+
                 <div class="bg-transparent rounded-xl py-0 px-5 flex items-center text-center">
+
                     <div class="w-20 h-20 flex items-center justify-center rounded-full bg-[#f1f6e2]">
-                        <img 
-                            src="{{ asset('images/shield-icon.png') }}" 
+                        <img
+                            src="{{ asset('images/shield-icon.png') }}"
                             alt="Icon"
                             class="w-12 h-12 object-contain"
                         >
                     </div>
+
                     <div>
                         <h3 class="font-semibold text-black text-sm">Grow Smarter</h3>
-                        <p class="text-xs text-gray-500 -mt-1">
-                            Monitor Today, Harvest Tomorrow
-                        </p>
+                        <p class="text-xs text-gray-500 -mt-1">Monitor Today, Harvest Tomorrow</p>
                     </div>
+
                 </div>
+
             </div>
+
         </div>
 
-        <div 
+
+        <div
             class="absolute top-0 right-0 h-full w-1/2 md:w-2/3 lg:w-1/2 bg-cover bg-center bg-no-repeat"
             style="
                 background-image: url('{{ asset('images/right-bg-desktop.png') }}');
                 clip-path: polygon(25% 0, 100% 0, 100% 100%, 25% 100%, 0 50%);
             "
         ></div>
+
     </div>
+
+
 
     {{-- MOBILE --}}
     <div class="relative w-full h-auto flex flex-col gap-4 px-3 py-6 md:hidden">
+
         <div class="flex justify-left z-10 gap-2 w-full max-w-[60%]">
+
             <img src="{{ asset('images/Logo_MelonTrack.png') }}" alt="Logo" class="w-12 h-12 object-contain">
+
             <div>
                 <h1 class="text-[1.3rem] font-semibold text-[#316943]">
                     MelonTrack
                 </h1>
+
                 <p class="-mt-1 text-xs">Smart Melon Monitoring System</p>
             </div>
+
         </div>
-        
+
+
         <div class="flex flex-col justify-left gap-3 w-full max-w-[55%]">
-                        
+
             <h1 class="text-[1.3rem] font-semibold text-[#95d78e]">
                 <span class="text-[#316943]">Create</span> your account
             </h1>
-            <p class="-mt-3 text-2xs">Join MelonTack and start monitong, analyzing, and maximizing your melon harvest.</p>
-            
+
+            <p class="-mt-3 text-2xs">
+                Join MelonTack and start monitong, analyzing, and maximizing your melon harvest.
+            </p>
+
         </div>
 
+
         <div class="relative w-full max-w-[55%] my-4">
+
             <hr class="border-[#316943] w-full" />
 
-            <img 
-                src="{{ asset('images/leaf-icon.png') }}" 
+            <img
+                src="{{ asset('images/leaf-icon.png') }}"
                 alt="Or Divider"
                 class="absolute left-1/2 -translate-x-1/2 bg-white px-2 -top-3 w-10 h-6 object-contain"
             >
+
         </div>
 
+
         <div class="relative w-full z-10">
-                
+
             <form wire:submit.prevent="register" class="mx-auto border border-[#316943] w-full h-fit max-w-sm flex flex-col justify-center items-center px-5 py-5 bg-white/50 z-10 rounded-xl">
+
                 <div class="flex flex-col justify-center items-center mb-4">
-                    <div class="w-12 h-12 bg-[#f2f5e2] rounded-full px-2 py-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M18 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0ZM3 19.235v-.11a6.375 6.375 0 0 1 12.75 0v.109A12.318 12.318 0 0 1 9.374 21c-2.331 0-4.512-.645-6.374-1.766Z" />
+
+                    <div class="w-12 h-12 bg-[#f2f5e2] rounded-full flex items-center justify-center">
+
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="1.5"
+                            stroke="currentColor"
+                            class="w-7 h-7"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M18 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0ZM3 19.235v-.11a6.375 6.375 0 0 1 12.75 0v.109A12.318 12.318 0 0 1 9.374 21c-2.331 0-4.512-.645-6.374-1.766Z"
+                            />
                         </svg>
+
                     </div>
 
                     <h1 class="font-semibold text-lg">Sign-Up</h1>
-                    <p class="text-xs text-center">Create your MelonTrack account to get started.</p>
+
+                    <p class="text-xs text-center">
+                        Create your MelonTrack account to get started.
+                    </p>
+
                 </div>
+
+
                 <div class="w-full flex flex-col justify-center items-center">
+
                     <div class="space-y-2 w-[90%] md:w-full">
 
+                        {{-- FIRST / LAST NAME --}}
                         <div class="grid grid-cols-2 gap-2">
-                            <div class="relative" x-data  @input="$event.target.value = $event.target.value.replace(/[^a-zA-Z\s'-]/g, '')">
-                                <x-input icon="user" label="First Name" placeholder="First Name" wire:model.live="firstname" class="py-2"/>
+
+                            <div
+                                class="relative required-field"
+                                x-data
+                                @input="$event.target.value = $event.target.value.replace(/[^a-zA-Z\s'-]/g, '')"
+                            >
+
+                                <x-input
+                                    icon="user"
+                                    label="First Name"
+                                    placeholder="First Name"
+                                    wire:model.live="firstname"
+                                    class="py-2"
+                                />
+
                                 <div class="absolute inset-y-0 start-0 flex items-center pointer-events-none ps-2 peer-disabled:opacity-50 peer-disabled:pointer-events-none">
                                 </div>
+
                             </div>
-                            <div class="relative" x-data @input="$event.target.value = $event.target.value.replace(/[^a-zA-Z\s'-]/g, '')">
-                                <x-input icon="user" label="Last Name" placeholder="Last Name" wire:model.live="lastname" class="py-2"/>
+
+
+                            <div
+                                class="relative required-field"
+                                x-data
+                                @input="$event.target.value = $event.target.value.replace(/[^a-zA-Z\s'-]/g, '')"
+                            >
+
+                                <x-input
+                                    icon="user"
+                                    label="Last Name"
+                                    placeholder="Last Name"
+                                    wire:model.live="lastname"
+                                    class="py-2"
+                                />
+
                                 <div class="absolute inset-y-0 start-0 flex items-center pointer-events-none ps-2 peer-disabled:opacity-50 peer-disabled:pointer-events-none">
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        {{-- EMAIL --}}
+                        <div class="relative required-field">
+
+                            <x-input
+                                icon="mail"
+                                label="Email Address"
+                                placeholder="Email Address"
+                                wire:model="email"
+                                class="py-2"
+                            />
+
+                            <div class="absolute inset-y-0 start-0 flex items-center pointer-events-none ps-2 peer-disabled:opacity-50 peer-disabled:pointer-events-none">
+                            </div>
+
+                        </div>
+
+
+                        {{-- USERNAME --}}
+                        <div class="relative required-field">
+
+                            <x-input
+                                icon="user"
+                                label="Username"
+                                placeholder="Username"
+                                wire:model="username"
+                                class="py-2"
+                            />
+
+                            <div class="absolute inset-y-0 start-0 flex items-center pointer-events-none ps-2 peer-disabled:opacity-50 peer-disabled:pointer-events-none">
+                            </div>
+
+                        </div>
+
+
+                        {{-- PASSWORD --}}
+                        <div
+                            class="relative required-field"
+                            x-data="{
+                                password: '',
+                                focused: false
+                            }"
+                        >
+                            <div
+                                @input="
+                                    let value = $event.target.value.slice(0, 16);
+                                    $event.target.value = value;
+                                    password = value;
+                                "
+                                @focusin="
+                                    focused = true;
+                                    password = $event.target.value;
+                                "
+                                @focusout="focused = false"
+                            >
+                                <x-inputs.password
+                                    icon="lock-closed"
+                                    label="Password"
+                                    placeholder="Password"
+                                    class="py-2"
+                                    wire:model="password"
+                                />
+                            </div>
+
+                            {{-- Animated Password Popup --}}
+                            <div
+                                x-cloak
+                                x-show="focused"
+                                x-transition:enter="transition ease-out duration-200"
+                                x-transition:enter-start="opacity-0 -translate-y-1 scale-95"
+                                x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                                x-transition:leave="transition ease-in duration-150"
+                                x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                                x-transition:leave-end="opacity-0 -translate-y-1 scale-95"
+                                class="absolute z-50 left-0 mt-1 w-full px-3 py-2
+                                    bg-white border border-gray-200
+                                    text-xs rounded-lg shadow-md"
+                            >
+                                <div class="flex items-center justify-between gap-3">
+
+                                    {{-- Minimum requirement --}}
+                                    <span
+                                        :class="password.length >= 8
+                                            ? 'text-green-600'
+                                            : 'text-red-500'"
+                                    >
+                                        <span x-show="password.length < 8">
+                                            Minimum 8 characters
+                                        </span>
+
+                                        <span x-show="password.length >= 8">
+                                            ✓ Minimum length reached
+                                        </span>
+                                    </span>
+
+                                    {{-- Character counter --}}
+                                    <span
+                                        class="font-medium whitespace-nowrap"
+                                        :class="password.length >= 16
+                                            ? 'text-red-500'
+                                            : 'text-gray-500'"
+                                    >
+                                        <span x-text="password.length"></span>/16
+                                    </span>
+
                                 </div>
                             </div>
                         </div>
 
-                        <div class="relative">
-                            <x-input icon="mail" label="Email Address" placeholder="Email Address" wire:model="email" class="py-2"/>
+
+                        {{-- CONFIRM PASSWORD --}}
+                        <div
+                            class="relative required-field"
+                            x-data
+                            @input="$event.target.value = $event.target.value.slice(0, 16)"
+                        >
+
+                            <x-inputs.password
+                                icon="lock-closed"
+                                label="Confirm Password"
+                                placeholder="Confirm Password"
+                                class="py-2"
+                                wire:model="confirmPassword"
+                            />
+
                             <div class="absolute inset-y-0 start-0 flex items-center pointer-events-none ps-2 peer-disabled:opacity-50 peer-disabled:pointer-events-none">
                             </div>
+
                         </div>
 
-                        <div class="relative">
-                            <x-input icon="user" label="Username" placeholder="Username" wire:model="username" class="py-2"/>
-                            <div class="absolute inset-y-0 start-0 flex items-center pointer-events-none ps-2 peer-disabled:opacity-50 peer-disabled:pointer-events-none">
-                            </div>
-                        </div>
 
-                        <div class="relative">
-                            <x-inputs.password icon="lock-closed" label="Password" placeholder="Password" class="py-2" wire:model="password"/>
-                            <div class="absolute inset-y-0 start-0 flex items-center pointer-events-none ps-2 peer-disabled:opacity-50 peer-disabled:pointer-events-none">
-                            </div>
-                        </div>
-
-                        <div class="relative">
-                            <x-inputs.password icon="lock-closed" label="Confirm Password" placeholder="Confirm Password" class="py-2" wire:model="confirmPassword"/>
-                            <div class="absolute inset-y-0 start-0 flex items-center pointer-events-none ps-2 peer-disabled:opacity-50 peer-disabled:pointer-events-none">
-                            </div>
-                        </div>
-
+                        {{-- TERMS --}}
                         <div class="flex justify-between items-center">
 
                             <div class="flex items-center gap-2">
-                                <input id="terms" type="checkbox" wire:model="terms" class="rounded border-gray-300">
 
-                                <label for="terms" class="text-2xs">
+                                <input
+                                    id="terms-mobile"
+                                    type="checkbox"
+                                    wire:model="terms"
+                                    class="rounded border-gray-300"
+                                >
+
+                                <label for="terms-mobile" class="text-2xs">
                                     I agree to the
+
                                     <a href="#" onclick="$openModal('termsModal')" class="underline-none text-[#346844]">
                                         Terms of Services
                                     </a>
+
                                     and
+
                                     <a href="#" onclick="$openModal('policyModal')" class="underline-none text-[#346844]">
                                         Privacy Policy
                                     </a>
                                 </label>
+
                             </div>
 
                         </div>
+
+                        @error('terms')
+                            <span class="text-red-500 text-sm">{{ $message }}</span>
+                        @enderror
+
                     </div>
+
                 </div>
-                <button type="submit" class="w-[90%] md:w-full py-2 px-4 mt-5 mb-2 inline-flex justify-center items-center gap-x-2 text-base font-medium border border-transparent bg-[#346844] text-white hover:bg-[#346844] disabled:opacity-50 disabled:pointer-events-none rounded-xl">
+
+
+                <button
+                    type="submit"
+                    class="w-[90%] md:w-full py-2 px-4 mt-5 mb-2 inline-flex justify-center items-center gap-x-2 text-base font-medium border border-transparent bg-[#346844] text-white hover:bg-[#346844] disabled:opacity-50 disabled:pointer-events-none rounded-xl"
+                >
                     Create Account
 
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M18 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0ZM3 19.235v-.11a6.375 6.375 0 0 1 12.75 0v.109A12.318 12.318 0 0 1 9.374 21c-2.331 0-4.512-.645-6.374-1.766Z" />
                     </svg>
+
                 </button>
 
-                {{-- <div class="relative w-[90%] md:w-full my-4">
-                    <hr class="border-gray-300" />
-
-                    <span class="absolute left-1/2 -translate-x-1/2 bg-white px-4 text-sm text-gray-500 -top-3">
-                        Or
-                    </span>
-                </div> --}}
-
-                {{-- <a href="{{ route('login') }}" class="w-[90%] mb-5 md:w-full py-2 px-4 inline-flex justify-center items-center gap-x-2 text-base font-medium border border-[#346844] bg-[#346844]/10 text-[#346844] hover:bg-[#346844]/10 disabled:opacity-50 disabled:pointer-events-none rounded-xl">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                    </svg>
-                    Back to Login
-                </a> --}}
 
                 <div class="flex text-sm gap-1">
-                    <span>Already have an account?</span> <a href="{{ route('login') }}" class="text-[#95d78e]">Login here.</a>
+                    <span>Already have an account?</span>
+
+                    <a href="{{ route('login') }}" class="text-[#95d78e]">
+                        Login here.
+                    </a>
                 </div>
+
             </form>
-            
+
         </div>
 
+
         <div class="w-full px-6 flex justify-between items-center gap-2 bg-[#f1f6e2] border border-[#346844] rounded-lg">
-            <img 
-                src="{{ asset('images/leaf-icon-soil.png') }}" 
+
+            <img
+                src="{{ asset('images/leaf-icon-soil.png') }}"
                 alt="Icon"
                 class="w-12 h-12 object-contain"
             >
-            <p class="text-xs text-[#346844]">Empowering farmers with technology for a sweeter tomorrow.</p>
+
+            <p class="text-xs text-[#346844]">
+                Empowering farmers with technology for a sweeter tomorrow.
+            </p>
+
         </div>
 
+
         <div class="w-full z-10">
+
             <div class="grid grid-cols-2 gap-4 bg-white/70 px-2 py-2 rounded-xl border border-[#316943]">
 
                 <!-- CARD 1 -->
-                <div class=" rounded-xl py-0 px-5 flex flex-col items-center text-center">
+                <div class="rounded-xl py-0 px-5 flex flex-col items-center text-center">
+
                     <div class="w-16 h-16 flex items-center justify-center rounded-full bg-[#f1f6e2] mb-4">
-                        <img 
-                            src="{{ asset('images/real-time-icon.png') }}" 
+                        <img
+                            src="{{ asset('images/real-time-icon.png') }}"
                             alt="Icon"
                             class="w-10 h-10 object-contain"
                         >
                     </div>
 
                     <h3 class="font-semibold text-black text-[0.50rem]">Monitoring</h3>
+
                     <p class="text-[0.50rem] text-gray-500 mt-2">
                         Track environmental conditions and crop health 24/7
                     </p>
+
                 </div>
+
 
                 <!-- CARD 2 -->
                 <div class="rounded-xl py-0 px-5 flex flex-col items-center text-center">
+
                     <div class="w-16 h-16 flex items-center justify-center rounded-full bg-[#f1f6e2] mb-4">
-                        <img 
-                            src="{{ asset('images/data-icon.png') }}" 
+                        <img
+                            src="{{ asset('images/data-icon.png') }}"
                             alt="Icon"
                             class="w-10 h-10 object-contain"
                         >
                     </div>
 
-                    <h3 class="font-semibold text-black text-[0.50rem]">Data-Driven Insight</h3>
+                    <h3 class="font-semibold text-black text-[0.50rem]">
+                        Data-Driven Insight
+                    </h3>
+
                     <p class="text-[0.50rem] text-gray-500 mt-2">
                         Get accurate KPIs and analytics for better decisions
                     </p>
+
                 </div>
+
 
                 <!-- CARD 3 -->
                 <div class="rounded-xl py-0 px-5 flex flex-col items-center text-center">
+
                     <div class="w-16 h-16 flex items-center justify-center rounded-full bg-[#f1f6e2] mb-4">
-                        <img 
-                            src="{{ asset('images/alert-icon.png') }}" 
+                        <img
+                            src="{{ asset('images/alert-icon.png') }}"
                             alt="Icon"
                             class="w-10 h-10 object-contain"
                         >
                     </div>
 
                     <h3 class="font-semibold text-black text-[0.50rem]">Smart Alerts</h3>
+
                     <p class="text-[0.50rem] text-gray-500 mt-2">
                         Receive SMS alert for critical challenges and recommendation
                     </p>
+
                 </div>
+
 
                 <!-- CARD 4 -->
                 <div class="rounded-xl py-0 px-5 flex flex-col items-center text-center">
+
                     <div class="w-16 h-16 flex items-center justify-center rounded-full bg-[#f1f6e2] mb-4">
-                        <img 
-                            src="{{ asset('images/yield-icon.png') }}" 
+                        <img
+                            src="{{ asset('images/yield-icon.png') }}"
                             alt="Icon"
                             class="w-10 h-10 object-contain"
                         >
                     </div>
 
                     <h3 class="font-semibold text-black text-[0.50rem]">Better Yields</h3>
+
                     <p class="text-[0.50rem] text-gray-500 mt-2">
                         Improve quality, increase yield, and maximize profit
                     </p>
+
                 </div>
 
             </div>
+
         </div>
 
+
         <div class="w-full h-fit z-10 bg-[#f1f6e2] rounded-2xl border border-[#346844] mx-auto p-2">
-    
+
             <div class="grid grid-cols-2 gap-2">
 
                 <!-- CARD 1 -->
                 <div class="flex items-center gap-2 p-2">
+
                     <div class="w-14 h-14 flex-shrink-0 flex items-center justify-center rounded-full bg-[#f1f6e2]">
-                        <img src="{{ asset('images/pin-icon.png') }}"
+                        <img
+                            src="{{ asset('images/pin-icon.png') }}"
                             class="w-8 h-8 object-contain"
-                            alt="">
+                            alt=""
+                        >
                     </div>
+
                     <div class="leading-tight">
                         <h3 class="font-semibold text-black text-sm">Bukid Amara</h3>
                         <p class="text-xs text-gray-500">Lucban Quezon</p>
                     </div>
+
                 </div>
+
 
                 <!-- CARD 2 -->
                 <div class="flex items-center gap-2 p-2">
+
                     <div class="w-14 h-14 flex-shrink-0 flex items-center justify-center rounded-full bg-[#f1f6e2]">
-                        <img src="{{ asset('images/single-leaf-icon.png') }}"
+                        <img
+                            src="{{ asset('images/single-leaf-icon.png') }}"
                             class="w-8 h-8 object-contain"
-                            alt="">
+                            alt=""
+                        >
                     </div>
+
                     <div class="leading-tight">
                         <h3 class="font-semibold text-black text-sm">Japanese Muskmelon</h3>
                         <p class="text-xs text-gray-500">Premium Quality</p>
                     </div>
+
                 </div>
+
 
                 <!-- CARD 3 -->
                 <div class="flex items-center gap-2 p-2">
+
                     <div class="w-14 h-14 flex-shrink-0 flex items-center justify-center rounded-full bg-[#f1f6e2]">
-                        <img src="{{ asset('images/analytics-icon.png') }}"
+                        <img
+                            src="{{ asset('images/analytics-icon.png') }}"
                             class="w-8 h-8 object-contain"
-                            alt="">
+                            alt=""
+                        >
                     </div>
+
                     <div class="leading-tight">
                         <h3 class="font-semibold text-black text-sm">Data You Can Trust</h3>
                         <p class="text-xs text-gray-500">Accurate - Timely - Actionable</p>
                     </div>
+
                 </div>
+
 
                 <!-- CARD 4 -->
                 <div class="flex items-center gap-2 p-2">
+
                     <div class="w-14 h-14 flex-shrink-0 flex items-center justify-center rounded-full bg-[#f1f6e2]">
-                        <img src="{{ asset('images/shield-icon.png') }}"
+                        <img
+                            src="{{ asset('images/shield-icon.png') }}"
                             class="w-8 h-8 object-contain"
-                            alt="">
+                            alt=""
+                        >
                     </div>
+
                     <div class="leading-tight">
                         <h3 class="font-semibold text-black text-sm">Grow Smarter</h3>
                         <p class="text-xs text-gray-500">Monitor Today, Harvest Tomorrow</p>
                     </div>
+
                 </div>
 
             </div>
+
         </div>
-        
+
+
         <div class="absolute top-0 right-0">
-            <div 
+
+            <div
                 class="w-40 h-[20rem] aspect-square bg-cover bg-center bg-no-repeat"
                 style="
                     background-image: url('{{ asset('images/right-bg-desktop.png') }}');
                     border-radius: 9999px 0 0 9999px;
                 "
             ></div>
+
         </div>
+
     </div>
 
+
+
+    {{-- TERMS MODAL --}}
     <x-modal wire:model.defer="termsModal" align="center">
+
         <x-card title="Terms of Services">
+
             <div class="w-full min-h-screen h-full py-10">
+
                 <div class="w-full max-w-[1080px] h-full mx-auto flex flex-col justify-center items-center lg:justify-start lg:items-start gap-5">
+
                     <div class="flex justify-center items-center gap-3 mx-auto">
-                        <img src="{{ asset('images/Logo_MelonTrack.png') }}" alt="Logo" class="w-12 h-12 md:w-20 md:h-20 object-contain">
+
+                        <img
+                            src="{{ asset('images/Logo_MelonTrack.png') }}"
+                            alt="Logo"
+                            class="w-12 h-12 md:w-20 md:h-20 object-contain"
+                        >
+
                         <div>
+
                             <h1 class="text-xl md:text-[2.8rem] font-semibold text-[#316943]">
                                 MelonTrack
                             </h1>
-                            <p class="text-xs md:text-base">Smart Melon Monitoring System</p>
+
+                            <p class="text-xs md:text-base">
+                                Smart Melon Monitoring System
+                            </p>
+
                         </div>
+
                     </div>
 
+
                     <div class="flex flex-col gap-5 text-sm md:text-base px-10 lg:px-5">
-                        <p>Welcome to the MelonTrack: MelonTrack: An IoT Web-Based Japanese Musk Melon Quality Monitoring and Cultivation Management System Using NPK With SMS Notifications For Bukid Amara. Please agree to the following terms & conditions.</p>
+
+                        <p>
+                            Welcome to the MelonTrack: MelonTrack: An IoT Web-Based Japanese Musk Melon Quality Monitoring and Cultivation Management System Using NPK With SMS Notifications For Bukid Amara. Please agree to the following terms & conditions.
+                        </p>
 
                         <p>Terms and Conditions for the Use of MelonTrack</p>
 
-                        <p>These Terms and Conditions ("Terms") govern the access to and use of the MelonTrack system. By accessing, registering, or using the MelonTrack platform, the user ("User") acknowledges that they have read, understood, and agreed to be bound by these Terms.</p>
+                        <p>
+                            These Terms and Conditions ("Terms") govern the access to and use of the MelonTrack system. By accessing, registering, or using the MelonTrack platform, the user ("User") acknowledges that they have read, understood, and agreed to be bound by these Terms.
+                        </p>
+
 
                         <p class="font-semibold">1. Purpose of the System</p>
+
                         <ul class="ml-10">
-                            <li class="list-disc">to design a monitoring module that tracks Japanese musk melons key growing parameters, including NPK nutrient levels, temperature, humidity, pH, and EC and regulate parameters outside the optimal range.</li>
-                            <li class="list-disc">to develop a data-driven analysis feature that evaluates plant growth  
-                            performance and fruit quality through recording key indicators such as brix level, and harvest output, in order to support improved yield   
-                            consistency and increase the number of marketable melons per harvest cycle.
+
+                            <li class="list-disc">
+                                to design a monitoring module that tracks Japanese musk melons key growing parameters, including NPK nutrient levels, temperature, humidity, pH, and EC and regulate parameters outside the optimal range.
                             </li>
-                            <li class="list-disc">to integrate Melon Production and Sales Report that generates consolidated data on yield performance, harvest output, and sales per harvest cycle, and to use these reports as a basis for identifying production trends and supporting farm decisions that improve melon quality and increase the number of marketable produce.</li>
+
+                            <li class="list-disc">
+                                to develop a data-driven analysis feature that evaluates plant growth performance and fruit quality through recording key indicators such as brix level, and harvest output, in order to support improved yield consistency and increase the number of marketable melons per harvest cycle.
+                            </li>
+
+                            <li class="list-disc">
+                                to integrate Melon Production and Sales Report that generates consolidated data on yield performance, harvest output, and sales per harvest cycle, and to use these reports as a basis for identifying production trends and supporting farm decisions that improve melon quality and increase the number of marketable produce.
+                            </li>
+
                         </ul>
-                    
+
+
                         <p class="font-semibold">2. User Obligations</p>
-                        <p>The User shall ensure that all data entered, transmitted, or collected through the system, including but not limited to sensor readings, crop counts, and cultivation parameters, are accurate, complete, and timely. The MelonTrack developers shall not be held liable for any inaccuracies, losses, or damages arising from incorrect or incomplete data input.</p>
+
+                        <p>
+                            The User shall ensure that all data entered, transmitted, or collected through the system, including but not limited to sensor readings, crop counts, and cultivation parameters, are accurate, complete, and timely. The MelonTrack developers shall not be held liable for any inaccuracies, losses, or damages arising from incorrect or incomplete data input.
+                        </p>
+
 
                         <p class="font-semibold">3. Accuracy of Information and Limitations of Liability</p>
-                        <p>All analytics, projections, and recommendations generated by MelonTrack are based on available data, system models, and historical records. Actual results may vary due to environmental conditions, equipment limitations, human intervention, or other unforeseen factors. MelonTrack shall not be responsible for any direct, indirect, incidental, or consequential damages resulting from reliance on system outputs.</p>
+
+                        <p>
+                            All analytics, projections, and recommendations generated by MelonTrack are based on available data, system models, and historical records. Actual results may vary due to environmental conditions, equipment limitations, human intervention, or other unforeseen factors. MelonTrack shall not be responsible for any direct, indirect, incidental, or consequential damages resulting from reliance on system outputs.
+                        </p>
+
 
                         <p class="font-semibold">4. Data Collection, Privacy, and Security</p>
-                        <p>Melon Track collects and processes data solely for system operation, monitoring, analysis, and performance improvement. Reasonable technical and organizational security measures are implemented to protect stored data; however, MelonTrack does not warrant absolute security against unauthorized access, data loss, or cyber threats. <br><br> MelonTrack complies with the Data Privacy Act of 2012 (Republic Act No. 10173), which protects the privacy and security of personal information collected, stored, and processed through the system. The information provided by users shall be used only for legitimate system functions and shall not be disclosed to unauthorized individuals or third parties without proper consent, unless otherwise required by law. </p>
+
+                        <p>
+                            Melon Track collects and processes data solely for system operation, monitoring, analysis, and performance improvement. Reasonable technical and organizational security measures are implemented to protect stored data; however, MelonTrack does not warrant absolute security against unauthorized access, data loss, or cyber threats.
+
+                            <br><br>
+
+                            MelonTrack complies with the Data Privacy Act of 2012 (Republic Act No. 10173), which protects the privacy and security of personal information collected, stored, and processed through the system. The information provided by users shall be used only for legitimate system functions and shall not be disclosed to unauthorized individuals or third parties without proper consent, unless otherwise required by law.
+                        </p>
+
 
                         <p class="font-semibold">5. System Availability and Maintenance</p>
-                        <p>Melon Track endeavors to maintain continuous system availability but does not guarantee uninterrupted access. Temporary suspension of services may occur due to maintenance, system updates, technical failures, or external factors beyond the control of the developers. No liability shall be incurred for any losses arising from system downtime or service interruption.</p>
+
+                        <p>
+                            Melon Track endeavors to maintain continuous system availability but does not guarantee uninterrupted access. Temporary suspension of services may occur due to maintenance, system updates, technical failures, or external factors beyond the control of the developers. No liability shall be incurred for any losses arising from system downtime or service interruption.
+                        </p>
+
 
                         <p class="font-semibold">6. Acceptable Use</p>
-                        <p>The User agrees to use MelonTrack solely for lawful agricultural monitoring, analysis, and management purposes. Unauthorized use, intentional data manipulation, system interference, or misuse of the platform is strictly prohibited.</p>
+
+                        <p>
+                            The User agrees to use MelonTrack solely for lawful agricultural monitoring, analysis, and management purposes. Unauthorized use, intentional data manipulation, system interference, or misuse of the platform is strictly prohibited.
+                        </p>
+
 
                         <p class="font-semibold">7. Modifications to the Terms</p>
-                        <p>Melon Track developers reserve the right to amend, update, or modify these Terms at any time without prior notice. Continued use of the system following such modifications shall constitute acceptance of the revised Terms.</p>
+
+                        <p>
+                            Melon Track developers reserve the right to amend, update, or modify these Terms at any time without prior notice. Continued use of the system following such modifications shall constitute acceptance of the revised Terms.
+                        </p>
+
 
                         <p class="font-semibold">8. Governing Law</p>
-                        <p>These Terms shall be governed by and construed in accordance with the applicable laws of the jurisdiction in which MelonTrack is deployed, without regard to conflict of law principles.</p>
+
+                        <p>
+                            These Terms shall be governed by and construed in accordance with the applicable laws of the jurisdiction in which MelonTrack is deployed, without regard to conflict of law principles.
+                        </p>
+
 
                         <p class="font-semibold">9. Acceptance of Terms</p>
-                        <p>By accessing or using MelonTrack, the User expressly acknowledges and agrees to these Terms and Conditions in full.</p>
+
+                        <p>
+                            By accessing or using MelonTrack, the User expressly acknowledges and agrees to these Terms and Conditions in full.
+                        </p>
+
                     </div>
+
                 </div>
+
             </div>
 
-    
+
             <x-slot name="footer">
+
                 <div class="flex justify-end gap-x-4">
                     <x-button flat label="Cancel" x-on:click="close" />
-                    {{-- <x-button primary label="I Agree" /> --}}
                 </div>
+
             </x-slot>
+
         </x-card>
+
     </x-modal>
 
-    <x-modal wire:model.defer="policyModal" align="center">
-        <x-card title="Privacy Policy">
-            
 
-    
+
+    {{-- PRIVACY POLICY MODAL --}}
+    <x-modal wire:model.defer="policyModal" align="center">
+
+        <x-card title="Privacy Policy">
+
             <x-slot name="footer">
+
                 <div class="flex justify-end gap-x-4">
                     <x-button flat label="Cancel" x-on:click="close" />
-                    {{-- <x-button primary label="I Agree" /> --}}
                 </div>
+
             </x-slot>
+
         </x-card>
+
     </x-modal>
 </div>

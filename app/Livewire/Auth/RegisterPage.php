@@ -30,8 +30,8 @@ class RegisterPage extends Component
 
             'email'     => 'required|email|unique:users,email|max:255',
 
-            'password'  => 'required|min:8|max:255',
-            'confirmPassword' => 'required|same:password',
+            'password' => 'required|min:8|max:16',
+            'confirmPassword' => 'required|same:password|max:16',
             
             'terms' => 'accepted',
         ]);
@@ -73,6 +73,25 @@ class RegisterPage extends Component
 
             session()->flash('error', 'Registration failed. Please try again.');
         }
+    }
+
+    public function updated($propertyName)
+    {
+        // Don't validate password fields while the user is typing.
+        // They will be validated when Create Account is clicked.
+        if (in_array($propertyName, ['password', 'confirmPassword'])) {
+            return;
+        }
+
+        $this->validateOnly($propertyName, [
+            'firstname' => 'required|max:255',
+            'lastname'  => 'required|max:255',
+            'username'  => 'required|max:255|unique:users,username',
+
+            'email'     => 'required|email|unique:users,email|max:255',
+
+            'terms' => 'accepted',
+        ]);
     }
     
     public function render()

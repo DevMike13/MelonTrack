@@ -1,8 +1,142 @@
 <div>
     
-    <div class="w-full flex justify-end items-center mb-3">
+    <div class="w-full flex justify-end items-center gap-2 mb-3">
+        @if(auth()->user()->role === 'admin')
+            <x-button
+                icon="key"
+                secondary
+                label="Set Delete PIN"
+                onclick="$openModal('deletePinModal')"
+            />
+        @endif
         <x-button icon="plus-sm" positive label="Add New Personnel" onclick="$openModal('newPersonnel')" />
     </div>
+
+    @if(auth()->user()->role === 'admin')
+
+        <x-modal
+            blur
+            name="deletePinModal"
+            persistent
+            align="center"
+            max-width="sm"
+        >
+
+            <x-card title="Delete Authorization PIN">
+
+                <p class="text-xs text-gray-500 mb-5">
+                    Set a 6-digit PIN required when a user attempts to delete data.
+                </p>
+
+
+                {{-- PIN --}}
+                <div>
+
+                    <p class="text-sm font-medium text-gray-700 mb-2">
+                        Enter PIN
+                    </p>
+
+                    <div
+                        class="flex justify-center gap-x-3"
+                        data-hs-pin-input=""
+                    >
+
+                        @foreach(range(0, 5) as $index)
+
+                            <input
+                                type="text"
+                                inputmode="numeric"
+                                maxlength="1"
+                                wire:model.lazy="deletePin.{{ $index }}"
+                                class="block w-9.5 text-center border-gray-200 rounded-md sm:text-sm
+                                    [&::-webkit-outer-spin-button]:appearance-none
+                                    [&::-webkit-inner-spin-button]:appearance-none
+                                    focus:border-green-500 focus:ring-green-500
+                                    disabled:opacity-50 disabled:pointer-events-none"
+                                placeholder="⚬"
+                                data-hs-pin-input-item=""
+                            >
+
+                        @endforeach
+
+                    </div>
+
+                    @error('deletePin')
+                        <p class="text-red-500 text-xs italic text-center mt-2">
+                            {{ $message }}
+                        </p>
+                    @enderror
+
+                </div>
+
+
+                {{-- CONFIRM PIN --}}
+                <div class="mt-5">
+
+                    <p class="text-sm font-medium text-gray-700 mb-2">
+                        Confirm PIN
+                    </p>
+
+                    <div
+                        class="flex justify-center gap-x-3"
+                        data-hs-pin-input=""
+                    >
+
+                        @foreach(range(0, 5) as $index)
+
+                            <input
+                                type="text"
+                                inputmode="numeric"
+                                maxlength="1"
+                                wire:model.lazy="deletePinConfirmation.{{ $index }}"
+                                class="block w-9.5 text-center border-gray-200 rounded-md sm:text-sm
+                                    [&::-webkit-outer-spin-button]:appearance-none
+                                    [&::-webkit-inner-spin-button]:appearance-none
+                                    focus:border-green-500 focus:ring-green-500
+                                    disabled:opacity-50 disabled:pointer-events-none"
+                                placeholder="⚬"
+                                data-hs-pin-input-item=""
+                            >
+
+                        @endforeach
+
+                    </div>
+
+                    @error('deletePinConfirmation')
+                        <p class="text-red-500 text-xs italic text-center mt-2">
+                            {{ $message }}
+                        </p>
+                    @enderror
+
+                </div>
+
+
+                <x-slot name="footer">
+
+                    <div class="flex justify-end gap-x-3">
+
+                        <x-button
+                            flat
+                            label="Cancel"
+                            x-on:click="close"
+                        />
+
+                        <x-button
+                            positive
+                            label="Save PIN"
+                            wire:click="setDeletePin"
+                            spinner="setDeletePin"
+                        />
+
+                    </div>
+
+                </x-slot>
+
+            </x-card>
+
+        </x-modal>
+
+    @endif
 
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5 mb-8 items-stretch">
 

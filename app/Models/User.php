@@ -34,6 +34,7 @@ class User extends Authenticatable implements FilamentUser
         'otp_expires_at',
         'otp_verified_at',
         'is_approved',
+        'delete_pin'
     ];
 
     /**

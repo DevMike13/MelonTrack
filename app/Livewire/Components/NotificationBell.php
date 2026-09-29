@@ -3,28 +3,40 @@
 namespace App\Livewire\Components;
 
 use App\Models\Notifications;
+use App\Models\DeleteNotification;
 use Livewire\Component;
 
 class NotificationBell extends Component
 {
     public $count = 0;
 
-    protected $listeners = ['notificationsRead' => 'resetCount'];
+    protected $listeners = [
+        'notificationsRead' => 'resetCount'
+    ];
 
     public function mount()
     {
-        $this->count = Notifications::where('is_read', false)->count();
+        $this->updateCount();
+    }
+
+    public function updateCount()
+    {
+        $firebaseCount = Notifications::where('is_read', false)->count();
+
+        $deleteCount = DeleteNotification::where('is_read', false)->count();
+
+        $this->count = $firebaseCount + $deleteCount;
     }
 
     public function resetCount()
     {
-        $this->count = 0;
+        $this->updateCount();
     }
 
     public function render()
     {
-        $this->count = Notifications::where('is_read', false)->count();
-        
+        $this->updateCount();
+
         return view('livewire.components.notification-bell');
     }
 }
