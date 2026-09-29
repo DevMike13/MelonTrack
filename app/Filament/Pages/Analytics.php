@@ -11,4 +11,9 @@ class Analytics extends Page
     protected static string $view = 'filament.pages.analytics';
 
     protected static ?int $navigationSort = 4;
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
 }
