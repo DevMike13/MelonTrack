@@ -2,12 +2,14 @@
 
 namespace App\Livewire\Auth;
 
+use App\Models\User;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 use WireUi\Traits\Actions;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Hash;
 
 #[Title('Login Page')]
 class LoginPage extends Component
@@ -26,6 +28,9 @@ class LoginPage extends Component
 
         $key = $this->throttleKey();
 
+        // =====================================================
+        // CHECK IF CURRENT LOGIN IS LOCKED
+        // =====================================================
         if (RateLimiter::tooManyAttempts($key, 5)) {
 
             $seconds = RateLimiter::availableIn($key);
@@ -38,16 +43,20 @@ class LoginPage extends Component
             return;
         }
 
-        if (!auth()->attempt([
-            'email' => $this->email,
-            'password' => $this->password,
-        ])) {
+        // =====================================================
+        // FIND USER BY EMAIL
+        // =====================================================
+        $user = User::where('email', $this->email)->first();
+
+        // =====================================================
+        // EMAIL DOES NOT EXIST
+        // =====================================================
+        if (!$user) {
 
             $lockoutSeconds = $this->getLockoutSeconds($key);
 
             RateLimiter::hit($key, $lockoutSeconds);
 
-            // Check if this failed attempt reached the limit
             if (RateLimiter::tooManyAttempts($key, 5)) {
 
                 Cache::increment($key . ':lockout-level');
@@ -63,12 +72,48 @@ class LoginPage extends Component
             $remaining = RateLimiter::remaining($key, 5);
 
             $this->notification()->error(
-                title: 'Error!',
-                description: "Invalid credentials. {$remaining} attempt(s) remaining."
+                title: 'Email Not Found',
+                description: "No account was found with this email address. {$remaining} attempt(s) remaining."
             );
 
             return;
         }
+
+        // =====================================================
+        // PASSWORD IS INCORRECT
+        // =====================================================
+        if (!Hash::check($this->password, $user->password)) {
+
+            $lockoutSeconds = $this->getLockoutSeconds($key);
+
+            RateLimiter::hit($key, $lockoutSeconds);
+
+            if (RateLimiter::tooManyAttempts($key, 5)) {
+
+                Cache::increment($key . ':lockout-level');
+
+                $this->notification()->error(
+                    title: 'Too Many Attempts',
+                    description: "You have reached 5 incorrect login attempts. Please wait {$lockoutSeconds} seconds before trying again."
+                );
+
+                return;
+            }
+
+            $remaining = RateLimiter::remaining($key, 5);
+
+            $this->notification()->error(
+                title: 'Incorrect Password',
+                description: "The password you entered is incorrect. {$remaining} attempt(s) remaining."
+            );
+
+            return;
+        }
+
+        // =====================================================
+        // CREDENTIALS ARE CORRECT - LOGIN USER
+        // =====================================================
+        auth()->login($user);
 
         RateLimiter::clear($key);
         Cache::forget($key . ':lockout-level');
@@ -77,39 +122,54 @@ class LoginPage extends Component
 
         $user = auth()->user();
 
+        // =====================================================
+        // ACCOUNT NOT VERIFIED
+        // =====================================================
         if (!$user->is_verified) {
+
             $this->logoutUser();
 
             $this->notification()->error(
-                title: 'Error!',
+                title: 'Account Not Verified',
                 description: 'Your account is not verified.'
             );
 
             return;
         }
 
+        // =====================================================
+        // ACCOUNT INACTIVE
+        // =====================================================
         if ($user->status === 'Inactive') {
+
             $this->logoutUser();
 
             $this->notification()->error(
-                title: 'Error!',
+                title: 'Account Inactive',
                 description: 'Your account is inactive.'
             );
 
             return;
         }
 
+        // =====================================================
+        // ACCOUNT PENDING APPROVAL
+        // =====================================================
         if ($user->role === 'user' && !$user->is_approved) {
+
             $this->logoutUser();
 
             $this->notification()->error(
-                title: 'Error!',
+                title: 'Pending Approval',
                 description: 'Your account is pending approval.'
             );
 
             return;
         }
 
+        // =====================================================
+        // LOGIN SUCCESSFUL
+        // =====================================================
         $user->update([
             'is_online' => true,
         ]);
@@ -129,9 +189,9 @@ class LoginPage extends Component
         $level = Cache::get($key . ':lockout-level', 0);
 
         return match ($level) {
-            0 => 20,    // First lockout
-            1 => 60,    // Second lockout
-            2 => 120,   // Third lockout
+            0 => 20,      // First lockout
+            1 => 60,      // Second lockout
+            2 => 120,     // Third lockout
             default => 300, // Fourth lockout and above
         };
     }
