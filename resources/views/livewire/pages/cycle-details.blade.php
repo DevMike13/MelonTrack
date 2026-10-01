@@ -1702,8 +1702,8 @@
                     <x-inputs.number
                         label="Brix Level"
                         wire:model.defer="brixLevel"
-                        min="12"
-                        max="18"
+                        {{-- min="12"
+                        max="18" --}}
                         step="0.1"
                     />
 
